@@ -73,7 +73,7 @@ void expandFileMacros(char inputFileName[], char outputFileName[]) {
         noWhitespaceLine = malloc(sizeof(char) * (strlen(line) + 1));
 
         if (noWhitespaceLine == NULL) {
-            fprintf(stderr, "Failed to allocated enough memory for a line.\n");
+            fprintf(stderr, "Failed to allocate enough memory for a line.\n");
             exit(1);
         }
 
