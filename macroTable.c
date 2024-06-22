@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "globals.h"
 #include "utils.h"
 
 char *getMacroContent(macro *macroTable, char *macroName) {

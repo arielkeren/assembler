@@ -120,12 +120,15 @@ void encodeRegister(word *wordToModify, int registerNumber, boolean isSource) {
 void encodeExtraWord(word *wordToModify, char operand[], boolean isSource) {
     switch (operand[0]) {
         case 'r':
+            encodeMetadata(wordToModify, 'A');
             encodeRegister(wordToModify, atoi(&operand[1]), isSource);
             break;
         case '*':
+            encodeMetadata(wordToModify, 'A');
             encodeRegister(wordToModify, atoi(&operand[2]), isSource);
             break;
         case '#':
+            encodeMetadata(wordToModify, 'A');
             encodeNumber(wordToModify, atoi(&operand[1]));
             break;
         default:
@@ -138,6 +141,11 @@ void encodeData(word *wordToModify, int data) {
 }
 
 boolean validateString(char string[]) {
+    size_t length;
+
+    length = strlen(string);
+
+    return length >= 2 && string[0] == string[length - 1] == '\"';
 }
 
 void encodeString(word **data, char string[]) {
@@ -151,7 +159,16 @@ void encodeString(word **data, char string[]) {
 }
 
 void encodeNumberList(word **data, char numberList[]) {
+    char *token;
+
     while (*numberList != NULL) {
+        token = getNextToken(numberList);
+        removeEndingComma(token);
         addWord(data);
+        encodeData(*data, atoi(token));
+
+        free(token);
+        numberList = skipCharacters(numberList);
+        numberList = skipWhitespace(numberList);
     }
 }

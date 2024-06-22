@@ -37,7 +37,8 @@ void handleLine(char line[], word *code, word *data) {
         return;
     }
 
-    if (strncmp(line, ".data", 5) == 0) {
+    if (strncmp(line, ".entry", 5) == 0) {
+    } else if (strncmp(line, ".data", 5) == 0) {
         handleData(skipWhitespace(&line[5]), data);
     } else if (strncmp(line, ".string", 7) == 0) {
         handleString(skipWhitespace(&line[7]), data);
@@ -47,6 +48,29 @@ void handleLine(char line[], word *code, word *data) {
 }
 
 void handleString(char line[], word *data) {
+    char *token;
+
+    token = getNextToken(line);
+
+    if (token == NULL) {
+        return;
+    }
+
+    if (!validateString(token)) {
+        free(token);
+        return;
+    }
+
+    encodeString(&data, token);
+    free(token);
+}
+
+void handleData(char line[], word *data) {
+    if (!validateData(line)) {
+        return;
+    }
+
+    encodeNumberList(&data, line);
 }
 
 void handleOperation(char line[], word *code) {
@@ -59,7 +83,12 @@ void handleOperation(char line[], word *code) {
 
     token = getNextToken(line);
 
-    if (token == NULL || !validateOperation(token)) {
+    if (token == NULL) {
+        return;
+    }
+
+    if (!validateOperation(token)) {
+        free(token);
         return;
     }
 
@@ -106,6 +135,7 @@ void handleOperation(char line[], word *code) {
     } else {
         addWord(&code);
         encodeExtraWord(code, firstOperand, TRUE);
+
         addWord(&code);
         encodeExtraWord(code, secondOperand, FALSE);
     }

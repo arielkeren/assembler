@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "globals.h"
 #include "macroTable.h"
 #include "utils.h"
 

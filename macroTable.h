@@ -1,11 +1,7 @@
 #ifndef MACRO_TABLE_H
 #define MACRO_TABLE_H
 
-typedef struct macroStruct {
-    char *name;
-    char *content;
-    struct macroStruct *next;
-} macro;
+#include "globals.h"
 
 char *getMacroContent(macro *macroTable, char *macroName);
 char *addMacro(macro **macroTable, char *macroName);
