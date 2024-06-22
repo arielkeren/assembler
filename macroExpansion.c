@@ -1,30 +1,32 @@
 #include "macroExpansion.h"
 
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "macroTable.h"
+#include "utils.h"
 
-void expandMacros(char *fileNames[], int fileCount) {
+void expandMacros(char fileName[]) {
     char *inputFileName;
     char *outputFileName;
+    FILE *inputFile;
+    FILE *outputFile;
 
-    while (fileCount > 0) {
-        inputFileName = addExtension(*fileNames, "as");
-        outputFileName = addExtension(*fileNames, "am");
-        expandFileMacros(inputFileName, outputFileName);
+    inputFileName = addExtension(fileName, "as");
+    outputFileName = addExtension(fileName, "am");
 
-        free(inputFileName);
-        free(outputFileName);
-        fileNames++;
-    }
+    inputFile = openFile(inputFileName, "r");
+    outputFile = openFile(outputFileName, "w");
+
+    expandFileMacros(inputFileName, outputFileName);
+
+    free(inputFileName);
+    free(outputFileName);
+    fclose(inputFile);
+    fclose(outputFile);
 }
 
-void expandFileMacros(char inputFileName[], char outputFileName[]) {
-    FILE *input;
-    FILE *output;
+void expandFileMacros(FILE *inputFile, FILE *outputFile) {
     macro *macroTable;
     int isInsideMacro;
     char line[82];
@@ -32,22 +34,10 @@ void expandFileMacros(char inputFileName[], char outputFileName[]) {
     char *macroName;
     char *noWhitespaceLine;
 
-    input = fopen(inputFileName, "r");
-    if (input == NULL) {
-        fprintf(stderr, "Failed to open a file: %s.\n", inputFileName);
-        exit(1);
-    }
-
-    output = fopen(outputFileName, "w");
-    if (output == NULL) {
-        fprintf(stderr, "Failed to open a file: %s.\n", outputFileName);
-        exit(1);
-    }
-
     macroTable = NULL;
     isInsideMacro = 0;
 
-    while (fgets(line, sizeof(line) * sizeof(char), input) != NULL) {
+    while (fgets(line, sizeof(line), inputFile) != NULL) {
         if (isInsideMacro) {
             if (isEndOfMacro(line)) {
                 isInsideMacro = 0;
@@ -66,55 +56,25 @@ void expandFileMacros(char inputFileName[], char outputFileName[]) {
         }
 
         if (!isSingleWord(line)) {
-            fputs(line, output);
+            fputs(line, outputFile);
             continue;
         }
 
-        noWhitespaceLine = malloc(sizeof(char) * (strlen(line) + 1));
-
-        if (noWhitespaceLine == NULL) {
-            fprintf(stderr, "Failed to allocate enough memory for a line.\n");
-            exit(1);
-        }
+        noWhitespaceLine = allocate(sizeof(char) * (strlen(line) + 1));
 
         strcpy(noWhitespaceLine, line);
         removeEndingWhitespace(noWhitespaceLine);
 
         content = getMacroContent(macroTable, noWhitespaceLine);
         if (content != NULL) {
-            fputs(content, output);
+            fputs(content, outputFile);
             continue;
         }
 
-        fputs(line, output);
+        fputs(line, outputFile);
     }
 
     freeMacroTable(macroTable);
-    fclose(input);
-    fclose(output);
-}
-
-char *addExtension(char fileName[], char extension[]) {
-    size_t fileNameLength;
-    size_t extensionLength;
-    char *name;
-
-    fileNameLength = strlen(fileName);
-    extensionLength = strlen(extension);
-
-    name = malloc(sizeof(char) * (fileNameLength + extensionLength + 2));
-
-    if (name == NULL) {
-        fprintf(stderr, "Failed to allocate enough memory for a file name.\n");
-        exit(1);
-    }
-
-    strcpy(name, fileName);
-    name[fileNameLength] = '.';
-    strcpy(&name[fileNameLength + 1], extension);
-    name[fileNameLength + extensionLength + 1] = '\0';
-
-    return name;
 }
 
 int isEndOfMacro(char line[]) {
@@ -158,20 +118,6 @@ int isValidMacroName(char line[]) {
 void removeEndingWhitespace(char line[]) {
     line = skipCharacters(line);
     *line = '\0';
-}
-
-char *skipWhitespace(char line[]) {
-    while (isspace(*line)) {
-        line++;
-    }
-    return line;
-}
-
-char *skipCharacters(char line[]) {
-    while (!isspace(*line)) {
-        line++;
-    }
-    return line;
 }
 
 int isSingleWord(char line[]) {

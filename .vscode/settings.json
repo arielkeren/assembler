@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "macroexpansion.h": "c",
+    "constants.h": "c"
+  }
+}

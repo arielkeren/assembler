@@ -3,7 +3,6 @@
 
 void expandMacros(char *fileNames[], int fileCount);
 void expandFileMacros(char inputFileName[], char outputFileName[]);
-char *addExtension(char fileName[], char extension[]);
 int isEndOfMacro(char line[]);
 char *getMacroName(char line[]);
 int isValidMacroName(char line[]);

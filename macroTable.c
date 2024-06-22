@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils.h"
+
 char *getMacroContent(macro *macroTable, char *macroName) {
     while (macroTable != NULL) {
         if (strcmp(macroTable->name, macroName) == 0) {
@@ -17,19 +19,10 @@ char *getMacroContent(macro *macroTable, char *macroName) {
 }
 
 char *addMacro(macro **macroTable, char *macroName) {
-    macro *newMacro = malloc(sizeof(macro));
+    macro *newMacro;
 
-    if (newMacro == NULL) {
-        fprintf(stderr, "Failed to allocate enough memory for a macro.\n");
-        exit(1);
-    }
-
-    newMacro->name = malloc(sizeof(char) * (strlen(macroName) + 1));
-
-    if (newMacro->name == NULL) {
-        fprintf(stderr, "Failed to allocate enough memory for a macro's name.\n");
-        exit(1);
-    }
+    newMacro = allocate(sizeof(macro));
+    newMacro->name = allocate(sizeof(char) * (strlen(macroName) + 1));
 
     strcpy(newMacro->name, macroName);
 
@@ -45,12 +38,7 @@ void addContent(macro *macroTable, char *macroName, char *content) {
 
     while (macroTable != NULL) {
         if (strcmp(macroTable->name, macroName) == 0) {
-            newContent = malloc(sizeof(char) * (strlen(macroTable->content) + strlen(content) + 1));
-
-            if (newContent == NULL) {
-                fprintf(stderr, "Failed to allocate enough memory for a macro's content.\n");
-                exit(1);
-            }
+            newContent = allocate(sizeof(char) * (strlen(macroTable->content) + strlen(content) + 1));
 
             strcpy(newContent, macroTable->content);
             free(macroTable->content);
