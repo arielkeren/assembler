@@ -20,17 +20,20 @@ void firstPass(char fileName[]) {
 void firstPassFile(FILE *inputFile) {
     word *code;
     word *data;
+    label *entryLabels;
+    label *externLabels;
+    usedLabel *usedLabels;
     char line[82];
 
     code = NULL;
     data = NULL;
 
     while (fgets(line, sizeof(line), inputFile) != NULL) {
-        handleLine(line, code, data);
+        handleLine(line, &code, &data, &entryLabels, &externLabels, &usedLabels);
     }
 }
 
-void handleLine(char line[], word *code, word *data) {
+void handleLine(char line[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels) {
     line = skipWhitespace(line);
 
     if (line[0] == ';') {
@@ -38,16 +41,31 @@ void handleLine(char line[], word *code, word *data) {
     }
 
     if (strncmp(line, ".entry", 5) == 0) {
+        handleLabel(skipWhitespace(&line[5]), entryLabels);
+    } else if (strncmp(line, ".extern", 7) == 0) {
+        handleLabel(skipWhitespaces(&line[7]), externLabels);
     } else if (strncmp(line, ".data", 5) == 0) {
         handleData(skipWhitespace(&line[5]), data);
     } else if (strncmp(line, ".string", 7) == 0) {
         handleString(skipWhitespace(&line[7]), data);
     } else {
-        handleOperation(line, code);
+        handleOperation(line, code, usedLabels);
     }
 }
 
-void handleString(char line[], word *data) {
+void handleLabel(char line[], label **labels) {
+    char *token;
+
+    token = getNextToken(line);
+
+    if (token == NULL) {
+        return;
+    }
+
+    addLabel(labels, token);
+}
+
+void handleString(char line[], word **data) {
     char *token;
 
     token = getNextToken(line);
@@ -61,25 +79,26 @@ void handleString(char line[], word *data) {
         return;
     }
 
-    encodeString(&data, token);
+    encodeString(data, token);
     free(token);
 }
 
-void handleData(char line[], word *data) {
+void handleData(char line[], word **data) {
     if (!validateData(line)) {
         return;
     }
 
-    encodeNumberList(&data, line);
+    encodeNumberList(data, line);
 }
 
-void handleOperation(char line[], word *code) {
+void handleOperation(char line[], word **code, usedLabel **usedLabels) {
     char *token;
     int operandCount;
     int isRegister;
     char *firstOperand;
     char *secondOperand;
     operandType firstOperandType;
+    operandType secondOperandType;
 
     token = getNextToken(line);
 
@@ -92,11 +111,11 @@ void handleOperation(char line[], word *code) {
         return;
     }
 
-    addWord(&code);
-    encodeMetadata(code, 'A');
-    encodeOperation(code, token);
+    addWord(*code);
+    encodeMetadata(*code, 'A');
+    encodeOperation(*code, token);
 
-    operandCount = getOperandCount(code, token);
+    operandCount = getOperandCount(*code, token);
     free(token);
 
     if (operandCount == 0) {
@@ -111,11 +130,16 @@ void handleOperation(char line[], word *code) {
         return;
     }
 
-    encodeOperand(code, firstOperand, operandCount != 1);
+    encodeOperand(*code, firstOperand, operandCount != 1);
+    firstOperandType = getOperandType(firstOperand);
 
     if (operandCount == 1) {
-        addWord(&code);
-        encodeExtraWord(code, firstOperand, FALSE);
+        addWord(code);
+        encodeExtraWord(*code, firstOperand, FALSE);
+
+        if (firstOperandType == DIRECT) {
+            addUsedLabel(usedLabels, firstOperand, *code);
+        }
 
         free(firstOperand);
         return;
@@ -125,21 +149,26 @@ void handleOperation(char line[], word *code) {
     line = skipWhitespace(line);
     secondOperand = getNextToken(line);
 
-    encodeOperand(code, token, FALSE);
-    firstOperandType = getOperandType(firstOperand);
+    secondOperandType = getOperandType(secondOperand);
+    encodeOperand(*code, token, FALSE);
 
-    if ((firstOperandType == DIRECT_REGISTER || firstOperandType == INDIRECT_REGISTER) && firstOperandType == getOperandType(secondOperand)) {
-        addWord(&code);
-        encodeExtraWord(code, firstOperand, TRUE);
-        encodeExtraWord(code, secondOperand, FALSE);
+    if (firstOperandType == secondOperandType && (firstOperandType == DIRECT_REGISTER || firstOperandType == INDIRECT_REGISTER)) {
+        addWord(code);
+        encodeExtraWord(*code, firstOperand, TRUE);
+        encodeExtraWord(*code, secondOperand, FALSE);
     } else {
-        addWord(&code);
-        encodeExtraWord(code, firstOperand, TRUE);
+        addWord(code);
+        encodeExtraWord(*code, firstOperand, TRUE);
 
-        addWord(&code);
-        encodeExtraWord(code, secondOperand, FALSE);
+        if (firstOperandType == DIRECT) {
+            addUsedLabel(usedLabels, firstOperand, *code);
+        }
+
+        addWord(code);
+        encodeExtraWord(*code, secondOperand, FALSE);
+
+        if (secondOperandType == DIRECT) {
+            addUsedLabel(usedLabels, secondOperand, *code);
+        }
     }
-
-    free(firstOperand);
-    free(secondOperand);
 }

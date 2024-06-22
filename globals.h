@@ -7,6 +7,12 @@ typedef struct macroStruct {
     struct macroStruct *next;
 } macro;
 
+typedef struct wordStruct {
+    unsigned char data1;
+    unsigned char data2;
+    struct wordStruct *next;
+} word;
+
 typedef struct labelStruct {
     char *name;
     struct labelStruct *next;
