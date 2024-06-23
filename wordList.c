@@ -31,26 +31,19 @@ boolean validateOperation(char operation[]) {
 }
 
 unsigned char getOperandCount(char operation[]) {
-    switch (indexOf(operation, OPERATIONS, 16)) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-            return 2;
-        case 5:
-        case 6:
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-            return 1;
-        default:
-            return 0;
+    size_t operationIndex;
+
+    operationIndex = indexOf(operation, OPERATIONS, 16);
+
+    if (operationIndex <= 4) {
+        return 2;
     }
+
+    if (operationIndex <= 13) {
+        return 1;
+    }
+
+    return 0;
 }
 
 void toggleBit(word *wordToModify, unsigned char bitPosition) {

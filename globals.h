@@ -15,6 +15,7 @@ typedef struct wordStruct {
 
 typedef struct labelStruct {
     char *name;
+    unsigned address;
     struct labelStruct *next;
 } label;
 

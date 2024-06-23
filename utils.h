@@ -11,6 +11,7 @@ char *skipWhitespace(char line[]);
 char *skipCharacters(char line[]);
 char *getNextToken(char line[]);
 void removeEndingComma(char string[]);
+boolean checkIfLabel(char token[]);
 char *addExtension(char fileName[], char extension[]);
 boolean contains(char string[], char *stringArray[], size_t arraySize);
 size_t indexOf(char string[], char *stringArray[], size_t arraySize);

@@ -8,21 +8,14 @@
 #include "utils.h"
 
 void expandMacros(char fileName[]) {
-    char *inputFileName;
-    char *outputFileName;
     FILE *inputFile;
     FILE *outputFile;
 
-    inputFileName = addExtension(fileName, "as");
-    outputFileName = addExtension(fileName, "am");
+    inputFile = openFile(fileName, "as", "r");
+    outputFile = openFile(fileName, "am", "w");
 
-    inputFile = openFile(inputFileName, "r");
-    outputFile = openFile(outputFileName, "w");
+    expandFileMacros(inputFile, outputFile);
 
-    expandFileMacros(inputFileName, outputFileName);
-
-    free(inputFileName);
-    free(outputFileName);
     fclose(inputFile);
     fclose(outputFile);
 }

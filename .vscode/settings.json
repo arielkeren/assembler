@@ -2,6 +2,7 @@
   "files.associations": {
     "macroexpansion.h": "c",
     "constants.h": "c",
-    "globals.h": "c"
+    "globals.h": "c",
+    "string.h": "c"
   }
 }

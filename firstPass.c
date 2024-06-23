@@ -1,56 +1,73 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "globals.h"
+#include "labelList.h"
+#include "usedLabelList.h"
 #include "utils.h"
 #include "wordList.h"
 
-void firstPass(char fileName[]) {
-    char *fileNameWithExtension;
+void firstPass(char fileName[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount) {
     FILE *file;
 
-    fileNameWithExtension = addExtension(fileName, "am");
-    file = openFile(fileNameWithExtension, "r");
+    file = openFile(fileName, "am", "r");
+    firstPassFile(file, code, data, entryLabels, externLabels, usedLabels, instructionCount, dataCount);
 
-    firstPassFile(file);
-
-    free(fileNameWithExtension);
     fclose(file);
 }
 
-void firstPassFile(FILE *inputFile) {
-    word *code;
-    word *data;
-    label *entryLabels;
-    label *externLabels;
-    usedLabel *usedLabels;
+void firstPassFile(FILE *inputFile, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount) {
     char line[82];
 
-    code = NULL;
-    data = NULL;
-
     while (fgets(line, sizeof(line), inputFile) != NULL) {
-        handleLine(line, &code, &data, &entryLabels, &externLabels, &usedLabels);
+        if (line[strlen(line) - 1] != '\n') {
+            printf("Line is too long. Maximum length is 80 characters (including whitespace).\n");
+            continue;
+        }
+
+        handleLine(line, code, data, entryLabels, externLabels, usedLabels, instructionCount, dataCount);
     }
 }
 
-void handleLine(char line[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels) {
+void handleLine(char line[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount) {
+    char *token;
+
     line = skipWhitespace(line);
 
-    if (line[0] == ';') {
+    if (line[0] == ';' || line[0] == '\0') {
         return;
     }
 
-    if (strncmp(line, ".entry", 5) == 0) {
-        handleLabel(skipWhitespace(&line[5]), entryLabels);
-    } else if (strncmp(line, ".extern", 7) == 0) {
-        handleLabel(skipWhitespaces(&line[7]), externLabels);
-    } else if (strncmp(line, ".data", 5) == 0) {
-        handleData(skipWhitespace(&line[5]), data);
-    } else if (strncmp(line, ".string", 7) == 0) {
-        handleString(skipWhitespace(&line[7]), data);
+    token = getNextToken(line);
+
+    if (checkIfLabel(token)) {
+        line = skipCharacters(line);
+        line = skipWhitespace(line);
+        free(token);
+        token = getNextToken(line);
+
+        if (token == NULL) {
+            printf("Label with nothing after it.\n");
+            return;
+        }
+    }
+
+    if (strcmp(token, ".entry") == 0) {
+        handleLabel(skipWhitespace(skipCharacters(line)), entryLabels);
+    } else if (strcmp(line, ".extern") == 0) {
+        handleLabel(skipWhitespace(skipCharacters(line)), externLabels);
+    } else if (strcmp(line, ".data") == 0) {
+        (*dataCount)++;
+        handleData(skipWhitespace(skipCharacters(line)), data);
+    } else if (strcmp(line, ".string") == 0) {
+        (*dataCount)++;
+        handleString(skipWhitespace(skipCharacters(line)), data);
     } else {
+        (*instructionCount)++;
         handleOperation(line, code, usedLabels);
     }
+
+    free(token);
 }
 
 void handleLabel(char line[], label **labels) {

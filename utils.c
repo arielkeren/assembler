@@ -17,16 +17,20 @@ void *allocate(size_t size) {
     return allocatedPointer;
 }
 
-FILE *openFile(char fileName[], char mode[]) {
+FILE *openFile(char fileName[], char extension[], char mode[]) {
+    char *fileNameWithExtension;
     FILE *file;
 
-    file = fopen(fileName, mode);
+    fileNameWithExtension = addExtension(fileName, extension);
+    file = fopen(fileNameWithExtension, mode);
 
     if (file == NULL) {
-        fprintf(stderr, "Failed to open a file: %s.\n", fileName);
+        fprintf(stderr, "Failed to open a file: %s.\n", fileNameWithExtension);
+        free(fileNameWithExtension);
         exit(1);
     }
 
+    free(fileNameWithExtension);
     return file;
 }
 
@@ -67,6 +71,10 @@ void removeEndingComma(char string[]) {
     if (string[length - 1] == ',') {
         string[length - 1] = '\0';
     }
+}
+
+boolean checkIfLabel(char token[]) {
+    return token[strlen(token) - 1] == ':';
 }
 
 char *addExtension(char fileName[], char extension[]) {
