@@ -8,7 +8,6 @@
 
 void makeObjectFile(char fileName[], word *code, word *data, unsigned instructionCount, unsigned dataCount) {
     FILE *file;
-    unsigned instructionIndex;
 
     file = openFile(fileName, "ob", "w");
     fprintf(file, "%d %d\n", instructionCount, dataCount);
@@ -35,7 +34,7 @@ void makeLabelFile(char fileName[], char extension[], label *labelList) {
 
 void insertWordList(FILE *file, word *wordList, unsigned startingIndex) {
     while (wordList != NULL) {
-        fprintf("%04d %5o", startingIndex, wordList->data1 + (wordList->data2 << 8));
+        fprintf(file, "%04d %5o", startingIndex, wordList->data1 + ((unsigned)wordList->data2 << 8));
         startingIndex++;
         wordList++;
     }

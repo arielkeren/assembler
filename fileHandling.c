@@ -1,9 +1,14 @@
 #include "fileHandling.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
+#include "fileCreation.h"
+#include "firstPass.h"
 #include "globals.h"
 #include "labelList.h"
+#include "macroExpansion.h"
+#include "secondPass.h"
 #include "usedLabelList.h"
 #include "wordList.h"
 
@@ -36,8 +41,8 @@ void compileFiles(char *fileNames[], int fileCount) {
         firstPass(*fileNames, &code, &data, &entryLabels, &externLabels, &usedLabels, &instructionCount, &dataCount);
         secondPass(*fileNames, code, entryLabels, externLabels, usedLabels, instructionCount);
 
-        makeEntryFile(*fileNames, entryLabels);
-        makeExternFile(*fileNames, externLabels);
+        makeLabelFile(*fileNames, ".ent", entryLabels);
+        makeLabelFile(*fileNames, ".ext", externLabels);
         makeObjectFile(*fileNames, code, data, instructionCount, dataCount);
 
         fileCount--;

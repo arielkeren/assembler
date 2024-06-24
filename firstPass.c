@@ -1,6 +1,7 @@
 #include "firstPass.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "globals.h"
@@ -103,9 +104,9 @@ void handleString(char line[], word **data) {
 }
 
 void handleData(char line[], word **data) {
-    if (!validateData(line)) {
+    /*if (!validateData(line)) {
         return;
-    }
+    }*/
 
     encodeNumberList(data, line);
 }
@@ -113,7 +114,6 @@ void handleData(char line[], word **data) {
 void handleOperation(char line[], word **code, usedLabel **usedLabels) {
     char *token;
     int operandCount;
-    int isRegister;
     char *firstOperand;
     char *secondOperand;
     operandType firstOperandType;
@@ -130,11 +130,11 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels) {
         return;
     }
 
-    addWord(*code);
+    addWord(code);
     encodeMetadata(*code, 'A');
     encodeOperation(*code, token);
 
-    operandCount = getOperandCount(*code, token);
+    operandCount = getOperandCount(token);
     free(token);
 
     if (operandCount == 0) {

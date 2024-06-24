@@ -4,8 +4,8 @@ assembler: main.o fileHandling.o fileCreation.o macroExpansion.o macroTable.o fi
 main.o: main.c fileHandling.h globals.h
 	gcc -ansi -Wall -pedantic -c main.c
 
-fileHandling.o: fileHandling.c fileHandling.h wordList.h labelList.h usedLabelList.h globals.h
-	gcc -ansi -Wall -pedantic -c main.c
+fileHandling.o: fileHandling.c fileHandling.h fileCreation.h macroExpansion.h firstPass.h secondPass.h wordList.h labelList.h usedLabelList.h globals.h
+	gcc -ansi -Wall -pedantic -c fileHandling.c
 
 fileCreation.o: fileCreation.c fileCreation.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c fileCreation.c
