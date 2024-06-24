@@ -156,7 +156,7 @@ void encodeNumberList(word **data, char numberList[]) {
 
     while (*numberList != NULL) {
         token = getNextToken(numberList);
-        removeEndingComma(token);
+        removeEnding(token, ',');
         addWord(data);
         encodeData(*data, atoi(token));
 
@@ -164,4 +164,9 @@ void encodeNumberList(word **data, char numberList[]) {
         numberList = skipCharacters(numberList);
         numberList = skipWhitespace(numberList);
     }
+}
+
+void encodeLabel(word *wordToModify, unsigned labelAddress) {
+    encodeMetadata(wordToModify, 'R');
+    applyMask(wordToModify, labelAddress, 3);
 }

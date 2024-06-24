@@ -5,9 +5,9 @@
 
 #include "globals.h"
 
-void firstPass(char fileName[]);
-void firstPassFile(FILE *inputFile);
-void handleLine(char line[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels);
+void firstPass(char fileName[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount);
+void firstPassFile(FILE *file, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount);
+void handleLine(char line[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount);
 void handleLabel(char line[], label **labels);
 void handleString(char line[], word **data);
 void handleData(char line[], word **data);

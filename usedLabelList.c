@@ -1,3 +1,5 @@
+#include "usedLabelList.h"
+
 #include <stdlib.h>
 
 #include "globals.h"

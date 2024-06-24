@@ -1,6 +1,11 @@
+#include "fileHandling.h"
+
 #include <stdio.h>
 
 #include "globals.h"
+#include "labelList.h"
+#include "usedLabelList.h"
+#include "wordList.h"
 
 void checkNoFiles(int fileCount) {
     if (fileCount == 0) {
@@ -38,4 +43,10 @@ void compileFiles(char *fileNames[], int fileCount) {
         fileCount--;
         fileNames++;
     }
+
+    freeWordList(code);
+    freeWordList(data);
+    freeLabelList(entryLabels);
+    freeLabelList(externLabels);
+    freeUsedLabelList(usedLabels);
 }

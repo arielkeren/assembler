@@ -1,3 +1,5 @@
+#include "firstPass.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -16,10 +18,10 @@ void firstPass(char fileName[], word **code, word **data, label **entryLabels, l
     fclose(file);
 }
 
-void firstPassFile(FILE *inputFile, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount) {
+void firstPassFile(FILE *file, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount) {
     char line[82];
 
-    while (fgets(line, sizeof(line), inputFile) != NULL) {
+    while (fgets(line, sizeof(line), file) != NULL) {
         if (line[strlen(line) - 1] != '\n') {
             printf("Line is too long. Maximum length is 80 characters (including whitespace).\n");
             continue;
@@ -54,12 +56,12 @@ void handleLine(char line[], word **code, word **data, label **entryLabels, labe
 
     if (strcmp(token, ".entry") == 0) {
         handleLabel(skipWhitespace(skipCharacters(line)), entryLabels);
-    } else if (strcmp(line, ".extern") == 0) {
+    } else if (strcmp(token, ".extern") == 0) {
         handleLabel(skipWhitespace(skipCharacters(line)), externLabels);
-    } else if (strcmp(line, ".data") == 0) {
+    } else if (strcmp(token, ".data") == 0) {
         (*dataCount)++;
         handleData(skipWhitespace(skipCharacters(line)), data);
-    } else if (strcmp(line, ".string") == 0) {
+    } else if (strcmp(token, ".string") == 0) {
         (*dataCount)++;
         handleString(skipWhitespace(skipCharacters(line)), data);
     } else {

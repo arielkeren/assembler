@@ -3,7 +3,8 @@
 
 #include "globals.h"
 
-void addLabel(label **labels, char labelName[]);
+void addLabel(label **labelList, char labelName[]);
+void putAddress(label *labelList, char labelName[], unsigned address);
 void freeLabelList(label *labelList);
 void freeLabel(label *labelToFree);
 

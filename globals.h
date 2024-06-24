@@ -25,6 +25,12 @@ typedef struct usedLabelStruct {
     struct usedLabelStruct *next;
 } usedLabel;
 
+typedef struct foundLabelStruct {
+    char *name;
+    unsigned address;
+    struct foundLabelStruct *next;
+} foundLabel;
+
 extern const char *OPERATIONS[16];
 
 typedef enum { FALSE,

@@ -1,4 +1,5 @@
 #include "fileHandling.h"
+#include "globals.h"
 
 int main(int argc, char *argv[]) {
     checkNoFiles(argc - 1);

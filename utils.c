@@ -1,3 +1,5 @@
+#include "utils.h"
+
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -63,12 +65,12 @@ char *getNextToken(char line[]) {
     return token;
 }
 
-void removeEndingComma(char string[]) {
+void removeEnding(char string[], char ending) {
     size_t length;
 
     length = strlen(string);
 
-    if (string[length - 1] == ',') {
+    if (string[length - 1] == ending) {
         string[length - 1] = '\0';
     }
 }
@@ -96,11 +98,13 @@ char *addExtension(char fileName[], char extension[]) {
 }
 
 boolean contains(char string[], char *stringArray[], size_t arraySize) {
-    for (; arraySize > 0; arraySize--) {
+    while (arraySize > 0) {
         if (strcmp(string, *stringArray) == 0) {
             return TRUE;
         }
+
         stringArray++;
+        arraySize--;
     }
 
     return FALSE;

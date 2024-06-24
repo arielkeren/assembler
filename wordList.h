@@ -20,5 +20,6 @@ void encodeData(word *wordToModify, int data);
 boolean validateString(char string[]);
 void encodeString(word **data, char string[]);
 void encodeNumberList(word **data, char numberList[]);
+void encodeLabel(word *wordToModify, unsigned labelAddress);
 
 #endif
