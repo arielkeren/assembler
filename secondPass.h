@@ -3,8 +3,9 @@
 
 #include "globals.h"
 
-void secondPass(label *entryLabels, label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount);
-void insertLabelAddresses(usedLabel *usedLabels, label *externLabels, foundLabel *foundLabels, unsigned instructionCount);
+void secondPass(label *entryLabels, externLabel *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount);
+void insertLabelAddresses(usedLabel *usedLabels, externLabel *externLabels, foundLabel *foundLabels, unsigned instructionCount);
 void fillEntryLabels(label *entryLabels, foundLabel *foundLabels, unsigned instructionCount);
+void fillExternLabels(externLabel *externLabels, usedLabel *usedLabels);
 
 #endif

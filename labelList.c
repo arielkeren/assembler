@@ -20,18 +20,6 @@ void putAddress(label *labelList, unsigned address) {
     labelList->address = address;
 }
 
-boolean containsLabel(label *labelList, char labelName[]) {
-    while (labelList != NULL) {
-        if (strcmp(labelList->name, labelName) == 0) {
-            return TRUE;
-        }
-
-        labelList = labelList->next;
-    }
-
-    return FALSE;
-}
-
 void freeLabelList(label *labelList) {
     label *next;
 

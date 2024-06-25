@@ -5,11 +5,12 @@
 #include "globals.h"
 #include "utils.h"
 
-void addUsedLabel(usedLabel **usedLabels, char labelName[], word *wordPointer) {
+void addUsedLabel(usedLabel **usedLabels, char labelName[], unsigned address, word *wordPointer) {
     usedLabel *newUsedLabel;
 
     newUsedLabel = allocate(sizeof(usedLabel));
     newUsedLabel->name = labelName;
+    newUsedLabel->address = address;
     newUsedLabel->wordPointer = wordPointer;
     newUsedLabel->next = *usedLabels;
     *usedLabels = newUsedLabel;

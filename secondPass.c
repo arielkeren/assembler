@@ -4,25 +4,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "externLabelList.h"
 #include "foundLabelList.h"
 #include "globals.h"
 #include "labelList.h"
 #include "utils.h"
 #include "wordList.h"
 
-void secondPass(label *entryLabels, label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount) {
+void secondPass(label *entryLabels, externLabel *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount) {
     insertLabelAddresses(usedLabels, externLabels, foundLabels, instructionCount);
     fillEntryLabels(entryLabels, foundLabels, instructionCount);
+    fillExternLabels(externLabels, usedLabels);
 }
 
-void insertLabelAddresses(usedLabel *usedLabels, label *externLabels, foundLabel *foundLabels, unsigned instructionCount) {
+void insertLabelAddresses(usedLabel *usedLabels, externLabel *externLabels, foundLabel *foundLabels, unsigned instructionCount) {
     foundLabel *matchingFoundLabel;
 
     while (usedLabels != NULL) {
         matchingFoundLabel = getFoundLabel(foundLabels, usedLabels->name);
 
         if (matchingFoundLabel == NULL) {
-            if (containsLabel(externLabels, usedLabels->name)) {
+            if (containsExternLabel(externLabels, usedLabels->name)) {
                 encodeMetadata(usedLabels->wordPointer, 'E');
             } else {
                 printf("ERROR: Definition of label \"%s\" not found.\n", usedLabels->name);
@@ -58,5 +60,23 @@ void fillEntryLabels(label *entryLabels, foundLabel *foundLabels, unsigned instr
         }
 
         entryLabels = entryLabels->next;
+    }
+}
+
+void fillExternLabels(externLabel *externLabels, usedLabel *usedLabels) {
+    usedLabel *currentUsedLabel;
+
+    while (externLabels != NULL) {
+        currentUsedLabel = usedLabels;
+
+        while (currentUsedLabel != NULL) {
+            if (strcmp(externLabels->name, currentUsedLabel->name) == 0) {
+                addUse(externLabels, currentUsedLabel->address);
+            }
+
+            currentUsedLabel = currentUsedLabel->next;
+        }
+
+        externLabels = externLabels->next;
     }
 }

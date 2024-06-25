@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "externLabelList.h"
 #include "fileCreation.h"
 #include "firstPass.h"
 #include "foundLabelList.h"
@@ -24,7 +25,7 @@ void compileFiles(char *fileNames[], int fileCount) {
     word *code;
     word *data;
     label *entryLabels;
-    label *externLabels;
+    externLabel *externLabels;
     usedLabel *usedLabels;
     foundLabel *foundLabels;
     unsigned instructionCount;
@@ -41,17 +42,12 @@ void compileFiles(char *fileNames[], int fileCount) {
 
     while (fileCount > 0) {
         expandMacros(*fileNames);
-        printf("Expanded macros.\n");
         firstPass(*fileNames, &code, &data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
-        printf("Instruction count: %d", instructionCount);
-        printf("Data count: %d", dataCount);
-        printf("First pass.\n");
         secondPass(entryLabels, externLabels, usedLabels, foundLabels, instructionCount);
-        printf("Second pass.\n");
 
-        makeLabelFile(*fileNames, ".ent", entryLabels);
-        makeLabelFile(*fileNames, ".ext", externLabels);
-        makeObjectFile(*fileNames, code, data, instructionCount, dataCount);
+        generateEntFile(*fileNames, entryLabels);
+        generateExtFile(*fileNames, externLabels);
+        generateObFile(*fileNames, code, data, instructionCount, dataCount);
 
         fileCount--;
         fileNames++;
@@ -60,7 +56,7 @@ void compileFiles(char *fileNames[], int fileCount) {
     freeWordList(code);
     freeWordList(data);
     freeLabelList(entryLabels);
-    freeLabelList(externLabels);
+    freeExternLabelList(externLabels);
     freeUsedLabelList(usedLabels);
     freeFoundLabelList(foundLabels);
 }

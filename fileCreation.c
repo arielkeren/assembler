@@ -6,57 +6,118 @@
 #include "globals.h"
 #include "utils.h"
 
-void makeObjectFile(char fileName[], word *code, word *data, unsigned instructionCount, unsigned dataCount) {
+void generateObFile(char fileName[], word *code, word *data, unsigned instructionCount, unsigned dataCount) {
     FILE *file;
 
     file = openFile(fileName, "ob", "w");
     fprintf(file, "%d %d\n", instructionCount, dataCount);
 
     insertWordList(file, code, 100);
-    insertWordList(file, code, instructionCount + 100);
+    insertWordList(file, data, instructionCount + 100);
 }
 
-void makeLabelFile(char fileName[], char extension[], label *labelList) {
-    size_t longest;
+void generateEntFile(char fileName[], label *entryLabels) {
     FILE *file;
 
-    if (labelList == NULL) {
+    if (entryLabels == NULL) {
         return;
     }
 
-    file = openFile(fileName, extension, "w");
+    file = openFile(fileName, "ent", "w");
+    insertEntryLabels(file, entryLabels);
 
-    longest = getLongestLabel(labelList);
-    insertLine(file, labelList, longest);
+    fclose(file);
+}
+
+void generateExtFile(char fileName[], externLabel *externLabels) {
+    FILE *file;
+
+    if (externLabels == NULL) {
+        return;
+    }
+
+    file = openFile(fileName, "ext", "w");
+    insertExternLabels(file, externLabels);
 
     fclose(file);
 }
 
 void insertWordList(FILE *file, word *wordList, unsigned startingIndex) {
     while (wordList != NULL) {
-        fprintf(file, "%04d %05o\n", startingIndex, wordList->data1 + ((unsigned)wordList->data2 << 8));
+        fprintf(file, "%04u %05o\n", startingIndex, wordList->data1 + ((unsigned)wordList->data2 << 8));
         startingIndex++;
         wordList = wordList->next;
     }
 }
 
-void insertLine(FILE *file, label *labelToInsert, size_t longest) {
-    fprintf(file, "%s%*s: %d\n", labelToInsert->name, longest - strlen(labelToInsert->name), " ", labelToInsert->address);
+void insertEntryLabels(FILE *file, label *entryLabels) {
+    size_t longest;
+
+    longest = getLongestEntryLabel(entryLabels);
+
+    while (entryLabels != NULL) {
+        insertLabel(file, entryLabels->name, entryLabels->address, longest);
+        entryLabels = entryLabels->next;
+    }
 }
 
-size_t getLongestLabel(label *labelList) {
+void insertExternLabels(FILE *file, externLabel *externLabels) {
+    size_t longest;
+
+    longest = getLongestExternLabel(externLabels);
+
+    while (externLabels != NULL) {
+        insertUses(file, externLabels, longest);
+        externLabels = externLabels->next;
+    }
+}
+
+void insertUses(FILE *file, externLabel *labelToInsert, size_t longest) {
+    use *currentUse;
+
+    currentUse = labelToInsert->useList;
+
+    while (currentUse != NULL) {
+        insertLabel(file, labelToInsert->name, currentUse->address, longest);
+        currentUse = currentUse->next;
+    }
+}
+
+void insertLabel(FILE *file, char labelName[], unsigned address, size_t longest) {
+    fprintf(file, "%-*s %04u\n", longest, labelName, address);
+}
+
+size_t getLongestEntryLabel(label *entryLabels) {
     size_t longest;
     size_t currentLength;
 
     longest = 0;
 
-    while (labelList != NULL) {
-        currentLength = strlen(labelList->name);
+    while (entryLabels != NULL) {
+        currentLength = strlen(entryLabels->name);
         if (currentLength > longest) {
             longest = currentLength;
         }
 
-        labelList = labelList->next;
+        entryLabels = entryLabels->next;
+    }
+
+    return longest;
+}
+
+size_t getLongestExternLabel(externLabel *externLabels) {
+    size_t longest;
+    size_t currentLength;
+
+    longest = 0;
+
+    while (externLabels != NULL) {
+        currentLength = strlen(externLabels->name);
+        if (currentLength > longest) {
+            longest = currentLength;
+        }
+
+        externLabels = externLabels->next;
     }
 
     return longest;

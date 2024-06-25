@@ -3,7 +3,7 @@
 
 #include "globals.h"
 
-void addUsedLabel(usedLabel **usedLabels, char labelName[], word *wordPointer);
+void addUsedLabel(usedLabel **usedLabels, char labelName[], unsigned address, word *wordPointer);
 void freeUsedLabelList(usedLabel *usedLabelList);
 void freeUsedLabel(usedLabel *usedLabelToFree);
 
