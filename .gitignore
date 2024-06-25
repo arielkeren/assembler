@@ -2,3 +2,6 @@
 *.exe
 *.as
 *.am
+*.ob
+*.ent
+*.ext
