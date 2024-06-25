@@ -13,7 +13,7 @@ char *getNextToken(char line[]);
 void removeEnding(char string[], char ending);
 boolean checkIfLabel(char token[]);
 char *addExtension(char fileName[], char extension[]);
-boolean contains(char string[], char *stringArray[], size_t arraySize);
-size_t indexOf(char string[], char *stringArray[], size_t arraySize);
+boolean contains(char string[], const char *stringArray[], size_t arraySize);
+size_t indexOf(char string[], const char *stringArray[], size_t arraySize);
 
 #endif

@@ -16,11 +16,11 @@ void addUsedLabel(usedLabel **usedLabels, char labelName[], word *wordPointer) {
 }
 
 void freeUsedLabelList(usedLabel *usedLabelList) {
-    label *next;
+    usedLabel *next;
 
     while (usedLabelList != NULL) {
         next = usedLabelList->next;
-        freeLabel(usedLabelList);
+        freeUsedLabel(usedLabelList);
         usedLabelList = next;
     }
 }

@@ -16,10 +16,10 @@ macroExpansion.o: macroExpansion.c macroExpansion.h macroTable.h utils.h globals
 macroTable.o: macroTable.c macroTable.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c macroTable.c
 
-firstPass.o: firstPass.c firstPass.h wordList.h labelList.h usedLabelList.h utils.h globals.h
+firstPass.o: firstPass.c firstPass.h wordList.h labelList.h usedLabelList.h foundLabelList.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c firstPass.c
 
-secondPass.o: secondPass.c secondPass.h foundLabelList.h utils.h globals.h
+secondPass.o: secondPass.c secondPass.h wordList.h labelList.h foundLabelList.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c secondPass.c
 
 utils.o: utils.c utils.h globals.h

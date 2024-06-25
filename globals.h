@@ -1,6 +1,13 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+typedef enum { FALSE,
+               TRUE } boolean;
+typedef enum { IMMEDIATE,
+               DIRECT,
+               INDIRECT_REGISTER,
+               DIRECT_REGISTER } operandType;
+
 typedef struct macroStruct {
     char *name;
     char *content;
@@ -28,16 +35,10 @@ typedef struct usedLabelStruct {
 typedef struct foundLabelStruct {
     char *name;
     unsigned address;
+    boolean isData;
     struct foundLabelStruct *next;
 } foundLabel;
 
 extern const char *OPERATIONS[16];
-
-typedef enum { FALSE,
-               TRUE } boolean;
-typedef enum { IMMEDIATE,
-               DIRECT,
-               INDIRECT_REGISTER,
-               DIRECT_REGISTER } operandType;
 
 #endif

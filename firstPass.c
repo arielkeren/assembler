@@ -4,22 +4,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "foundLabelList.h"
 #include "globals.h"
 #include "labelList.h"
 #include "usedLabelList.h"
 #include "utils.h"
 #include "wordList.h"
 
-void firstPass(char fileName[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount) {
+void firstPass(char fileName[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     FILE *file;
 
     file = openFile(fileName, "am", "r");
-    firstPassFile(file, code, data, entryLabels, externLabels, usedLabels, instructionCount, dataCount);
+    firstPassFile(file, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
     fclose(file);
 }
 
-void firstPassFile(FILE *file, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount) {
+void firstPassFile(FILE *file, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char line[82];
 
     while (fgets(line, sizeof(line), file) != NULL) {
@@ -28,12 +29,13 @@ void firstPassFile(FILE *file, word **code, word **data, label **entryLabels, la
             continue;
         }
 
-        handleLine(line, code, data, entryLabels, externLabels, usedLabels, instructionCount, dataCount);
+        handleLine(line, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
     }
 }
 
-void handleLine(char line[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, unsigned *instructionCount, unsigned *dataCount) {
+void handleLine(char line[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char *token;
+    char *nextToken;
 
     line = skipWhitespace(line);
 
@@ -46,13 +48,30 @@ void handleLine(char line[], word **code, word **data, label **entryLabels, labe
     if (checkIfLabel(token)) {
         line = skipCharacters(line);
         line = skipWhitespace(line);
-        free(token);
-        token = getNextToken(line);
+        nextToken = getNextToken(line);
 
-        if (token == NULL) {
+        if (nextToken == NULL) {
             printf("Label with nothing after it.\n");
             return;
         }
+
+        if (strcmp(token, ".entry") == 0) {
+            printf("WARNING: Label before .entry.\n");
+        } else if (strcmp(token, ".extern") == 0) {
+            printf("WARNING: Label before .extern.\n");
+        } else {
+            removeEnding(token, ':');
+            addFoundLabel(foundLabels, token);
+        }
+
+        if (strcmp(token, ".data") == 0 || strcmp(token, ".string") == 0) {
+            markAsData(*foundLabels);
+            setAddress(*foundLabels, *dataCount);
+        } else {
+            setAddress(*foundLabels, *instructionCount);
+        }
+
+        token = nextToken;
     }
 
     if (strcmp(token, ".entry") == 0) {
@@ -60,14 +79,11 @@ void handleLine(char line[], word **code, word **data, label **entryLabels, labe
     } else if (strcmp(token, ".extern") == 0) {
         handleLabel(skipWhitespace(skipCharacters(line)), externLabels);
     } else if (strcmp(token, ".data") == 0) {
-        (*dataCount)++;
-        handleData(skipWhitespace(skipCharacters(line)), data);
+        handleData(skipWhitespace(skipCharacters(line)), data, dataCount);
     } else if (strcmp(token, ".string") == 0) {
-        (*dataCount)++;
-        handleString(skipWhitespace(skipCharacters(line)), data);
+        handleString(skipWhitespace(skipCharacters(line)), data, dataCount);
     } else {
-        (*instructionCount)++;
-        handleOperation(line, code, usedLabels);
+        handleOperation(line, code, usedLabels, instructionCount);
     }
 
     free(token);
@@ -85,7 +101,7 @@ void handleLabel(char line[], label **labels) {
     addLabel(labels, token);
 }
 
-void handleString(char line[], word **data) {
+void handleString(char line[], word **data, unsigned *dataCount) {
     char *token;
 
     token = getNextToken(line);
@@ -99,19 +115,19 @@ void handleString(char line[], word **data) {
         return;
     }
 
-    encodeString(data, token);
+    encodeString(data, token, dataCount);
     free(token);
 }
 
-void handleData(char line[], word **data) {
+void handleData(char line[], word **data, unsigned *dataCount) {
     /*if (!validateData(line)) {
         return;
     }*/
 
-    encodeNumberList(data, line);
+    encodeNumberList(data, line, dataCount);
 }
 
-void handleOperation(char line[], word **code, usedLabel **usedLabels) {
+void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned *instructionCount) {
     char *token;
     int operandCount;
     char *firstOperand;
@@ -130,6 +146,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels) {
         return;
     }
 
+    (*instructionCount)++;
     addWord(code);
     encodeMetadata(*code, 'A');
     encodeOperation(*code, token);
@@ -153,6 +170,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels) {
     firstOperandType = getOperandType(firstOperand);
 
     if (operandCount == 1) {
+        (*instructionCount)++;
         addWord(code);
         encodeExtraWord(*code, firstOperand, FALSE);
 
@@ -172,10 +190,12 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels) {
     encodeOperand(*code, token, FALSE);
 
     if (firstOperandType == secondOperandType && (firstOperandType == DIRECT_REGISTER || firstOperandType == INDIRECT_REGISTER)) {
+        (*instructionCount)++;
         addWord(code);
         encodeExtraWord(*code, firstOperand, TRUE);
         encodeExtraWord(*code, secondOperand, FALSE);
     } else {
+        (*instructionCount)++;
         addWord(code);
         encodeExtraWord(*code, firstOperand, TRUE);
 
@@ -183,6 +203,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels) {
             addUsedLabel(usedLabels, firstOperand, *code);
         }
 
+        (*instructionCount)++;
         addWord(code);
         encodeExtraWord(*code, secondOperand, FALSE);
 

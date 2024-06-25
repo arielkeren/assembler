@@ -18,8 +18,8 @@ void encodeRegister(word *wordToModify, int registerNumber, boolean isSource);
 void encodeExtraWord(word *wordToModify, char operand[], boolean isSource);
 void encodeData(word *wordToModify, int data);
 boolean validateString(char string[]);
-void encodeString(word **data, char string[]);
-void encodeNumberList(word **data, char numberList[]);
+void encodeString(word **data, char string[], unsigned *dataCount);
+void encodeNumberList(word **data, char numberList[], unsigned *dataCount);
 void encodeLabel(word *wordToModify, unsigned labelAddress);
 
 #endif

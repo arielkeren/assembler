@@ -3,6 +3,8 @@
     "macroexpansion.h": "c",
     "constants.h": "c",
     "globals.h": "c",
-    "string.h": "c"
+    "string.h": "c",
+    "labellist.h": "c",
+    "stdio.h": "c"
   }
 }

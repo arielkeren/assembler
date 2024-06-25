@@ -1,97 +1,62 @@
 #include "secondPass.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "foundLabelList.h"
 #include "globals.h"
+#include "labelList.h"
 #include "utils.h"
+#include "wordList.h"
 
-void secondPass(char fileName[], word *code, label *entryLabels, label *externLabels, usedLabel *usedLabels, unsigned instructionCount) {
-    FILE *file;
-
-    file = openFile(fileName, "am", "r");
-    secondPassFile(file, code, entryLabels, externLabels, usedLabels, instructionCount);
-
-    fclose(file);
+void secondPass(label *entryLabels, label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount) {
+    insertLabelAddresses(usedLabels, externLabels, foundLabels, instructionCount);
+    fillEntryLabels(entryLabels, foundLabels, instructionCount);
 }
 
-void secondPassFile(FILE *file, word *code, label *entryLabels, label *externLabels, usedLabel *usedLabels, unsigned instructionCount) {
-    foundLabel *foundLabels;
-    unsigned currentInstruction;
-    unsigned currentData;
-    char line[82];
-
-    currentInstruction = 0;
-    currentData = 0;
-    foundLabels = NULL;
-
-    while (fgets(line, sizeof(line), file) != NULL) {
-        findLabels(line, code, &foundLabels, entryLabels, externLabels, usedLabels, instructionCount, &currentInstruction, &currentData);
-    }
-
-    insertLabelAddresses(usedLabels, foundLabels, externLabels);
-    freeFoundLabelList(foundLabels);
-}
-
-void findLabels(char line[], word *code, foundLabel **foundLabels, label *entryLabels, label *externLabels, usedLabel *usedLabels, unsigned instructionCount, unsigned *currentInstruction, unsigned *currentData) {
-    char *token;
-
-    line = skipWhitespace(line);
-    token = getNextToken(line);
-
-    if (!checkIfLabel(token)) {
-        free(token);
-        line = skipCharacters(line);
-        line = skipWhitespace(line);
-        token = getNextToken(line);
-
-        if (strcmp(token, ".data") == 0) {
-            (*currentData)++;
-        } else if (strcmp(token, ".string") == 0) {
-            (*currentData)++;
-        } else if (strcmp(token, ".entry") != 0 && strcmp(token, ".extern") != 0) {
-            (*currentInstruction)++;
-        }
-
-        free(token);
-        return;
-    }
-
-    removeEnding(token, ':');
-    addFoundLabel(foundLabels, token);
-
-    line = skipCharacters(line);
-    line = skipWhitespace(line);
-    token = getNextToken(line);
-
-    if (strcmp(token, ".data") == 0) {
-        putAddress(entryLabels, (*foundLabels)->name, *currentData + instructionCount + 100);
-        (*currentData)++;
-    } else if (strcmp(token, ".string") == 0) {
-        putAddress(entryLabels, (*foundLabels)->name, *currentData + instructionCount + 100);
-        (*currentData)++;
-    } else if (strcmp(token, ".entry") != 0 && strcmp(token, ".extern") != 0) {
-        putAddress(entryLabels, (*foundLabels)->name, *currentInstruction + 100);
-        (*currentInstruction)++;
-    }
-
-    free(token);
-}
-
-void insertLabelAddresses(usedLabel *usedLabels, foundLabel *foundLabels, label *externLabels) {
-    foundLabel *currentFoundLabel;
+void insertLabelAddresses(usedLabel *usedLabels, label *externLabels, foundLabel *foundLabels, unsigned instructionCount) {
+    foundLabel *matchingFoundLabel;
 
     while (usedLabels != NULL) {
-        encodeMetadata(usedLabels->wordPointer, 'E');
-        currentFoundLabel = foundLabels;
+        matchingFoundLabel = getFoundLabel(foundLabels, usedLabels->name);
 
-        while (currentFoundLabel != NULL) {
-            if (strcmp(usedLabels->name, currentFoundLabel->name) == 0) {
-                encodeLabel(usedLabels->wordPointer, currentFoundLabel->address);
-                break;
+        if (matchingFoundLabel == NULL) {
+            if (containsLabel(externLabels, usedLabels->name)) {
+                encodeMetadata(usedLabels->wordPointer, 'E');
+            } else {
+                printf("ERROR: Definition of label \"%s\" not found.\n", usedLabels->name);
             }
+        } else {
+            encodeMetadata(usedLabels->wordPointer, 'R');
 
-            currentFoundLabel = currentFoundLabel->next;
+            if (matchingFoundLabel->isData) {
+                encodeLabel(usedLabels->wordPointer, matchingFoundLabel->address + instructionCount + 100);
+            } else {
+                encodeLabel(usedLabels->wordPointer, matchingFoundLabel->address + 100);
+            }
         }
+
+        usedLabels = usedLabels->next;
+    }
+}
+
+void fillEntryLabels(label *entryLabels, foundLabel *foundLabels, unsigned instructionCount) {
+    foundLabel *matchingFoundLabel;
+
+    while (entryLabels != NULL) {
+        matchingFoundLabel = getFoundLabel(foundLabels, entryLabels->name);
+
+        if (matchingFoundLabel == NULL) {
+            printf("ERROR: Label \"%s\" marked as .entry, but definition not found.\n", entryLabels->name);
+        } else {
+            if (matchingFoundLabel->isData) {
+                putAddress(entryLabels, matchingFoundLabel->address + instructionCount + 100);
+            } else {
+                putAddress(entryLabels, matchingFoundLabel->address + 100);
+            }
+        }
+
+        entryLabels = entryLabels->next;
     }
 }

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "globals.h"
 #include "utils.h"
@@ -14,6 +15,7 @@ void addWord(word **wordList) {
     newWord->data1 = 0;
     newWord->data2 = 0;
     newWord->next = *wordList;
+    *wordList = newWord;
 }
 
 void freeWordList(word *wordList) {
@@ -49,6 +51,7 @@ unsigned char getOperandCount(char operation[]) {
 void toggleBit(word *wordToModify, unsigned char bitPosition) {
     if (bitPosition < 8) {
         wordToModify->data1 |= (1 << bitPosition);
+        return;
     }
 
     wordToModify->data2 |= (1 << bitPosition);
@@ -138,25 +141,31 @@ boolean validateString(char string[]) {
 
     length = strlen(string);
 
-    return length >= 2 && string[0] == string[length - 1] == '\"';
+    return length >= 2 && ((string[0] == '\"') && (string[length - 1] == '\"'));
 }
 
-void encodeString(word **data, char string[]) {
+void encodeString(word **data, char string[], unsigned *dataCount) {
     string = &string[1];
+
     while (*string != '\"') {
+        (*dataCount)++;
         addWord(data);
         encodeData(*data, *string);
+
+        string++;
     }
 
+    (*dataCount)++;
     addWord(data);
 }
 
-void encodeNumberList(word **data, char numberList[]) {
+void encodeNumberList(word **data, char numberList[], unsigned *dataCount) {
     char *token;
 
-    while (*numberList != NULL) {
+    while (*numberList != '\0') {
         token = getNextToken(numberList);
         removeEnding(token, ',');
+        (*dataCount)++;
         addWord(data);
         encodeData(*data, atoi(token));
 
@@ -167,6 +176,5 @@ void encodeNumberList(word **data, char numberList[]) {
 }
 
 void encodeLabel(word *wordToModify, unsigned labelAddress) {
-    encodeMetadata(wordToModify, 'R');
     applyMask(wordToModify, labelAddress, 3);
 }

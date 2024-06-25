@@ -16,13 +16,20 @@ void addLabel(label **labelList, char labelName[]) {
     *labelList = newLabel;
 }
 
-void putAddress(label *labelList, char labelName[], unsigned address) {
+void putAddress(label *labelList, unsigned address) {
+    labelList->address = address;
+}
+
+boolean containsLabel(label *labelList, char labelName[]) {
     while (labelList != NULL) {
         if (strcmp(labelList->name, labelName) == 0) {
-            labelList->address = address;
+            return TRUE;
         }
-        return;
+
+        labelList = labelList->next;
     }
+
+    return FALSE;
 }
 
 void freeLabelList(label *labelList) {

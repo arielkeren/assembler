@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "globals.h"
@@ -37,14 +38,14 @@ FILE *openFile(char fileName[], char extension[], char mode[]) {
 }
 
 char *skipWhitespace(char line[]) {
-    while (isspace(*line)) {
+    while (isspace(*line) || *line == ',') {
         line++;
     }
     return line;
 }
 
 char *skipCharacters(char line[]) {
-    while (!isspace(*line)) {
+    while (!isspace(*line) && *line != ',') {
         line++;
     }
     return line;
@@ -62,6 +63,7 @@ char *getNextToken(char line[]) {
 
     token = allocate(sizeof(char) * (size + 1));
     strncpy(token, line, size);
+    token[size] = '\0';
     return token;
 }
 
@@ -97,7 +99,7 @@ char *addExtension(char fileName[], char extension[]) {
     return name;
 }
 
-boolean contains(char string[], char *stringArray[], size_t arraySize) {
+boolean contains(char string[], const char *stringArray[], size_t arraySize) {
     while (arraySize > 0) {
         if (strcmp(string, *stringArray) == 0) {
             return TRUE;
@@ -110,7 +112,7 @@ boolean contains(char string[], char *stringArray[], size_t arraySize) {
     return FALSE;
 }
 
-size_t indexOf(char string[], char *stringArray[], size_t arraySize) {
+size_t indexOf(char string[], const char *stringArray[], size_t arraySize) {
     size_t index;
 
     for (index = 0; index < arraySize; index++) {

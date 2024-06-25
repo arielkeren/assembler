@@ -1,11 +1,5 @@
 inc r2
 mov A,r1
-asdf
-inc r2
-mov A,r1
-inc r2
-mov A,r1
-A
-asdfasdfasdf
-sssss
-bbbb
+A: .data 1, 2
+.entry b
+b: .string "abc"

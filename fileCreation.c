@@ -34,9 +34,9 @@ void makeLabelFile(char fileName[], char extension[], label *labelList) {
 
 void insertWordList(FILE *file, word *wordList, unsigned startingIndex) {
     while (wordList != NULL) {
-        fprintf(file, "%04d %5o", startingIndex, wordList->data1 + ((unsigned)wordList->data2 << 8));
+        fprintf(file, "%04d %05o\n", startingIndex, wordList->data1 + ((unsigned)wordList->data2 << 8));
         startingIndex++;
-        wordList++;
+        wordList = wordList->next;
     }
 }
 
@@ -55,6 +55,8 @@ size_t getLongestLabel(label *labelList) {
         if (currentLength > longest) {
             longest = currentLength;
         }
+
+        labelList = labelList->next;
     }
 
     return longest;

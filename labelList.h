@@ -4,7 +4,8 @@
 #include "globals.h"
 
 void addLabel(label **labelList, char labelName[]);
-void putAddress(label *labelList, char labelName[], unsigned address);
+void putAddress(label *labelList, unsigned address);
+boolean containsLabel(label *labelList, char labelName[]);
 void freeLabelList(label *labelList);
 void freeLabel(label *labelToFree);
 

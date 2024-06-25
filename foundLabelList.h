@@ -4,6 +4,9 @@
 #include "globals.h"
 
 void addFoundLabel(foundLabel **foundLabelList, char labelName[]);
+void markAsData(foundLabel *foundLabelToModify);
+void setAddress(foundLabel *foundLabelToModify, unsigned newAddress);
+foundLabel *getFoundLabel(foundLabel *foundLabelList, char labelName[]);
 void freeFoundLabelList(foundLabel *foundLabelList);
 void freeFoundLabel(foundLabel *foundLabelToFree);
 
