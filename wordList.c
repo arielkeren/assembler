@@ -54,10 +54,10 @@ void toggleBit(word *wordToModify, unsigned char bitPosition) {
         return;
     }
 
-    wordToModify->data2 |= (1 << bitPosition);
+    wordToModify->data2 |= (1 << (bitPosition - 8));
 }
 
-void applyMask(word *wordToModify, unsigned char mask, unsigned char from) {
+void applyMask(word *wordToModify, unsigned mask, unsigned char from) {
     while (mask != 0 && from < 15) {
         if (mask & 1) {
             toggleBit(wordToModify, from);
@@ -82,11 +82,16 @@ operandType getOperandType(char operand[]) {
 }
 
 void encodeOperation(word *wordToModify, char operation[]) {
-    wordToModify->data2 |= (indexOf(operation, OPERATIONS, 16) << 2);
+    applyMask(wordToModify, indexOf(operation, OPERATIONS, 16), 11);
 }
 
-void encodeOperand(word *wordToModify, char operand[], int isSource) {
-    applyMask(wordToModify, getOperandType(operand), 3);
+void encodeOperand(word *wordToModify, char operand[], boolean isSource) {
+    if (isSource) {
+        toggleBit(wordToModify, getOperandType(operand) + 7);
+        return;
+    }
+
+    toggleBit(wordToModify, getOperandType(operand) + 3);
 }
 
 void encodeMetadata(word *wordToModify, char metadata) {
@@ -110,7 +115,7 @@ void encodeNumber(word *wordToModify, int number) {
 }
 
 void encodeRegister(word *wordToModify, int registerNumber, boolean isSource) {
-    applyMask(wordToModify, registerNumber, isSource ? 3 : 6);
+    applyMask(wordToModify, registerNumber, isSource ? 6 : 3);
 }
 
 void encodeExtraWord(word *wordToModify, char operand[], boolean isSource) {

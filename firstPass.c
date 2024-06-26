@@ -56,16 +56,16 @@ void handleLine(char line[], word **code, word **data, label **entryLabels, exte
             return;
         }
 
-        if (strcmp(token, ".entry") == 0) {
+        if (strcmp(nextToken, ".entry") == 0) {
             printf("WARNING: Label before .entry.\n");
-        } else if (strcmp(token, ".extern") == 0) {
+        } else if (strcmp(nextToken, ".extern") == 0) {
             printf("WARNING: Label before .extern.\n");
         } else {
             removeEnding(token, ':');
             addFoundLabel(foundLabels, token);
         }
 
-        if (strcmp(token, ".data") == 0 || strcmp(token, ".string") == 0) {
+        if (strcmp(nextToken, ".data") == 0 || strcmp(nextToken, ".string") == 0) {
             markAsData(*foundLabels);
             setAddress(*foundLabels, *dataCount);
         } else {
@@ -201,9 +201,9 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
     secondOperand = getNextToken(line);
 
     secondOperandType = getOperandType(secondOperand);
-    encodeOperand(*code, token, FALSE);
+    encodeOperand(*code, secondOperand, FALSE);
 
-    if (firstOperandType == secondOperandType && (firstOperandType == DIRECT_REGISTER || firstOperandType == INDIRECT_REGISTER)) {
+    if ((firstOperandType == DIRECT_REGISTER || firstOperandType == INDIRECT_REGISTER) && (secondOperandType == DIRECT_REGISTER || secondOperandType == INDIRECT_REGISTER)) {
         (*instructionCount)++;
         addWord(code);
         encodeExtraWord(*code, firstOperand, TRUE);
