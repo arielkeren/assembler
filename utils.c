@@ -81,6 +81,32 @@ boolean checkIfLabel(char token[]) {
     return token[strlen(token) - 1] == ':';
 }
 
+boolean checkIfFollowedByComma(char line[]) {
+    while (isspace(*line)) {
+        line++;
+    }
+
+    return *line == ',';
+}
+
+boolean checkForConsecutiveCommas(char line[]) {
+    while (isspace(*line)) {
+        line++;
+    }
+
+    if (*line != ',') {
+        return FALSE;
+    }
+
+    line++;
+
+    while (isspace(*line)) {
+        line++;
+    }
+
+    return *line == ',';
+}
+
 char *addExtension(char fileName[], char extension[]) {
     size_t fileNameLength;
     size_t extensionLength;

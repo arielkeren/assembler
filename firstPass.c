@@ -25,8 +25,12 @@ void firstPassFile(FILE *file, word **code, word **data, label **entryLabels, ex
     char line[82];
 
     while (fgets(line, sizeof(line), file) != NULL) {
-        if (line[strlen(line) - 1] != '\n') {
+        if (line[strlen(line) - 1] != '\n' && !feof(file)) {
             printf("Line is too long. Maximum length is 80 characters (including whitespace).\n");
+            continue;
+        }
+
+        if (!validateLine()) {
             continue;
         }
 

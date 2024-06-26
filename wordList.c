@@ -28,10 +28,6 @@ void freeWordList(word *wordList) {
     }
 }
 
-boolean validateOperation(char operation[]) {
-    return contains(operation, OPERATIONS, 16);
-}
-
 unsigned char getOperandCount(char operation[]) {
     size_t operationIndex;
 
@@ -139,14 +135,6 @@ void encodeExtraWord(word *wordToModify, char operand[], boolean isSource) {
 
 void encodeData(word *wordToModify, int data) {
     applyMask(wordToModify, data, 0);
-}
-
-boolean validateString(char string[]) {
-    size_t length;
-
-    length = strlen(string);
-
-    return length >= 2 && ((string[0] == '\"') && (string[length - 1] == '\"'));
 }
 
 void encodeString(word **data, char string[], unsigned *dataCount) {
