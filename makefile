@@ -1,5 +1,5 @@
-assembler: main.o fileHandling.o fileCreation.o macroExpansion.o macroTable.o firstPass.o secondPass.o utils.o globals.o wordList.o labelList.o externLabelList.o usedLabelList.o foundLabelList.o
-	gcc -ansi -Wall -pedantic -o assembler main.o fileHandling.o fileCreation.o macroExpansion.o macroTable.o firstPass.o secondPass.o wordList.o labelList.o externLabelList.o usedLabelList.o foundLabelList.o utils.o globals.o
+assembler: main.o fileHandling.o fileCreation.o macroExpansion.o macroTable.o firstPass.o secondPass.o lineValidation.o utils.o globals.o wordList.o labelList.o externLabelList.o usedLabelList.o foundLabelList.o
+	gcc -ansi -Wall -pedantic -o assembler main.o fileHandling.o fileCreation.o macroExpansion.o macroTable.o firstPass.o secondPass.o lineValidation.o wordList.o labelList.o externLabelList.o usedLabelList.o foundLabelList.o utils.o globals.o
 
 main.o: main.c fileHandling.h globals.h
 	gcc -ansi -Wall -pedantic -c main.c
@@ -21,6 +21,9 @@ firstPass.o: firstPass.c firstPass.h wordList.h labelList.h usedLabelList.h foun
 
 secondPass.o: secondPass.c secondPass.h wordList.h labelList.h foundLabelList.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c secondPass.c
+
+lineValidation.o: lineValidation.c lineValidation.h wordList.h utils.h globals.h
+	gcc -ansi -Wall -pedantic -c lineValidation.c
 
 utils.o: utils.c utils.h globals.h
 	gcc -ansi -Wall -pedantic -c utils.c

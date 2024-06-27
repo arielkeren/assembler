@@ -8,6 +8,7 @@
 #include "foundLabelList.h"
 #include "globals.h"
 #include "labelList.h"
+#include "lineValidation.h"
 #include "usedLabelList.h"
 #include "utils.h"
 #include "wordList.h"
@@ -30,7 +31,7 @@ void firstPassFile(FILE *file, word **code, word **data, label **entryLabels, ex
             continue;
         }
 
-        if (!validateLine()) {
+        if (!validateLine(line)) {
             continue;
         }
 
@@ -55,93 +56,41 @@ void handleLine(char line[], word **code, word **data, label **entryLabels, exte
         line = skipWhitespace(line);
         nextToken = getNextToken(line);
 
-        if (nextToken == NULL) {
-            printf("Label with nothing after it.\n");
-            return;
-        }
-
-        if (strcmp(nextToken, ".entry") == 0) {
-            printf("WARNING: Label before .entry.\n");
-        } else if (strcmp(nextToken, ".extern") == 0) {
-            printf("WARNING: Label before .extern.\n");
-        } else {
+        if (strcmp(nextToken, ".entry") != 0 && strcmp(nextToken, ".extern") != 0) {
             removeEnding(token, ':');
             addFoundLabel(foundLabels, token);
-        }
 
-        if (strcmp(nextToken, ".data") == 0 || strcmp(nextToken, ".string") == 0) {
-            markAsData(*foundLabels);
-            setAddress(*foundLabels, *dataCount);
+            if (strcmp(nextToken, ".data") == 0 || strcmp(nextToken, ".string") == 0) {
+                markAsData(*foundLabels);
+                setAddress(*foundLabels, *dataCount);
+            } else {
+                setAddress(*foundLabels, *instructionCount);
+            }
         } else {
-            setAddress(*foundLabels, *instructionCount);
+            free(token);
         }
 
         token = nextToken;
     }
 
+    nextToken = getNextToken(skipWhitespace(skipCharacters(line)));
+
     if (strcmp(token, ".entry") == 0) {
-        handleEntryLabel(skipWhitespace(skipCharacters(line)), entryLabels);
+        addLabel(entryLabels, nextToken);
     } else if (strcmp(token, ".extern") == 0) {
-        handleExternLabel(skipWhitespace(skipCharacters(line)), externLabels);
+        addExternLabel(externLabels, nextToken);
     } else if (strcmp(token, ".data") == 0) {
-        handleData(skipWhitespace(skipCharacters(line)), data, dataCount);
+        encodeNumberList(data, skipWhitespace(skipCharacters(line)), dataCount);
+        free(nextToken);
     } else if (strcmp(token, ".string") == 0) {
-        handleString(skipWhitespace(skipCharacters(line)), data, dataCount);
+        encodeString(data, nextToken, dataCount);
+        free(nextToken);
     } else {
         handleOperation(line, code, usedLabels, instructionCount);
+        free(nextToken);
     }
 
     free(token);
-}
-
-void handleEntryLabel(char line[], label **labels) {
-    char *token;
-
-    token = getNextToken(line);
-
-    if (token == NULL) {
-        return;
-    }
-
-    addLabel(labels, token);
-}
-
-void handleExternLabel(char line[], externLabel **externLabels) {
-    char *token;
-
-    token = getNextToken(line);
-
-    if (token == NULL) {
-        return;
-    }
-
-    addExternLabel(externLabels, token);
-}
-
-void handleString(char line[], word **data, unsigned *dataCount) {
-    char *token;
-
-    token = getNextToken(line);
-
-    if (token == NULL) {
-        return;
-    }
-
-    if (!validateString(token)) {
-        free(token);
-        return;
-    }
-
-    encodeString(data, token, dataCount);
-    free(token);
-}
-
-void handleData(char line[], word **data, unsigned *dataCount) {
-    /*if (!validateData(line)) {
-        return;
-    }*/
-
-    encodeNumberList(data, line, dataCount);
 }
 
 void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned *instructionCount) {
@@ -153,15 +102,6 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
     operandType secondOperandType;
 
     token = getNextToken(line);
-
-    if (token == NULL) {
-        return;
-    }
-
-    if (!validateOperation(token)) {
-        free(token);
-        return;
-    }
 
     (*instructionCount)++;
     addWord(code);
@@ -178,10 +118,6 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
     line = skipCharacters(line);
     line = skipWhitespace(line);
     firstOperand = getNextToken(line);
-
-    if (firstOperand == NULL) {
-        return;
-    }
 
     encodeOperand(*code, firstOperand, operandCount != 1);
     firstOperandType = getOperandType(firstOperand);

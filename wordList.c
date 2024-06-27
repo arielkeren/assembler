@@ -67,7 +67,7 @@ void applyMask(word *wordToModify, unsigned mask, unsigned char from) {
 operandType getOperandType(char operand[]) {
     switch (operand[0]) {
         case 'r':
-            return DIRECT_REGISTER;
+            return ((operand[1] >= '0' && operand[1] <= '7') && operand[2] == '\0') ? DIRECT_REGISTER : DIRECT;
         case '*':
             return INDIRECT_REGISTER;
         case '#':
@@ -115,16 +115,16 @@ void encodeRegister(word *wordToModify, int registerNumber, boolean isSource) {
 }
 
 void encodeExtraWord(word *wordToModify, char operand[], boolean isSource) {
-    switch (operand[0]) {
-        case 'r':
+    switch (getOperandType(operand)) {
+        case DIRECT_REGISTER:
             encodeMetadata(wordToModify, 'A');
             encodeRegister(wordToModify, atoi(&operand[1]), isSource);
             break;
-        case '*':
+        case INDIRECT_REGISTER:
             encodeMetadata(wordToModify, 'A');
             encodeRegister(wordToModify, atoi(&operand[2]), isSource);
             break;
-        case '#':
+        case IMMEDIATE:
             encodeMetadata(wordToModify, 'A');
             encodeNumber(wordToModify, atoi(&operand[1]));
             break;
@@ -138,7 +138,7 @@ void encodeData(word *wordToModify, int data) {
 }
 
 void encodeString(word **data, char string[], unsigned *dataCount) {
-    string = &string[1];
+    string++;
 
     while (*string != '\"') {
         (*dataCount)++;

@@ -1,6 +1,9 @@
 #include "lineValidation.h"
 
-#include "ctype.h"
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "globals.h"
 #include "utils.h"
 #include "wordList.h"
@@ -59,18 +62,20 @@ boolean validateLabel(char label[]) {
     boolean isValid;
     char *current;
 
-    if (label[0] == '\0') {
+    if (*label == '\0') {
         printf("ERROR: No label specified.\n");
         return FALSE;
     }
 
     isValid = TRUE;
-    current = label;
 
-    if (!isalpha(label[0])) {
+    if (!isalpha(*label)) {
         printf("ERROR: Label \"%s\" starts with an invalid character \"%c\" - not a lowercase or uppercase letter in the English alphabet.\n", label, label[0]);
         isValid = FALSE;
     }
+
+    label = getNextToken(label);
+    current = label;
 
     while (*current != '\0') {
         if (!isalnum(*current) && *current != '_') {
@@ -83,9 +88,10 @@ boolean validateLabel(char label[]) {
 
     if (strlen(label) > 31) {
         printf("ERROR: Label \"%s\" is too long - maximum length is 31 characters.\n", label);
-        return FALSE;
+        isValid = FALSE;
     }
 
+    free(label);
     return isValid;
 }
 
@@ -103,18 +109,18 @@ boolean validateData(char data[]) {
     isValid = TRUE;
     isFollowedByComma = TRUE;
     current = data;
-    token = getNextToken(data);
 
-    while (token != NULL) {
+    while (*current != '\0') {
         if (!isFollowedByComma) {
             printf("ERROR: The numbers in \"%s\" are not separated by commas correctly - a comma is missing.\n", data);
             isValid = FALSE;
         }
 
-        current = skipCharacters(current);
-
+        token = getNextToken(data);
         isValid = isValid && validateNumber(token);
         free(token);
+
+        current = skipCharacters(current);
 
         if (checkForConsecutiveCommas(current)) {
             printf("ERROR: Multiple consecutive commas in \"%s\".\n", data);
@@ -123,7 +129,6 @@ boolean validateData(char data[]) {
 
         isFollowedByComma = checkIfFollowedByComma(current);
         current = skipWhitespace(current);
-        token = getNextToken(current);
     }
 
     if (isFollowedByComma) {
@@ -211,7 +216,53 @@ boolean validateInstruction(char instruction[]) {
         return FALSE;
     }
 
+    if (operandCount == 0) {
+        free(operation);
+        return TRUE;
+    }
+
     token = getNextToken(instruction);
+
+    if (!validateOperand(token)) {
+        free(operation);
+        free(token);
+        return FALSE;
+    }
+
+    free(token);
+    instruction = skipCharacters(instruction);
+    instruction = skipWhitespace(instruction);
+
+    if (operandCount == 1 && *instruction != '\0') {
+        printf("ERROR: Extra non-whitespace characters after the operation - \"%s\" should have only one operand.\n", operation);
+        free(operation);
+        return FALSE;
+    }
+
+    if (operandCount == 1) {
+        free(operation);
+        return TRUE;
+    }
+
+    token = getNextToken(instruction);
+
+    if (!validateOperand(token)) {
+        free(operation);
+        free(token);
+        return FALSE;
+    }
+
+    free(token);
+    instruction = skipCharacters(instruction);
+    instruction = skipWhitespace(instruction);
+
+    if (*instruction != '\0') {
+        printf("ERROR: Extra non-whitespace characters after the operation - \"%s\" should have only two operands.\n", operation);
+        free(operation);
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 boolean validateOperation(char operation[]) {
@@ -227,7 +278,7 @@ boolean validateOperand(char operand[]) {
         case INDIRECT_REGISTER:
             return validateIndirectRegister(operand);
         case DIRECT_REGISTER:
-            return validateDirectRegister(operand);
+            return TRUE;
         default:
             return FALSE;
     }
@@ -239,30 +290,49 @@ boolean validateImmediate(char immediate[]) {
     immediate++;
 
     if (!validateNumber(immediate)) {
-        printf("ERROR: \"%s\" is not a number, even though it is preceded by a hash.\n", token);
+        printf("ERROR: \"%s\" is not a number, even though it is preceded by a hash (a label cannot start with a hash).\n", immediate);
         return FALSE;
     }
 
     number = atoi(immediate);
 
     if (number > 2047) {
-        printf("ERROR: \"%s\" is too large to store in just 12 bits - largest possible value is 2047.\n", token);
+        printf("ERROR: \"%s\" is too large to store in just 12 bits - largest possible value is 2047.\n", immediate);
         return FALSE;
     }
 
     if (number < -2048) {
-        printf("ERROR: \"%s\" is too small to store in just 12 bits - smallest possible value is -2048.\n", token);
+        printf("ERROR: \"%s\" is too small to store in just 12 bits - smallest possible value is -2048.\n", immediate);
         return FALSE;
     }
 
     return TRUE;
 }
 
-boolean validateDirectRegister(char directRegister[]) {
-    directRegister++;
+boolean validateIndirectRegister(char directRegister[]) {
+    int number;
 
-    if (!validateNumber(directRegister)) {
-        printf("ERROR: \"%s\" is not a number, even though it is preceded by an \"r\", signaling that it should be a register number.\n", directRegister);
+    if (directRegister[1] != 'r') {
+        printf("ERROR: Token \"%s\" starts with an asterisk but does not include any register right after it (a label cannot start with an asterisk).\n", directRegister);
         return FALSE;
     }
+
+    if (directRegister[2] == '\0') {
+        printf("ERROR: Token \"%s\" looks like it should be a reference to a register, but does not specify which one (a label cannot start with an asterisk).\n", directRegister);
+        return FALSE;
+    }
+
+    if (!validateNumber(&directRegister[2])) {
+        printf("ERROR: \"%s\" is not a valid label (a label cannot start with an asterisk), nor does it specify a valid register number, even though it is preceded by \"*r\", signaling that there should be a valid register number right after.\n", directRegister);
+        return FALSE;
+    }
+
+    number = atoi(&directRegister[2]);
+
+    if (number > 7 || number < 0) {
+        printf("ERROR: \"%s\" does not specify a valid register - the number should be between 0 and 7, including 0 and 7.\n", directRegister);
+        return FALSE;
+    }
+
+    return TRUE;
 }
