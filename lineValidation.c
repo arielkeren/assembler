@@ -5,8 +5,8 @@
 #include <string.h>
 
 #include "globals.h"
+#include "instructionInformation.h"
 #include "utils.h"
-#include "wordList.h"
 
 boolean validateLine(char line[]) {
     boolean isValid;
@@ -229,6 +229,11 @@ boolean validateInstruction(char instruction[]) {
         return FALSE;
     }
 
+    if (!doesOperationAcceptOperand(operation, token, operandCount != 1)) {
+        printf("ERROR: Operation \"%s\" does not accept operand \"%s\".\n", operation, token);
+        return FALSE;
+    }
+
     free(token);
     instruction = skipCharacters(instruction);
     instruction = skipWhitespace(instruction);
@@ -252,6 +257,11 @@ boolean validateInstruction(char instruction[]) {
         return FALSE;
     }
 
+    if (!doesOperationAcceptOperand(operation, token, FALSE)) {
+        printf("ERROR: Operation \"%s\" does not accept operand \"%s\".\n", operation, token);
+        return FALSE;
+    }
+
     free(token);
     instruction = skipCharacters(instruction);
     instruction = skipWhitespace(instruction);
@@ -266,7 +276,7 @@ boolean validateInstruction(char instruction[]) {
 }
 
 boolean validateOperation(char operation[]) {
-    return contains(operation, OPERATIONS, 16);
+    return getOperationIndex(operation) != 16;
 }
 
 boolean validateOperand(char operand[]) {

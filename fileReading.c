@@ -1,28 +1,30 @@
-#include "firstPass.h"
+#include "fileReading.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "encoder.h"
 #include "externLabelList.h"
 #include "foundLabelList.h"
 #include "globals.h"
+#include "instructionInformation.h"
 #include "labelList.h"
 #include "lineValidation.h"
 #include "usedLabelList.h"
 #include "utils.h"
 #include "wordList.h"
 
-void firstPass(char fileName[], word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void readFile(char fileName[], word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     FILE *file;
 
     file = openFile(fileName, "am", "r");
-    firstPassFile(file, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
+    readLines(file, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
     fclose(file);
 }
 
-void firstPassFile(FILE *file, word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void readLines(FILE *file, word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char line[82];
 
     while (fgets(line, sizeof(line), file) != NULL) {

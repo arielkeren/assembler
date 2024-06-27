@@ -5,6 +5,8 @@
     "globals.h": "c",
     "string.h": "c",
     "labellist.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "instructioninformation.h": "c",
+    "labellinking.h": "c"
   }
 }

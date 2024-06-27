@@ -1,17 +1,15 @@
-#include "secondPass.h"
+#include "labelLinking.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
+#include "encoder.h"
 #include "externLabelList.h"
 #include "foundLabelList.h"
 #include "globals.h"
 #include "labelList.h"
-#include "utils.h"
-#include "wordList.h"
 
-void secondPass(label *entryLabels, externLabel *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount) {
+void linkLabels(label *entryLabels, externLabel *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount) {
     insertLabelAddresses(usedLabels, externLabels, foundLabels, instructionCount);
     fillEntryLabels(entryLabels, foundLabels, instructionCount);
     fillExternLabels(externLabels, usedLabels);

@@ -71,11 +71,11 @@ void expandFileMacros(FILE *inputFile, FILE *outputFile) {
     freeMacroTable(macroTable);
 }
 
-int isEndOfMacro(char line[]) {
+boolean isEndOfMacro(char line[]) {
     line = skipWhitespace(line);
 
     if (strncmp(line, "endmacr", 7) != 0) {
-        return 0;
+        return FALSE;
     }
 
     line = &line[7];
@@ -103,7 +103,7 @@ char *getMacroName(char line[]) {
     return line;
 }
 
-int isValidMacroName(char line[]) {
+boolean isValidMacroName(char line[]) {
     line = skipCharacters(line);
     line = skipWhitespace(line);
     return *line == '\0';
@@ -114,7 +114,7 @@ void removeEndingWhitespace(char line[]) {
     *line = '\0';
 }
 
-int isSingleWord(char line[]) {
+boolean isSingleWord(char line[]) {
     line = skipWhitespace(line);
     line = skipCharacters(line);
     line = skipWhitespace(line);

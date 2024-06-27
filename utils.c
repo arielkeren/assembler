@@ -124,28 +124,3 @@ char *addExtension(char fileName[], char extension[]) {
 
     return name;
 }
-
-boolean contains(char string[], const char *stringArray[], size_t arraySize) {
-    while (arraySize > 0) {
-        if (strcmp(string, *stringArray) == 0) {
-            return TRUE;
-        }
-
-        stringArray++;
-        arraySize--;
-    }
-
-    return FALSE;
-}
-
-size_t indexOf(char string[], const char *stringArray[], size_t arraySize) {
-    size_t index;
-
-    for (index = 0; index < arraySize; index++) {
-        if (strcmp(string, stringArray[index]) == 0) {
-            return index;
-        }
-    }
-
-    return arraySize;
-}
