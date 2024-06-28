@@ -45,7 +45,7 @@ char *skipWhitespace(char line[]) {
 }
 
 char *skipCharacters(char line[]) {
-    while (!isspace(*line) && *line != ',') {
+    while (*line != '\0' && !isspace(*line) && *line != ',') {
         line++;
     }
     return line;

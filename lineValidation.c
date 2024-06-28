@@ -42,10 +42,15 @@ boolean validateLine(char line[]) {
         }
     }
 
+    if (checkIfFollowedByComma(skipCharacters(line))) {
+        printf("ERROR: Comma after the first word in the command (excluding the label, if there is one).\n");
+        isValid = FALSE;
+    }
+
     if (strcmp(token, ".entry") == 0) {
-        isValid = isValid && validateLabel(skipWhitespace(skipCharacters(line)));
+        isValid = isValid && validateEntryExtern(skipWhitespace(skipCharacters(line)));
     } else if (strcmp(token, ".extern") == 0) {
-        isValid = isValid && validateLabel(skipWhitespace(skipCharacters(line)));
+        isValid = isValid && validateEntryExtern(skipWhitespace(skipCharacters(line)));
     } else if (strcmp(token, ".data") == 0) {
         isValid = isValid && validateData(skipWhitespace(skipCharacters(line)));
     } else if (strcmp(token, ".string") == 0) {
@@ -58,9 +63,32 @@ boolean validateLine(char line[]) {
     return isValid;
 }
 
+boolean validateEntryExtern(char label[]) {
+    boolean isValid;
+    char *token;
+
+    token = getNextToken(label);
+    isValid = validateLabel(token);
+    free(token);
+    label = skipCharacters(label);
+
+    if (checkIfFollowedByComma(label)) {
+        printf("ERROR: Comma after the label.\n");
+        isValid = FALSE;
+    }
+
+    label = skipWhitespace(label);
+
+    if (*label != '\0') {
+        printf("ERROR: Extra non-whitespace characters after the label.\n");
+        return FALSE;
+    }
+
+    return isValid;
+}
+
 boolean validateLabel(char label[]) {
     boolean isValid;
-    char *current;
 
     if (*label == '\0') {
         printf("ERROR: No label specified.\n");
@@ -70,59 +98,53 @@ boolean validateLabel(char label[]) {
     isValid = TRUE;
 
     if (!isalpha(*label)) {
-        printf("ERROR: Label \"%s\" starts with an invalid character \"%c\" - not a lowercase or uppercase letter in the English alphabet.\n", label, label[0]);
+        printf("ERROR: Label starts with an invalid character - not a lowercase or uppercase letter in the English alphabet.\n");
         isValid = FALSE;
     }
 
-    label = getNextToken(label);
-    current = label;
-
-    while (*current != '\0') {
-        if (!isalnum(*current) && *current != '_') {
-            printf("ERROR: Label \"%s\" contains an invalid character \"%c\" - not a digit, nor a lowercase or uppercase letter in the English alphabet, nor an underscore.\n", label, *label);
-            isValid = FALSE;
-        }
-
-        current++;
-    }
-
     if (strlen(label) > 31) {
-        printf("ERROR: Label \"%s\" is too long - maximum length is 31 characters.\n", label);
+        printf("ERROR: Label is too long - maximum length is 31 characters.\n");
         isValid = FALSE;
     }
 
     if (getOperationIndex(label) != 16) {
-        printf("ERROR: Label \"%s\" cannot share the same name as an operation.\n", label);
+        printf("ERROR: Label cannot share the same name as an operation.\n");
         isValid = FALSE;
     }
 
     if (label[0] == 'r' && label[1] >= '0' && label[1] <= '7' && label[2] == '\0') {
-        printf("ERROR: Label \"%s\" cannot share the same name as a register.\n", label);
+        printf("ERROR: Label cannot share the same name as a register.\n");
         isValid = FALSE;
     }
 
-    free(label);
+    while (*label != '\0') {
+        if (!isalnum(*label) && *label != '_') {
+            printf("ERROR: Label contains an invalid character - not a digit, nor a lowercase or uppercase letter in the English alphabet, nor an underscore.\n");
+            isValid = FALSE;
+        }
+
+        label++;
+    }
+
     return isValid;
 }
 
 boolean validateData(char data[]) {
     boolean isValid;
     boolean isFollowedByComma;
-    char *current;
     char *token;
 
-    if (data[0] == '\0') {
+    if (*data == '\0') {
         printf("ERROR: No data specified.\n");
         return FALSE;
     }
 
     isValid = TRUE;
     isFollowedByComma = TRUE;
-    current = data;
 
-    while (*current != '\0') {
+    while (*data != '\0') {
         if (!isFollowedByComma) {
-            printf("ERROR: The numbers in \"%s\" are not separated by commas correctly - a comma is missing.\n", data);
+            printf("ERROR: Missing comma between the numbers.\n");
             isValid = FALSE;
         }
 
@@ -130,19 +152,19 @@ boolean validateData(char data[]) {
         isValid = isValid && validateNumber(token);
         free(token);
 
-        current = skipCharacters(current);
+        data = skipCharacters(data);
 
-        if (checkForConsecutiveCommas(current)) {
-            printf("ERROR: Multiple consecutive commas in \"%s\".\n", data);
+        if (checkForConsecutiveCommas(data)) {
+            printf("ERROR: Multiple consecutive commas between the numbers.\n");
             isValid = FALSE;
         }
 
-        isFollowedByComma = checkIfFollowedByComma(current);
-        current = skipWhitespace(current);
+        isFollowedByComma = checkIfFollowedByComma(data);
+        data = skipWhitespace(data);
     }
 
     if (isFollowedByComma) {
-        printf("ERROR: The last number in \"%s\" is followed by a comma.\n", data);
+        printf("ERROR: The last number is followed by a comma.\n");
         return FALSE;
     }
 
@@ -150,21 +172,17 @@ boolean validateData(char data[]) {
 }
 
 boolean validateNumber(char number[]) {
-    char *current;
-
-    current = number;
-
-    if (number[0] == '+' || number[0] == '-') {
-        current++;
+    if (*number == '+' || *number == '-') {
+        number++;
     }
 
-    while (*current != '\0') {
-        if (!isdigit(*current)) {
-            printf("ERROR: Data \"%s\" contains an invalid character \"%c\" - not a valid number.\n", number, *current);
+    while (*number != '\0') {
+        if (!isdigit(*number)) {
+            printf("ERROR: Invalid integer.\n");
             return FALSE;
         }
 
-        current++;
+        number++;
     }
 
     return TRUE;
@@ -182,24 +200,31 @@ boolean validateString(char string[]) {
     isValid = TRUE;
     token = getNextToken(string);
 
-    if (token[0] != '\"') {
-        printf("ERROR: String \"%s\" does not start with a quotation mark.\n", token);
+    if (*token != '\"') {
+        printf("ERROR: String does not start with a quotation mark.\n");
         isValid = FALSE;
     }
 
     if (token[strlen(token) - 1] != '\"') {
-        printf("ERROR: String \"%s\" does not end with a quotation mark.\n", token);
+        printf("ERROR: String does not end with a quotation mark.\n");
         isValid = FALSE;
     }
 
     string = skipCharacters(string);
+
+    if (checkIfFollowedByComma(string)) {
+        printf("ERROR: Comma after the string.\n");
+        isValid = FALSE;
+    }
+
     string = skipWhitespace(string);
 
     if (*string != '\0') {
         printf("ERROR: Extra non-whitespace characters after the string.\n");
-        return FALSE;
+        isValid = FALSE;
     }
 
+    free(token);
     return isValid;
 }
 
@@ -221,7 +246,7 @@ boolean validateInstruction(char instruction[]) {
     instruction = skipWhitespace(instruction);
 
     if (operandCount == 0 && *instruction != '\0') {
-        printf("ERROR: Extra non-whitespace characters after the operation - \"%s\" should have no operands.\n", operation);
+        printf("ERROR: Extra non-whitespace characters after operation - \"%s\" should have no operands.\n", operation);
         free(operation);
         return FALSE;
     }
@@ -246,6 +271,17 @@ boolean validateInstruction(char instruction[]) {
 
     free(token);
     instruction = skipCharacters(instruction);
+
+    if (operandCount == 1 && checkIfFollowedByComma(instruction)) {
+        printf("ERROR: Comma after the only operand.\n");
+        return FALSE;
+    }
+
+    if (operandCount == 2 && !checkIfFollowedByComma(instruction)) {
+        printf("ERROR: Missing comma between the first and the second operand.\n");
+        return FALSE;
+    }
+
     instruction = skipWhitespace(instruction);
 
     if (operandCount == 1 && *instruction != '\0') {
@@ -274,6 +310,12 @@ boolean validateInstruction(char instruction[]) {
 
     free(token);
     instruction = skipCharacters(instruction);
+
+    if (checkIfFollowedByComma(instruction)) {
+        printf("ERROR: Comma after the second operand.\n");
+        return FALSE;
+    }
+
     instruction = skipWhitespace(instruction);
 
     if (*instruction != '\0') {

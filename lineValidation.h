@@ -4,6 +4,7 @@
 #include "globals.h"
 
 boolean validateLine(char line[]);
+boolean validateEntryExtern(char label[]);
 boolean validateLabel(char label[]);
 boolean validateData(char data[]);
 boolean validateNumber(char number[]);
