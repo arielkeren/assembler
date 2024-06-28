@@ -91,6 +91,16 @@ boolean validateLabel(char label[]) {
         isValid = FALSE;
     }
 
+    if (getOperationIndex(label) != 16) {
+        printf("ERROR: Label \"%s\" cannot share the same name as an operation.\n", label);
+        isValid = FALSE;
+    }
+
+    if (label[0] == 'r' && label[1] >= '0' && label[1] <= '7' && label[2] == '\0') {
+        printf("ERROR: Label \"%s\" cannot share the same name as a register.\n", label);
+        isValid = FALSE;
+    }
+
     free(label);
     return isValid;
 }
