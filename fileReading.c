@@ -29,7 +29,7 @@ void readLines(FILE *file, word **code, word **data, label **entryLabels, extern
 
     while (fgets(line, sizeof(line), file) != NULL) {
         if (line[strlen(line) - 1] != '\n' && !feof(file)) {
-            printf("Line is too long. Maximum length is 80 characters (including whitespace).\n");
+            printf("ERROR: Line is too long. Maximum length is 80 characters (including whitespace).\n");
             continue;
         }
 
@@ -38,6 +38,10 @@ void readLines(FILE *file, word **code, word **data, label **entryLabels, extern
         }
 
         handleLine(line, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
+    }
+
+    if (*instructionCount + *dataCount > 3997) {
+        printf("ERROR: Too many words in the program - memory overflow.\n");
     }
 }
 
