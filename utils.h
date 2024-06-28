@@ -15,5 +15,7 @@ boolean checkIfLabel(char token[]);
 boolean checkIfFollowedByComma(char line[]);
 boolean checkForConsecutiveCommas(char line[]);
 char *addExtension(char fileName[], char extension[]);
+void printError(char message[], unsigned lineNumber);
+void printWarning(char message[], unsigned lineNumber);
 
 #endif

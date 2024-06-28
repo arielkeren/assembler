@@ -1,6 +1,5 @@
 #include "fileReading.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,26 +25,31 @@ void readFile(char fileName[], word **code, word **data, label **entryLabels, ex
 
 void readLines(FILE *file, word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char line[82];
+    unsigned lineNumber;
+
+    lineNumber = 0;
 
     while (fgets(line, sizeof(line), file) != NULL) {
+        lineNumber++;
+
         if (line[strlen(line) - 1] != '\n' && !feof(file)) {
-            printf("ERROR: Line is too long. Maximum length is 80 characters (including whitespace).\n");
+            printError("Line is too long. Maximum length is 80 characters (including whitespace).", lineNumber);
             continue;
         }
 
-        if (!validateLine(line)) {
+        if (*instructionCount + *dataCount > 3997) {
+            printError("Too many words in the program - memory overflow.", lineNumber);
+        }
+
+        if (!validateLine(line, lineNumber)) {
             continue;
         }
 
-        handleLine(line, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
-    }
-
-    if (*instructionCount + *dataCount > 3997) {
-        printf("ERROR: Too many words in the program - memory overflow.\n");
+        handleLine(line, lineNumber, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
     }
 }
 
-void handleLine(char line[], word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void handleLine(char line[], unsigned lineNumber, word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char *token;
     char *nextToken;
 
@@ -58,12 +62,16 @@ void handleLine(char line[], word **code, word **data, label **entryLabels, exte
     token = getNextToken(line);
 
     if (checkIfLabel(token)) {
+        removeEnding(token, ':');
         line = skipCharacters(line);
         line = skipWhitespace(line);
         nextToken = getNextToken(line);
 
+        if (getFoundLabel(*foundLabels, token) != NULL) {
+            printError("Duplicate label.", lineNumber);
+        }
+
         if (strcmp(nextToken, ".entry") != 0 && strcmp(nextToken, ".extern") != 0) {
-            removeEnding(token, ':');
             addFoundLabel(foundLabels, token);
 
             if (strcmp(nextToken, ".data") == 0 || strcmp(nextToken, ".string") == 0) {
@@ -82,8 +90,16 @@ void handleLine(char line[], word **code, word **data, label **entryLabels, exte
     nextToken = getNextToken(skipWhitespace(skipCharacters(line)));
 
     if (strcmp(token, ".entry") == 0) {
+        if (containsEntryLabel(*entryLabels, nextToken)) {
+            printError("Label already marked as entry.", lineNumber);
+        }
+
         addLabel(entryLabels, nextToken);
     } else if (strcmp(token, ".extern") == 0) {
+        if (containsExternLabel(*externLabels, nextToken)) {
+            printError("Label already marked as extern.", lineNumber);
+        }
+
         addExternLabel(externLabels, nextToken);
     } else if (strcmp(token, ".data") == 0) {
         encodeNumberList(data, skipWhitespace(skipCharacters(line)), dataCount);

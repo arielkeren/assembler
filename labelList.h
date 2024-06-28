@@ -5,6 +5,7 @@
 
 void addLabel(label **labelList, char labelName[]);
 void putAddress(label *labelList, unsigned address);
+boolean containsEntryLabel(label *labelList, char labelName[]);
 void freeLabelList(label *labelList);
 void freeLabel(label *labelToFree);
 

@@ -124,3 +124,11 @@ char *addExtension(char fileName[], char extension[]) {
 
     return name;
 }
+
+void printError(char message[], unsigned lineNumber) {
+    printf("ERROR ON LINE %u: %s\n", lineNumber, message);
+}
+
+void printWarning(char message[], unsigned lineNumber) {
+    printf("WARNING ON LINE %u: %s\n", lineNumber, message);
+}
