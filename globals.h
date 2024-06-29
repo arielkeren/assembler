@@ -8,11 +8,6 @@ typedef enum { IMMEDIATE,
                INDIRECT_REGISTER,
                DIRECT_REGISTER } operandType;
 
-typedef struct useStruct {
-    unsigned address;
-    struct useStruct *next;
-} use;
-
 typedef struct macroStruct {
     char *name;
     char *content;
@@ -27,15 +22,9 @@ typedef struct wordStruct {
 
 typedef struct labelStruct {
     char *name;
-    unsigned address;
+    unsigned lineNumber;
     struct labelStruct *next;
 } label;
-
-typedef struct externLabelStruct {
-    char *name;
-    use *useList;
-    struct externLabelStruct *next;
-} externLabel;
 
 typedef struct usedLabelStruct {
     char *name;

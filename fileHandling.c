@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "externLabelList.h"
 #include "fileCreation.h"
 #include "fileReading.h"
 #include "foundLabelList.h"
@@ -25,7 +24,7 @@ void compileFiles(char *fileNames[], int fileCount) {
     word *code;
     word *data;
     label *entryLabels;
-    externLabel *externLabels;
+    label *externLabels;
     usedLabel *usedLabels;
     foundLabel *foundLabels;
     unsigned instructionCount;
@@ -43,16 +42,16 @@ void compileFiles(char *fileNames[], int fileCount) {
 
         expandMacros(*fileNames);
         readFile(*fileNames, &code, &data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
-        linkLabels(entryLabels, externLabels, usedLabels, foundLabels, instructionCount);
+        linkLabels(externLabels, usedLabels, foundLabels, instructionCount);
 
-        generateEntFile(*fileNames, entryLabels);
-        generateExtFile(*fileNames, externLabels);
+        generateEntFile(*fileNames, entryLabels, foundLabels, instructionCount);
+        generateExtFile(*fileNames, externLabels, usedLabels, foundLabels);
         generateObFile(*fileNames, code, data, instructionCount, dataCount);
 
         freeWordList(code);
         freeWordList(data);
         freeLabelList(entryLabels);
-        freeExternLabelList(externLabels);
+        freeLabelList(externLabels);
         freeUsedLabelList(usedLabels);
         freeFoundLabelList(foundLabels);
 

@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "encoder.h"
-#include "externLabelList.h"
 #include "foundLabelList.h"
 #include "globals.h"
 #include "instructionInformation.h"
@@ -14,7 +13,7 @@
 #include "utils.h"
 #include "wordList.h"
 
-void readFile(char fileName[], word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void readFile(char fileName[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     FILE *file;
 
     file = openFile(fileName, "am", "r");
@@ -28,7 +27,7 @@ void readFile(char fileName[], word **code, word **data, label **entryLabels, ex
     fclose(file);
 }
 
-void readLines(FILE *file, word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void readLines(FILE *file, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char line[82];
     unsigned lineNumber;
 
@@ -54,7 +53,7 @@ void readLines(FILE *file, word **code, word **data, label **entryLabels, extern
     }
 }
 
-void handleLine(char line[], unsigned lineNumber, word **code, word **data, label **entryLabels, externLabel **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void handleLine(char line[], unsigned lineNumber, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char *token;
     char *nextToken;
 
@@ -95,17 +94,17 @@ void handleLine(char line[], unsigned lineNumber, word **code, word **data, labe
     nextToken = getNextToken(skipWhitespace(skipCharacters(line)));
 
     if (strcmp(token, ".entry") == 0) {
-        if (containsEntryLabel(*entryLabels, nextToken)) {
+        if (containsLabel(*entryLabels, nextToken)) {
             printError("Label already marked as entry.", lineNumber);
         }
 
-        addLabel(entryLabels, nextToken);
+        addLabel(entryLabels, nextToken, lineNumber);
     } else if (strcmp(token, ".extern") == 0) {
-        if (containsExternLabel(*externLabels, nextToken)) {
+        if (containsLabel(*externLabels, nextToken)) {
             printError("Label already marked as extern.", lineNumber);
         }
 
-        addExternLabel(externLabels, nextToken);
+        addLabel(externLabels, nextToken, lineNumber);
     } else if (strcmp(token, ".data") == 0) {
         encodeNumberList(data, skipWhitespace(skipCharacters(line)), dataCount);
         free(nextToken);

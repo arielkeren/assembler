@@ -6,21 +6,17 @@
 #include "globals.h"
 #include "utils.h"
 
-void addLabel(label **labelList, char labelName[]) {
+void addLabel(label **labelList, char labelName[], unsigned lineNumber) {
     label *newLabel;
 
     newLabel = allocate(sizeof(label));
     newLabel->name = labelName;
-    newLabel->address = 0;
+    newLabel->lineNumber = lineNumber;
     newLabel->next = *labelList;
     *labelList = newLabel;
 }
 
-void putAddress(label *labelList, unsigned address) {
-    labelList->address = address;
-}
-
-boolean containsEntryLabel(label *labelList, char labelName[]) {
+boolean containsLabel(label *labelList, char labelName[]) {
     while (labelList != NULL) {
         if (strcmp(labelList->name, labelName) == 0) {
             return TRUE;
@@ -30,6 +26,24 @@ boolean containsEntryLabel(label *labelList, char labelName[]) {
     }
 
     return FALSE;
+}
+
+unsigned char getLongestLabel(label *labelList) {
+    unsigned char longest;
+    unsigned char currentLength;
+
+    longest = 0;
+
+    while (labelList != NULL) {
+        currentLength = (unsigned char)strlen(labelList->name);
+        if (currentLength > longest) {
+            longest = currentLength;
+        }
+
+        labelList = labelList->next;
+    }
+
+    return longest;
 }
 
 void freeLabelList(label *labelList) {
