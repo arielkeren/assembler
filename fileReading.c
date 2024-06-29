@@ -18,6 +18,11 @@ void readFile(char fileName[], word **code, word **data, label **entryLabels, ex
     FILE *file;
 
     file = openFile(fileName, "am", "r");
+
+    if (file == NULL) {
+        return;
+    }
+
     readLines(file, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
     fclose(file);

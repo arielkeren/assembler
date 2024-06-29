@@ -12,7 +12,16 @@ void expandMacros(char fileName[]) {
     FILE *outputFile;
 
     inputFile = openFile(fileName, "as", "r");
+
+    if (inputFile == NULL) {
+        return;
+    }
+
     outputFile = openFile(fileName, "am", "w");
+
+    if (outputFile == NULL) {
+        return;
+    }
 
     expandFileMacros(inputFile, outputFile);
 
