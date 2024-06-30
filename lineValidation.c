@@ -98,28 +98,28 @@ boolean validateLabel(char label[], unsigned lineNumber) {
     isValid = TRUE;
 
     if (!isalpha(*label)) {
-        printError("Label starts with an invalid character - not a lowercase or uppercase letter in the English alphabet.", lineNumber);
+        printError("Label/macro starts with an invalid character - not a lowercase or uppercase letter in the English alphabet.", lineNumber);
         isValid = FALSE;
     }
 
     if (strlen(label) > 31) {
-        printError("Label is too long - maximum length is 31 characters.", lineNumber);
+        printError("Label/macro is too long - maximum length is 31 characters.", lineNumber);
         isValid = FALSE;
     }
 
     if (getOperationIndex(label) != 16) {
-        printError("Label cannot share the same name as an operation.", lineNumber);
+        printError("Label/macro cannot share the same name as an operation.", lineNumber);
         isValid = FALSE;
     }
 
     if (label[0] == 'r' && label[1] >= '0' && label[1] <= '7' && label[2] == '\0') {
-        printError("Label cannot share the same name as a register.", lineNumber);
+        printError("Label/macro cannot share the same name as a register.", lineNumber);
         isValid = FALSE;
     }
 
     while (*label != '\0') {
         if (!isalnum(*label) && *label != '_') {
-            printError("Label contains an invalid character - not a digit, nor a lowercase or uppercase letter in the English alphabet, nor an underscore.", lineNumber);
+            printError("Label/macro contains an invalid character - not a digit, nor a lowercase or uppercase letter in the English alphabet, nor an underscore.", lineNumber);
             isValid = FALSE;
         }
 

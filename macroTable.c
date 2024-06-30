@@ -6,7 +6,7 @@
 #include "globals.h"
 #include "utils.h"
 
-char *getMacroContent(macro *macroTable, char *macroName) {
+char *getMacroContent(macro *macroTable, char macroName[]) {
     while (macroTable != NULL) {
         if (strcmp(macroTable->name, macroName) == 0) {
             return macroTable->content;
@@ -18,38 +18,26 @@ char *getMacroContent(macro *macroTable, char *macroName) {
     return NULL;
 }
 
-char *addMacro(macro **macroTable, char *macroName) {
+void addMacro(macro **macroTable, char macroName[]) {
     macro *newMacro;
 
     newMacro = allocate(sizeof(macro));
-    newMacro->name = allocate(sizeof(char) * (strlen(macroName) + 1));
-
-    strcpy(newMacro->name, macroName);
-
+    newMacro->name = macroName;
     newMacro->content = "";
     newMacro->next = *macroTable;
     *macroTable = newMacro;
-
-    return newMacro->name;
 }
 
-void addContent(macro *macroTable, char *macroName, char *content) {
+void addMacroContent(macro *macroToModify, char content[]) {
     char *newContent;
 
-    while (macroTable != NULL) {
-        if (strcmp(macroTable->name, macroName) == 0) {
-            newContent = allocate(sizeof(char) * (strlen(macroTable->content) + strlen(content) + 1));
+    newContent = allocate(sizeof(char) * (strlen(macroToModify->content) + strlen(content) + 1));
 
-            strcpy(newContent, macroTable->content);
-            free(macroTable->content);
-            strcat(newContent, content);
+    strcpy(newContent, macroToModify->content);
+    free(macroToModify->content);
+    strcat(newContent, content);
 
-            macroTable->content = newContent;
-            return;
-        }
-
-        macroTable = macroTable->next;
-    }
+    macroToModify->content = newContent;
 }
 
 void freeMacroTable(macro *macroTable) {

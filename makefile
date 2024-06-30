@@ -10,7 +10,7 @@ fileHandling.o: fileHandling.c fileHandling.h macroExpansion.h fileReading.h lab
 fileCreation.o: fileCreation.c fileCreation.h  utils.h globals.h
 	gcc -ansi -Wall -pedantic -c fileCreation.c
 
-macroExpansion.o: macroExpansion.c macroExpansion.h macroTable.h utils.h globals.h
+macroExpansion.o: macroExpansion.c macroExpansion.h macroTable.h lineValidation.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c macroExpansion.c
 
 fileReading.o: fileReading.c fileReading.h encoder.h lineValidation.h instructionInformation.h labelList.h foundLabelList.h usedLabelList.h utils.h globals.h
