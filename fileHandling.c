@@ -10,6 +10,7 @@
 #include "labelLinking.h"
 #include "labelList.h"
 #include "macroExpansion.h"
+#include "macroTable.h"
 #include "usedLabelList.h"
 #include "wordList.h"
 
@@ -23,6 +24,7 @@ void checkNoFiles(int fileCount) {
 void compileFiles(char *fileNames[], int fileCount) {
     word *code;
     word *data;
+    macro *macros;
     label *entryLabels;
     label *externLabels;
     usedLabel *usedLabels;
@@ -33,6 +35,7 @@ void compileFiles(char *fileNames[], int fileCount) {
     while (fileCount > 0) {
         code = NULL;
         data = NULL;
+        macros = NULL;
         entryLabels = NULL;
         externLabels = NULL;
         usedLabels = NULL;
@@ -40,7 +43,7 @@ void compileFiles(char *fileNames[], int fileCount) {
         instructionCount = 0;
         dataCount = 0;
 
-        expandMacros(*fileNames);
+        expandMacros(*fileNames, &macros);
         readFile(*fileNames, &code, &data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
         linkLabels(externLabels, usedLabels, foundLabels, instructionCount);
 
@@ -50,6 +53,7 @@ void compileFiles(char *fileNames[], int fileCount) {
 
         freeWordList(code);
         freeWordList(data);
+        freeMacroTable(macros);
         freeLabelList(entryLabels);
         freeLabelList(externLabels);
         freeUsedLabelList(usedLabels);

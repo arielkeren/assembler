@@ -9,7 +9,7 @@
 #include "macroTable.h"
 #include "utils.h"
 
-void expandMacros(char fileName[]) {
+void expandMacros(char fileName[], macro **macros) {
     FILE *inputFile;
     FILE *outputFile;
 
@@ -25,96 +25,96 @@ void expandMacros(char fileName[]) {
         return;
     }
 
-    expandFileMacros(inputFile, outputFile);
+    expandFileMacros(inputFile, outputFile, macros);
 
     fclose(inputFile);
     fclose(outputFile);
 }
 
-void expandFileMacros(FILE *inputFile, FILE *outputFile) {
-    macro *macroTable;
+void expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros) {
     boolean isInsideMacro;
     unsigned lineNumber;
     char line[82];
-    char *current;
-    char *token;
-    char *content;
 
-    macroTable = NULL;
     isInsideMacro = FALSE;
     lineNumber = 0;
 
     while (fgets(line, sizeof(line), inputFile) != NULL) {
         lineNumber++;
+        expandLineMacros(inputFile, outputFile, macros, line, lineNumber, &isInsideMacro);
+    }
+}
 
-        if (isInsideMacro) {
-            if (isEndOfMacro(line)) {
-                isInsideMacro = FALSE;
-                continue;
-            }
+void expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char line[], unsigned lineNumber, boolean *isInsideMacro) {
+    char *current;
+    char *token;
+    char *content;
 
-            addMacroContent(macroTable, line);
-            continue;
+    if (*isInsideMacro) {
+        if (isEndOfMacro(line)) {
+            *isInsideMacro = FALSE;
+            return;
         }
 
-        current = skipWhitespace(line);
+        addMacroContent(*macros, line);
+        return;
+    }
+
+    current = skipWhitespace(line);
+
+    if (*current == '\0') {
+        fputs(line, outputFile);
+        return;
+    }
+
+    token = getNextToken(current);
+
+    if (strcmp(token, "endmacr") == 0) {
+        free(token);
+        printError("End of macro definition without declaring a macro.", lineNumber);
+        return;
+    }
+
+    if (strcmp(token, "macr") == 0) {
+        free(token);
+        current = skipCharacters(current);
+        current = skipWhitespace(current);
 
         if (*current == '\0') {
-            fputs(line, outputFile);
-            continue;
+            printError("Macro definition without a name.", lineNumber);
+            return;
+        }
+
+        if (*skipWhitespace(skipCharacters(current)) != '\0') {
+            printError("Extra non-whitespace characters after the macro name.", lineNumber);
+            return;
         }
 
         token = getNextToken(current);
 
-        if (strcmp(token, "endmacr") == 0) {
+        if (!validateLabel(token, lineNumber)) {
             free(token);
-            printError("End of macro definition without declaring a macro.", lineNumber);
-            continue;
+            return;
         }
 
-        if (strcmp(token, "macr") == 0) {
-            free(token);
-            current = skipCharacters(current);
-            current = skipWhitespace(current);
-
-            if (*current == '\0') {
-                printError("Macro definition without a name.", lineNumber);
-                continue;
-            }
-
-            if (*skipWhitespace(skipCharacters(current)) != '\0') {
-                printError("Extra non-whitespace characters after the macro name.", lineNumber);
-                continue;
-            }
-
-            token = getNextToken(current);
-
-            if (!validateLabel(token, lineNumber)) {
-                free(token);
-                continue;
-            }
-
-            if (getMacroContent(macroTable, token) != NULL) {
-                printError("Macro with the same name already defined.", lineNumber);
-            }
-
-            addMacro(&macroTable, token);
-            isInsideMacro = TRUE;
-            continue;
+        if (getMacroContent(*macros, token) != NULL) {
+            printError("Macro with the same name already defined.", lineNumber);
         }
 
-        content = getMacroContent(macroTable, token);
-        if (content != NULL) {
-            free(token);
-            fputs(content, outputFile);
-            continue;
-        }
-
-        free(token);
-        fputs(line, outputFile);
+        addMacro(macros, token);
+        *isInsideMacro = TRUE;
+        return;
     }
 
-    freeMacroTable(macroTable);
+    content = getMacroContent(*macros, token);
+    if (content != NULL) {
+        free(token);
+        fputs(content, outputFile);
+        return;
+    }
+
+    free(token);
+    fputs(line, outputFile);
 }
 
 boolean isEndOfMacro(char line[]) {
