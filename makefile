@@ -1,14 +1,14 @@
-assembler: assembler.o fileHandling.o fileCreation.o macroExpansion.o fileReading.o labelLinking.o encoder.o instructionInformation.o lineValidation.o utils.o macroTable.o wordList.o labelList.o foundLabelList.o usedLabelList.o
-	gcc -ansi -Wall -pedantic -o assembler assembler.o fileHandling.o fileCreation.o macroExpansion.o fileReading.o labelLinking.o encoder.o instructionInformation.o lineValidation.o utils.o macroTable.o wordList.o labelList.o foundLabelList.o usedLabelList.o
+assembler: assembler.o fileHandling.o fileGeneration.o macroExpansion.o fileReading.o labelLinking.o encoder.o instructionInformation.o lineValidation.o utils.o macroTable.o wordList.o labelList.o foundLabelList.o usedLabelList.o
+	gcc -ansi -Wall -pedantic -o assembler assembler.o fileHandling.o fileGeneration.o macroExpansion.o fileReading.o labelLinking.o encoder.o instructionInformation.o lineValidation.o utils.o macroTable.o wordList.o labelList.o foundLabelList.o usedLabelList.o
 
 assembler.o: assembler.c fileHandling.h globals.h
 	gcc -ansi -Wall -pedantic -c assembler.c
 
-fileHandling.o: fileHandling.c fileHandling.h macroExpansion.h fileReading.h labelLinking.h fileCreation.h macroTable.h wordList.h labelList.h foundLabelList.h usedLabelList.h globals.h
+fileHandling.o: fileHandling.c fileHandling.h macroExpansion.h fileReading.h labelLinking.h fileGeneration.h macroTable.h wordList.h labelList.h foundLabelList.h usedLabelList.h globals.h
 	gcc -ansi -Wall -pedantic -c fileHandling.c
 
-fileCreation.o: fileCreation.c fileCreation.h  utils.h globals.h
-	gcc -ansi -Wall -pedantic -c fileCreation.c
+fileGeneration.o: fileGeneration.c fileGeneration.h labelList.h foundLabelList.h utils.h globals.h
+	gcc -ansi -Wall -pedantic -c fileGeneration.c
 
 macroExpansion.o: macroExpansion.c macroExpansion.h macroTable.h lineValidation.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c macroExpansion.c

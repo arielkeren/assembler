@@ -13,7 +13,7 @@ void *allocate(size_t size) {
     allocatedPointer = malloc(size);
 
     if (allocatedPointer == NULL) {
-        printf("Failed to allocate enough memory.\n");
+        printf("ERROR: Failed to allocate enough memory.\n");
         exit(1);
     }
 
@@ -28,7 +28,7 @@ FILE *openFile(char fileName[], char extension[], char mode[]) {
     file = fopen(fileNameWithExtension, mode);
 
     if (file == NULL) {
-        printf("Failed to open a file: %s.\n", fileNameWithExtension);
+        printf("ERROR: Failed to open file: %s.\n", fileNameWithExtension);
     }
 
     free(fileNameWithExtension);

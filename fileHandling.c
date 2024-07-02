@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "fileCreation.h"
+#include "fileGeneration.h"
 #include "fileReading.h"
 #include "foundLabelList.h"
 #include "globals.h"
@@ -29,6 +29,7 @@ void compileFiles(char *fileNames[], int fileCount) {
     label *externLabels;
     usedLabel *usedLabels;
     foundLabel *foundLabels;
+    boolean shouldGenerateFiles;
     unsigned instructionCount;
     unsigned dataCount;
 
@@ -40,25 +41,34 @@ void compileFiles(char *fileNames[], int fileCount) {
         externLabels = NULL;
         usedLabels = NULL;
         foundLabels = NULL;
+        shouldGenerateFiles = TRUE;
         instructionCount = 0;
         dataCount = 0;
 
-        expandMacros(*fileNames, &macros);
+        if (!expandMacros(*fileNames, &macros)) {
+            freeMacroTable(macros);
+            fileCount--;
+            fileNames++;
+            continue;
+        }
 
-        readFile(*fileNames, macros, &code, &data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
+        shouldGenerateFiles = readFile(*fileNames, macros, &code, &data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
         freeMacroTable(macros);
 
-        linkLabels(externLabels, usedLabels, foundLabels, instructionCount);
+        shouldGenerateFiles = shouldGenerateFiles && linkLabels(externLabels, usedLabels, foundLabels, instructionCount);
 
-        generateEntFile(*fileNames, entryLabels, foundLabels, instructionCount);
+        shouldGenerateFiles = shouldGenerateFiles && generateEntFile(*fileNames, entryLabels, foundLabels, instructionCount, shouldGenerateFiles);
         freeLabelList(entryLabels);
 
-        generateExtFile(*fileNames, externLabels, usedLabels, foundLabels);
+        shouldGenerateFiles = shouldGenerateFiles && generateExtFile(*fileNames, externLabels, usedLabels, foundLabels, shouldGenerateFiles);
+        freeLabelList(externLabels);
         freeUsedLabelList(usedLabels);
         freeFoundLabelList(foundLabels);
-        freeLabelList(externLabels);
 
-        generateObFile(*fileNames, code, data, instructionCount, dataCount);
+        if (shouldGenerateFiles) {
+            generateObFile(*fileNames, code, data, instructionCount, dataCount);
+        }
+
         freeWordList(code);
         freeWordList(data);
 
