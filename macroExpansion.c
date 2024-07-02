@@ -23,6 +23,7 @@ boolean expandMacros(char fileName[], macro **macros) {
     outputFile = openFile(fileName, "am", "w");
 
     if (outputFile == NULL) {
+        fclose(inputFile);
         return FALSE;
     }
 

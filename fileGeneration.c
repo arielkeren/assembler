@@ -51,6 +51,7 @@ boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLab
     }
 
     isSuccessful = TRUE;
+    file = NULL;
 
     if (shouldGenerate) {
         file = openFile(fileName, "ext", "w");
@@ -62,7 +63,10 @@ boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLab
 
     isSuccessful = isSuccessful && insertExternLabels(shouldGenerate ? file : NULL, externLabels, usedLabels, foundLabels, getLongestLabel(externLabels));
 
-    fclose(file);
+    if (file != NULL) {
+        fclose(file);
+    }
+
     return isSuccessful;
 }
 
