@@ -13,7 +13,7 @@ fileCreation.o: fileCreation.c fileCreation.h  utils.h globals.h
 macroExpansion.o: macroExpansion.c macroExpansion.h macroTable.h lineValidation.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c macroExpansion.c
 
-fileReading.o: fileReading.c fileReading.h encoder.h lineValidation.h instructionInformation.h labelList.h foundLabelList.h usedLabelList.h utils.h globals.h
+fileReading.o: fileReading.c fileReading.h encoder.h lineValidation.h instructionInformation.h macroTable.h labelList.h foundLabelList.h usedLabelList.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c fileReading.c
 
 labelLinking.o: labelLinking.c labelLinking.h encoder.h labelList.h foundLabelList.h globals.h

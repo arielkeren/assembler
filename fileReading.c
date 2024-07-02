@@ -9,11 +9,12 @@
 #include "instructionInformation.h"
 #include "labelList.h"
 #include "lineValidation.h"
+#include "macroTable.h"
 #include "usedLabelList.h"
 #include "utils.h"
 #include "wordList.h"
 
-void readFile(char fileName[], word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void readFile(char fileName[], macro *macros, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     FILE *file;
 
     file = openFile(fileName, "am", "r");
@@ -22,12 +23,12 @@ void readFile(char fileName[], word **code, word **data, label **entryLabels, la
         return;
     }
 
-    readLines(file, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
+    readLines(file, macros, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
     fclose(file);
 }
 
-void readLines(FILE *file, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void readLines(FILE *file, macro *macros, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char line[82];
     unsigned lineNumber;
 
@@ -49,11 +50,11 @@ void readLines(FILE *file, word **code, word **data, label **entryLabels, label 
             continue;
         }
 
-        handleLine(line, lineNumber, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
+        handleLine(line, lineNumber, macros, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
     }
 }
 
-void handleLine(char line[], unsigned lineNumber, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+void handleLine(char line[], unsigned lineNumber, macro *macros, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     char *token;
     char *nextToken;
 
@@ -72,7 +73,11 @@ void handleLine(char line[], unsigned lineNumber, word **code, word **data, labe
         nextToken = getNextToken(line);
 
         if (getFoundLabel(*foundLabels, token) != NULL) {
-            printError("Duplicate label.", lineNumber);
+            printError("Label already defined.", lineNumber);
+        }
+
+        if (getMacroContent(macros, token) != NULL) {
+            printError("Label's name already taken by a macro.", lineNumber);
         }
 
         if (strcmp(nextToken, ".entry") != 0 && strcmp(nextToken, ".extern") != 0) {
@@ -98,10 +103,18 @@ void handleLine(char line[], unsigned lineNumber, word **code, word **data, labe
             printError("Label already marked as entry.", lineNumber);
         }
 
+        if (getMacroContent(macros, token) != NULL) {
+            printError("Label's name already taken by a macro.", lineNumber);
+        }
+
         addLabel(entryLabels, nextToken, lineNumber);
     } else if (strcmp(token, ".extern") == 0) {
         if (containsLabel(*externLabels, nextToken)) {
             printError("Label already marked as extern.", lineNumber);
+        }
+
+        if (getMacroContent(macros, token) != NULL) {
+            printError("Label's name already taken by a macro.", lineNumber);
         }
 
         addLabel(externLabels, nextToken, lineNumber);

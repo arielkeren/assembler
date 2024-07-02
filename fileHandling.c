@@ -44,20 +44,23 @@ void compileFiles(char *fileNames[], int fileCount) {
         dataCount = 0;
 
         expandMacros(*fileNames, &macros);
-        readFile(*fileNames, &code, &data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
+
+        readFile(*fileNames, macros, &code, &data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
+        freeMacroTable(macros);
+
         linkLabels(externLabels, usedLabels, foundLabels, instructionCount);
 
         generateEntFile(*fileNames, entryLabels, foundLabels, instructionCount);
-        generateExtFile(*fileNames, externLabels, usedLabels, foundLabels);
-        generateObFile(*fileNames, code, data, instructionCount, dataCount);
-
-        freeWordList(code);
-        freeWordList(data);
-        freeMacroTable(macros);
         freeLabelList(entryLabels);
-        freeLabelList(externLabels);
+
+        generateExtFile(*fileNames, externLabels, usedLabels, foundLabels);
         freeUsedLabelList(usedLabels);
         freeFoundLabelList(foundLabels);
+        freeLabelList(externLabels);
+
+        generateObFile(*fileNames, code, data, instructionCount, dataCount);
+        freeWordList(code);
+        freeWordList(data);
 
         fileCount--;
         fileNames++;
