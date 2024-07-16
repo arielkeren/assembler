@@ -34,8 +34,8 @@ void compileFiles(char *fileNames[], int fileCount) {
     unsigned dataCount;
 
     while (fileCount > 0) {
-        code = NULL;
-        data = NULL;
+        code = createWord();
+        data = createWord();
         macros = NULL;
         entryLabels = NULL;
         externLabels = NULL;
@@ -52,7 +52,7 @@ void compileFiles(char *fileNames[], int fileCount) {
             continue;
         }
 
-        shouldGenerateFiles = readFile(*fileNames, macros, &code, &data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
+        shouldGenerateFiles = readFile(*fileNames, macros, code, data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
         freeMacroTable(macros);
 
         shouldGenerateFiles = shouldGenerateFiles && linkLabels(externLabels, usedLabels, foundLabels, instructionCount);
@@ -66,7 +66,7 @@ void compileFiles(char *fileNames[], int fileCount) {
         freeFoundLabelList(foundLabels);
 
         if (shouldGenerateFiles) {
-            generateObFile(*fileNames, code, data, instructionCount, dataCount);
+            generateObFile(*fileNames, code->next, data->next, instructionCount, dataCount);
         }
 
         freeWordList(code);

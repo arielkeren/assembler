@@ -1,16 +1,3 @@
-macr asdf
-    sub r1, r4
-cmp r3, #-6
-sub r1, r4
-cmp r3, #-6
-endmacr
-
-macr aaa
-    mov *r6, L3
-    mov *r6, L3
-    mov *r6, L3
-endmacr
-
 ; file ps.as
 .entry LIST
 .extern fn1
@@ -19,10 +6,6 @@ jsr fn1
 LOOP: prn #48
 lea STR, r6
 inc r6
-
-asdf
-aaa
-
 mov *r6, L3
 sub r1, r4
 cmp r3, #-6
@@ -38,4 +21,3 @@ LIST: .data 6, -9
 .data -100
 K: .data 31
 .extern L3
-asdf

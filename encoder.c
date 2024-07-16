@@ -92,14 +92,14 @@ void encodeString(word **data, char string[], unsigned *dataCount) {
 
     while (*string != '\"') {
         (*dataCount)++;
-        addWord(data);
+        *data = addWord(*data);
         encodeData(*data, *string);
 
         string++;
     }
 
     (*dataCount)++;
-    addWord(data);
+    *data = addWord(*data);
 }
 
 void encodeNumberList(word **data, char numberList[], unsigned *dataCount) {
@@ -109,7 +109,7 @@ void encodeNumberList(word **data, char numberList[], unsigned *dataCount) {
         token = getNextToken(numberList);
         removeEnding(token, ',');
         (*dataCount)++;
-        addWord(data);
+        *data = addWord(*data);
         encodeData(*data, atoi(token));
 
         free(token);

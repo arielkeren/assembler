@@ -14,7 +14,7 @@
 #include "utils.h"
 #include "wordList.h"
 
-boolean readFile(char fileName[], macro *macros, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+boolean readFile(char fileName[], macro *macros, word *code, word *data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     boolean isSuccessful;
     FILE *file;
 
@@ -30,7 +30,7 @@ boolean readFile(char fileName[], macro *macros, word **code, word **data, label
     return isSuccessful;
 }
 
-boolean readLines(FILE *file, macro *macros, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+boolean readLines(FILE *file, macro *macros, word *code, word *data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     boolean isSuccessful;
     char line[82];
     unsigned lineNumber;
@@ -52,7 +52,7 @@ boolean readLines(FILE *file, macro *macros, word **code, word **data, label **e
             continue;
         }
 
-        isSuccessful = isSuccessful && handleLine(line, lineNumber, macros, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
+        isSuccessful = isSuccessful && handleLine(line, lineNumber, macros, &code, &data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
         if (*instructionCount + *dataCount > 3997) {
             printError("Too many words in the program - memory overflow.", lineNumber);
@@ -68,13 +68,13 @@ boolean handleLine(char line[], unsigned lineNumber, macro *macros, word **code,
     char *token;
     char *nextToken;
 
-    isSuccessful = TRUE;
     line = skipWhitespace(line);
 
-    if (line[0] == ';' || line[0] == '\0') {
+    if (*line == ';' || *line == '\0') {
         return TRUE;
     }
 
+    isSuccessful = TRUE;
     token = getNextToken(line);
 
     if (checkIfLabel(token)) {
@@ -161,7 +161,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
     token = getNextToken(line);
 
     (*instructionCount)++;
-    addWord(code);
+    *code = addWord(*code);
     encodeMetadata(*code, 'A');
     encodeOperation(*code, token);
 
@@ -180,7 +180,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
     firstOperandType = getOperandType(firstOperand);
 
     if (operandCount == 1) {
-        addWord(code);
+        *code = addWord(*code);
         encodeExtraWord(*code, firstOperand, FALSE);
 
         if (firstOperandType == DIRECT) {
@@ -202,11 +202,11 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
 
     if ((firstOperandType == DIRECT_REGISTER || firstOperandType == INDIRECT_REGISTER) && (secondOperandType == DIRECT_REGISTER || secondOperandType == INDIRECT_REGISTER)) {
         (*instructionCount)++;
-        addWord(code);
+        *code = addWord(*code);
         encodeExtraWord(*code, firstOperand, TRUE);
         encodeExtraWord(*code, secondOperand, FALSE);
     } else {
-        addWord(code);
+        *code = addWord(*code);
         encodeExtraWord(*code, firstOperand, TRUE);
 
         if (firstOperandType == DIRECT) {
@@ -216,7 +216,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
         }
         (*instructionCount)++;
 
-        addWord(code);
+        *code = addWord(*code);
         encodeExtraWord(*code, secondOperand, FALSE);
 
         if (secondOperandType == DIRECT) {

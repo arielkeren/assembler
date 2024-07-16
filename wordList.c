@@ -5,15 +5,25 @@
 #include "globals.h"
 #include "utils.h"
 
-void addWord(word **wordList) {
+word *addWord(word *wordList) {
+    word *newWord;
+
+    newWord = createWord();
+    wordList->next = newWord;
+
+    return newWord;
+}
+
+word *createWord() {
     word *newWord;
 
     newWord = allocate(sizeof(word));
 
     newWord->data1 = 0;
     newWord->data2 = 0;
-    newWord->next = *wordList;
-    *wordList = newWord;
+    newWord->next = NULL;
+
+    return newWord;
 }
 
 void freeWordList(word *wordList) {

@@ -3,7 +3,8 @@
 
 #include "globals.h"
 
-void addWord(word **wordList);
+word *addWord(word *wordList);
+word *createWord();
 void freeWordList(word *wordList);
 
 #endif
