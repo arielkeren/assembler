@@ -142,7 +142,7 @@ boolean handleLine(char line[], unsigned lineNumber, macro *macros, word **code,
         encodeString(data, nextToken, dataCount);
         free(nextToken);
     } else {
-        handleOperation(line, code, usedLabels, instructionCount);
+        handleOperation(line, lineNumber, code, usedLabels, instructionCount);
         free(nextToken);
     }
 
@@ -150,7 +150,7 @@ boolean handleLine(char line[], unsigned lineNumber, macro *macros, word **code,
     return isSuccessful;
 }
 
-void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned *instructionCount) {
+void handleOperation(char line[], unsigned lineNumber, word **code, usedLabel **usedLabels, unsigned *instructionCount) {
     char *token;
     int operandCount;
     char *firstOperand;
@@ -184,7 +184,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
         encodeExtraWord(*code, firstOperand, FALSE);
 
         if (firstOperandType == DIRECT) {
-            addUsedLabel(usedLabels, firstOperand, *instructionCount + 100, *code);
+            addUsedLabel(usedLabels, firstOperand, *instructionCount + 100, lineNumber, *code);
         } else {
             free(firstOperand);
         }
@@ -210,7 +210,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
         encodeExtraWord(*code, firstOperand, TRUE);
 
         if (firstOperandType == DIRECT) {
-            addUsedLabel(usedLabels, firstOperand, *instructionCount + 100, *code);
+            addUsedLabel(usedLabels, firstOperand, *instructionCount + 100, lineNumber, *code);
         } else {
             free(firstOperand);
         }
@@ -220,7 +220,7 @@ void handleOperation(char line[], word **code, usedLabel **usedLabels, unsigned 
         encodeExtraWord(*code, secondOperand, FALSE);
 
         if (secondOperandType == DIRECT) {
-            addUsedLabel(usedLabels, secondOperand, *instructionCount + 100, *code);
+            addUsedLabel(usedLabels, secondOperand, *instructionCount + 100, lineNumber, *code);
         } else {
             free(secondOperand);
         }

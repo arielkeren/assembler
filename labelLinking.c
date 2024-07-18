@@ -1,11 +1,10 @@
 #include "labelLinking.h"
 
-#include <stdio.h>
-
 #include "encoder.h"
 #include "foundLabelList.h"
 #include "globals.h"
 #include "labelList.h"
+#include "utils.h"
 
 boolean linkLabels(label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount) {
     boolean isSuccessful;
@@ -20,7 +19,7 @@ boolean linkLabels(label *externLabels, usedLabel *usedLabels, foundLabel *found
             if (containsLabel(externLabels, usedLabels->name)) {
                 encodeMetadata(usedLabels->wordPointer, 'E');
             } else {
-                printf("ERROR: Definition of label \"%s\" not found.\n", usedLabels->name);
+                printError("Definition of label not found.", usedLabels->lineNumber);
                 isSuccessful = FALSE;
             }
         } else {

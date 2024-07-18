@@ -29,6 +29,7 @@ typedef struct labelStruct {
 typedef struct usedLabelStruct {
     char *name;
     unsigned address;
+    unsigned lineNumber;
     word *wordPointer;
     struct usedLabelStruct *next;
 } usedLabel;
@@ -39,7 +40,5 @@ typedef struct foundLabelStruct {
     boolean isData;
     struct foundLabelStruct *next;
 } foundLabel;
-
-extern const char *OPERATIONS[16];
 
 #endif
