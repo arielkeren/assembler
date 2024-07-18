@@ -19,85 +19,30 @@ void generateObFile(char fileName[], word *code, word *data, unsigned instructio
 }
 
 boolean generateEntFile(char fileName[], label *entryLabels, foundLabel *foundLabels, unsigned instructionCount, boolean shouldGenerate) {
-    boolean isSuccessful;
-    FILE *file;
-
-    if (entryLabels == NULL) {
-        return TRUE;
-    }
-
-    isSuccessful = TRUE;
-
-    if (shouldGenerate) {
-        file = openFile(fileName, "ent", "w");
-
-        if (file == NULL) {
-            isSuccessful = FALSE;
-        }
-    }
-
-    isSuccessful = isSuccessful && insertEntryLabels(shouldGenerate ? file : NULL, entryLabels, foundLabels, instructionCount, getLongestLabel(entryLabels));
-
-    fclose(file);
-    return isSuccessful;
-}
-
-boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, boolean shouldGenerate) {
-    boolean isSuccessful;
-    FILE *file;
-
-    if (externLabels == NULL) {
-        return TRUE;
-    }
-
-    isSuccessful = TRUE;
-    file = NULL;
-
-    if (shouldGenerate) {
-        file = openFile(fileName, "ext", "w");
-
-        if (file == NULL) {
-            isSuccessful = FALSE;
-        }
-    }
-
-    isSuccessful = isSuccessful && insertExternLabels(shouldGenerate ? file : NULL, externLabels, usedLabels, foundLabels, getLongestLabel(externLabels));
-
-    if (file != NULL) {
-        fclose(file);
-    }
-
-    return isSuccessful;
-}
-
-void insertWordList(FILE *file, word *wordList, unsigned startingAddress) {
-    while (wordList != NULL) {
-        fprintf(file, "%04u %05o\n", startingAddress, wordList->data1 + ((unsigned)wordList->data2 << 8));
-        startingAddress++;
-        wordList = wordList->next;
-    }
-}
-
-boolean insertEntryLabels(FILE *file, label *entryLabels, foundLabel *foundLabels, unsigned instructionCount, unsigned char longest) {
-    boolean isSuccessful;
     foundLabel *matchingFoundLabel;
+    FILE *file;
+    unsigned char longest;
 
-    isSuccessful = TRUE;
+    file = NULL;
+    longest = getLongestLabel(entryLabels);
 
     while (entryLabels != NULL) {
         matchingFoundLabel = getFoundLabel(foundLabels, entryLabels->name);
 
         if (matchingFoundLabel == NULL) {
             printError("Label marked as .entry, but definition not found.", entryLabels->lineNumber);
-            isSuccessful = FALSE;
-            file = NULL;
+            shouldGenerate = FALSE;
+            entryLabels = entryLabels->next;
+            continue;
+        }
+
+        if (!shouldGenerate) {
             entryLabels = entryLabels->next;
             continue;
         }
 
         if (file == NULL) {
-            entryLabels = entryLabels->next;
-            continue;
+            file = openFile(fileName, "ent", "w");
         }
 
         if (matchingFoundLabel->isData) {
@@ -109,25 +54,29 @@ boolean insertEntryLabels(FILE *file, label *entryLabels, foundLabel *foundLabel
         entryLabels = entryLabels->next;
     }
 
-    return isSuccessful;
+    if (file != NULL) {
+        fclose(file);
+    }
+
+    return shouldGenerate;
 }
-
-boolean insertExternLabels(FILE *file, label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned char longest) {
-    boolean isSuccessful;
+boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, boolean shouldGenerate) {
     usedLabel *currentUsedLabel;
+    FILE *file;
+    unsigned char longest;
 
-    isSuccessful = TRUE;
+    file = NULL;
+    longest = getLongestLabel(externLabels);
 
     while (externLabels != NULL) {
         if (getFoundLabel(foundLabels, externLabels->name) != NULL) {
             printError("Label marked as .extern, but also defined.", externLabels->lineNumber);
-            isSuccessful = FALSE;
-            file = NULL;
+            shouldGenerate = FALSE;
             externLabels = externLabels->next;
             continue;
         }
 
-        if (file == NULL) {
+        if (!shouldGenerate) {
             externLabels = externLabels->next;
             continue;
         }
@@ -136,6 +85,10 @@ boolean insertExternLabels(FILE *file, label *externLabels, usedLabel *usedLabel
 
         while (currentUsedLabel != NULL) {
             if (strcmp(externLabels->name, currentUsedLabel->name) == 0) {
+                if (file == NULL) {
+                    file = openFile(fileName, "ext", "w");
+                }
+
                 insertLabel(file, externLabels->name, currentUsedLabel->address, longest);
             }
 
@@ -145,7 +98,19 @@ boolean insertExternLabels(FILE *file, label *externLabels, usedLabel *usedLabel
         externLabels = externLabels->next;
     }
 
-    return isSuccessful;
+    if (file != NULL) {
+        fclose(file);
+    }
+
+    return shouldGenerate;
+}
+
+void insertWordList(FILE *file, word *wordList, unsigned startingAddress) {
+    while (wordList != NULL) {
+        fprintf(file, "%04u %05o\n", startingAddress, wordList->data1 + ((unsigned)wordList->data2 << 8));
+        startingAddress++;
+        wordList = wordList->next;
+    }
 }
 
 void insertLabel(FILE *file, char labelName[], unsigned address, unsigned char longest) {
