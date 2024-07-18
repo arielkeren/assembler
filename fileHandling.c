@@ -55,7 +55,7 @@ void compileFiles(char *fileNames[], int fileCount) {
         shouldGenerateFiles = readFile(*fileNames, macros, code, data, &entryLabels, &externLabels, &usedLabels, &foundLabels, &instructionCount, &dataCount);
         freeMacroTable(macros);
 
-        shouldGenerateFiles = shouldGenerateFiles && linkLabels(externLabels, usedLabels, foundLabels, instructionCount);
+        shouldGenerateFiles = shouldGenerateFiles && linkLabels(*fileNames, externLabels, usedLabels, foundLabels, instructionCount);
 
         shouldGenerateFiles = shouldGenerateFiles && generateEntFile(*fileNames, entryLabels, foundLabels, instructionCount, shouldGenerateFiles);
         freeLabelList(entryLabels);

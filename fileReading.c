@@ -24,13 +24,13 @@ boolean readFile(char fileName[], macro *macros, word *code, word *data, label *
         return FALSE;
     }
 
-    isSuccessful = readLines(file, macros, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
+    isSuccessful = readLines(fileName, file, macros, code, data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
     fclose(file);
     return isSuccessful;
 }
 
-boolean readLines(FILE *file, macro *macros, word *code, word *data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+boolean readLines(char fileName[], FILE *file, macro *macros, word *code, word *data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     boolean isSuccessful;
     char line[82];
     unsigned lineNumber;
@@ -42,20 +42,20 @@ boolean readLines(FILE *file, macro *macros, word *code, word *data, label **ent
         lineNumber++;
 
         if (line[strlen(line) - 1] != '\n' && !feof(file)) {
-            printError("Line is too long. Maximum length is 80 characters (including whitespace).", lineNumber);
+            printError("Line is too long. Maximum length is 80 characters (including whitespace).", fileName, lineNumber);
             isSuccessful = FALSE;
             continue;
         }
 
-        if (!validateLine(line, lineNumber)) {
+        if (!validateLine(line, fileName, lineNumber)) {
             isSuccessful = FALSE;
             continue;
         }
 
-        isSuccessful = isSuccessful && handleLine(line, lineNumber, macros, &code, &data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
+        isSuccessful = isSuccessful && handleLine(fileName, line, lineNumber, macros, &code, &data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
         if (*instructionCount + *dataCount > 3997) {
-            printError("Too many words in the program - memory overflow.", lineNumber);
+            printError("Too many words in the program - memory overflow.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
     }
@@ -63,7 +63,7 @@ boolean readLines(FILE *file, macro *macros, word *code, word *data, label **ent
     return isSuccessful;
 }
 
-boolean handleLine(char line[], unsigned lineNumber, macro *macros, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+boolean handleLine(char fileName[], char line[], unsigned lineNumber, macro *macros, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     boolean isSuccessful;
     char *token;
     char *nextToken;
@@ -84,12 +84,12 @@ boolean handleLine(char line[], unsigned lineNumber, macro *macros, word **code,
         nextToken = getNextToken(line);
 
         if (getFoundLabel(*foundLabels, token) != NULL) {
-            printError("Label already defined.", lineNumber);
+            printError("Label already defined.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
 
         if (getMacroContent(macros, token) != NULL) {
-            printError("Label's name already taken by a macro.", lineNumber);
+            printError("Label's name already taken by a macro.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
 
@@ -113,24 +113,24 @@ boolean handleLine(char line[], unsigned lineNumber, macro *macros, word **code,
 
     if (strcmp(token, ".entry") == 0) {
         if (containsLabel(*entryLabels, nextToken)) {
-            printError("Label already marked as entry.", lineNumber);
+            printError("Label already marked as entry.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
 
         if (getMacroContent(macros, token) != NULL) {
-            printError("Label's name already taken by a macro.", lineNumber);
+            printError("Label's name already taken by a macro.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
 
         addLabel(entryLabels, nextToken, lineNumber);
     } else if (strcmp(token, ".extern") == 0) {
         if (containsLabel(*externLabels, nextToken)) {
-            printError("Label already marked as extern.", lineNumber);
+            printError("Label already marked as extern.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
 
         if (getMacroContent(macros, token) != NULL) {
-            printError("Label's name already taken by a macro.", lineNumber);
+            printError("Label's name already taken by a macro.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
 

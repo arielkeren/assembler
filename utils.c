@@ -123,10 +123,29 @@ char *addExtension(char fileName[], char extension[]) {
     return name;
 }
 
-void printError(char message[], unsigned lineNumber) {
-    printf("ERROR ON LINE %u: %s\n", lineNumber, message);
+void printMessage(char message[], char fileName[], unsigned lineNumber, boolean isError, boolean isMacro) {
+    static unsigned errorCount = 0;
+    static unsigned warningCount = 0;
+
+    if (isError) {
+        printf("\n--- Error #%u ---\n", ++errorCount);
+    } else {
+        printf("\n--- Warning #%u ---\n", ++warningCount);
+    }
+
+    printf("File: %s.a%c\n", fileName, isMacro ? 's' : 'm');
+    printf("Line: %u\n", lineNumber);
+    printf("%s\n", message);
 }
 
-void printWarning(char message[], unsigned lineNumber) {
-    printf("WARNING ON LINE %u: %s\n", lineNumber, message);
+void printError(char message[], char fileName[], unsigned lineNumber) {
+    printMessage(message, fileName, lineNumber, TRUE, FALSE);
+}
+
+void printMacroError(char message[], char fileName[], unsigned lineNumber) {
+    printMessage(message, fileName, lineNumber, TRUE, TRUE);
+}
+
+void printWarning(char message[], char fileName[], unsigned lineNumber) {
+    printMessage(message, fileName, lineNumber, FALSE, FALSE);
 }

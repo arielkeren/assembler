@@ -27,7 +27,7 @@ boolean expandMacros(char fileName[], macro **macros) {
         return FALSE;
     }
 
-    isSuccessful = expandFileMacros(inputFile, outputFile, macros);
+    isSuccessful = expandFileMacros(inputFile, outputFile, macros, fileName);
 
     fclose(inputFile);
     fclose(outputFile);
@@ -35,7 +35,7 @@ boolean expandMacros(char fileName[], macro **macros) {
     return isSuccessful;
 }
 
-boolean expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros) {
+boolean expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros, char fileName[]) {
     boolean isSuccessful;
     boolean isInsideMacro;
     unsigned lineNumber;
@@ -47,13 +47,13 @@ boolean expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros) {
 
     while (fgets(line, sizeof(line), inputFile) != NULL) {
         lineNumber++;
-        isSuccessful = isSuccessful && expandLineMacros(inputFile, outputFile, macros, line, lineNumber, &isInsideMacro);
+        isSuccessful = isSuccessful && expandLineMacros(inputFile, outputFile, macros, fileName, line, lineNumber, &isInsideMacro);
     }
 
     return isSuccessful;
 }
 
-boolean expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char line[], unsigned lineNumber, boolean *isInsideMacro) {
+boolean expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char fileName[], char line[], unsigned lineNumber, boolean *isInsideMacro) {
     char *current;
     char *token;
     char *content;
@@ -79,7 +79,7 @@ boolean expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char
 
     if (strcmp(token, "endmacr") == 0) {
         free(token);
-        printError("End of macro definition without declaring a macro.", lineNumber);
+        printMacroError("End of macro definition without declaring a macro.", fileName, lineNumber);
         return FALSE;
     }
 
@@ -89,24 +89,24 @@ boolean expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char
         current = skipWhitespace(current);
 
         if (*current == '\0') {
-            printError("Macro definition without a name.", lineNumber);
+            printMacroError("Macro definition without a name.", fileName, lineNumber);
             return FALSE;
         }
 
         if (*skipWhitespace(skipCharacters(current)) != '\0') {
-            printError("Extra non-whitespace characters after the macro name.", lineNumber);
+            printMacroError("Extra non-whitespace characters after the macro name.", fileName, lineNumber);
             return FALSE;
         }
 
         token = getNextToken(current);
 
-        if (!validateLabel(token, lineNumber)) {
+        if (!validateMacro(token, fileName, lineNumber)) {
             free(token);
             return FALSE;
         }
 
         if (getMacroContent(*macros, token) != NULL) {
-            printError("Macro with the same name already defined.", lineNumber);
+            printMacroError("Macro with the same name already defined.", fileName, lineNumber);
             return FALSE;
         }
 

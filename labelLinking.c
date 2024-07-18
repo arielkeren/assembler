@@ -6,7 +6,7 @@
 #include "labelList.h"
 #include "utils.h"
 
-boolean linkLabels(label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount) {
+boolean linkLabels(char fileName[], label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount) {
     boolean isSuccessful;
     foundLabel *matchingFoundLabel;
 
@@ -19,7 +19,7 @@ boolean linkLabels(label *externLabels, usedLabel *usedLabels, foundLabel *found
             if (containsLabel(externLabels, usedLabels->name)) {
                 encodeMetadata(usedLabels->wordPointer, 'E');
             } else {
-                printError("Definition of label not found.", usedLabels->lineNumber);
+                printError("Definition of label not found.", fileName, usedLabels->lineNumber);
                 isSuccessful = FALSE;
             }
         } else {

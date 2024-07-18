@@ -30,7 +30,7 @@ boolean generateEntFile(char fileName[], label *entryLabels, foundLabel *foundLa
         matchingFoundLabel = getFoundLabel(foundLabels, entryLabels->name);
 
         if (matchingFoundLabel == NULL) {
-            printError("Label marked as .entry, but definition not found.", entryLabels->lineNumber);
+            printError("Label marked as .entry, but definition not found.", fileName, entryLabels->lineNumber);
             shouldGenerate = FALSE;
             entryLabels = entryLabels->next;
             continue;
@@ -70,7 +70,7 @@ boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLab
 
     while (externLabels != NULL) {
         if (getFoundLabel(foundLabels, externLabels->name) != NULL) {
-            printError("Label marked as .extern, but also defined.", externLabels->lineNumber);
+            printError("Label marked as .extern, but also defined.", fileName, externLabels->lineNumber);
             shouldGenerate = FALSE;
             externLabels = externLabels->next;
             continue;
