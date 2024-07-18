@@ -12,10 +12,17 @@ void generateObFile(char fileName[], word *code, word *data, unsigned instructio
     FILE *file;
 
     file = openFile(fileName, "ob", "w");
+
+    if (file == NULL) {
+        return;
+    }
+
     fprintf(file, "%u %u\n", instructionCount, dataCount);
 
     insertWordList(file, code, 100);
     insertWordList(file, data, instructionCount + 100);
+
+    fclose(file);
 }
 
 boolean generateEntFile(char fileName[], label *entryLabels, foundLabel *foundLabels, unsigned instructionCount, boolean shouldGenerate) {
@@ -43,6 +50,10 @@ boolean generateEntFile(char fileName[], label *entryLabels, foundLabel *foundLa
 
         if (file == NULL) {
             file = openFile(fileName, "ent", "w");
+
+            if (file == NULL) {
+                return FALSE;
+            }
         }
 
         if (matchingFoundLabel->isData) {
@@ -87,6 +98,10 @@ boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLab
             if (strcmp(externLabels->name, currentUsedLabel->name) == 0) {
                 if (file == NULL) {
                     file = openFile(fileName, "ext", "w");
+
+                    if (file == NULL) {
+                        return FALSE;
+                    }
                 }
 
                 insertLabel(file, externLabels->name, currentUsedLabel->address, longest);

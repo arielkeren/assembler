@@ -12,11 +12,12 @@
 #include "macroExpansion.h"
 #include "macroTable.h"
 #include "usedLabelList.h"
+#include "utils.h"
 #include "wordList.h"
 
 void checkNoFiles(int fileCount) {
     if (fileCount == 0) {
-        printf("No files to compile.\n");
+        printCriticalError("No files provided to compile. Add the file names (without the extensions) to compile as command line arguments. Exiting the program...");
         exit(1);
     }
 }

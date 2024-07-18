@@ -4,7 +4,7 @@ assembler: assembler.o fileHandling.o fileGeneration.o macroExpansion.o fileRead
 assembler.o: assembler.c fileHandling.h globals.h
 	gcc -ansi -Wall -pedantic -c assembler.c
 
-fileHandling.o: fileHandling.c fileHandling.h macroExpansion.h fileReading.h labelLinking.h fileGeneration.h macroTable.h wordList.h labelList.h foundLabelList.h usedLabelList.h globals.h
+fileHandling.o: fileHandling.c fileHandling.h macroExpansion.h fileReading.h labelLinking.h fileGeneration.h macroTable.h wordList.h labelList.h foundLabelList.h usedLabelList.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c fileHandling.c
 
 fileGeneration.o: fileGeneration.c fileGeneration.h labelList.h foundLabelList.h utils.h globals.h

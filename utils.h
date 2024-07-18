@@ -19,5 +19,6 @@ void printMessage(char message[], char fileName[], unsigned lineNumber, boolean 
 void printError(char message[], char fileName[], unsigned lineNumber);
 void printMacroError(char message[], char fileName[], unsigned lineNumber);
 void printWarning(char message[], char fileName[], unsigned lineNumber);
+void printCriticalError(char message[]);
 
 #endif

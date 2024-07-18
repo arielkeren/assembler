@@ -13,7 +13,7 @@ void *allocate(size_t size) {
     allocatedPointer = malloc(size);
 
     if (allocatedPointer == NULL) {
-        printf("ERROR: Failed to allocate enough memory.\n");
+        printCriticalError("Failed to allocate enough memory. Exiting the program...");
         exit(1);
     }
 
@@ -22,13 +22,19 @@ void *allocate(size_t size) {
 
 FILE *openFile(char fileName[], char extension[], char mode[]) {
     char *fileNameWithExtension;
+    char *errorMessage;
     FILE *file;
 
     fileNameWithExtension = addExtension(fileName, extension);
     file = fopen(fileNameWithExtension, mode);
 
     if (file == NULL) {
-        printf("ERROR: Failed to open file: %s.\n", fileNameWithExtension);
+        errorMessage = malloc(sizeof(char) * (strlen(fileNameWithExtension) + 53 + 1));
+
+        sprintf(errorMessage, "Failed to open file: %s. Moving on to the next file...", fileNameWithExtension);
+        printCriticalError(errorMessage);
+
+        free(errorMessage);
     }
 
     free(fileNameWithExtension);
@@ -148,4 +154,9 @@ void printMacroError(char message[], char fileName[], unsigned lineNumber) {
 
 void printWarning(char message[], char fileName[], unsigned lineNumber) {
     printMessage(message, fileName, lineNumber, FALSE, FALSE);
+}
+
+void printCriticalError(char message[]) {
+    printf("\n--- Critical Error ---\n");
+    printf("%s\n", message);
 }
