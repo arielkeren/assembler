@@ -16,7 +16,7 @@ macroExpansion.o: macroExpansion.c macroExpansion.h macroTable.h lineValidation.
 fileReading.o: fileReading.c fileReading.h encoder.h lineValidation.h instructionInformation.h macroTable.h labelList.h foundLabelList.h usedLabelList.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c fileReading.c
 
-labelLinking.o: labelLinking.c labelLinking.h encoder.h labelList.h foundLabelList.h globals.h
+labelLinking.o: labelLinking.c labelLinking.h encoder.h labelList.h foundLabelList.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c labelLinking.c
 
 encoder.o: encoder.c encoder.h instructionInformation.h wordList.h utils.h globals.h
