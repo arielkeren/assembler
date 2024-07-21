@@ -8,7 +8,7 @@
 
 char *getMacroContent(macro *macroTable, char macroName[]) {
     while (macroTable != NULL) {
-        if (strcmp(macroTable->name, macroName) == 0) {
+        if (strcmp(macroTable->name, macroName) == EQUAL_STRINGS) {
             return macroTable->content;
         }
 
@@ -31,7 +31,7 @@ void addMacro(macro **macroTable, char macroName[]) {
 void addMacroContent(macro *macroToModify, char content[]) {
     char *newContent;
 
-    newContent = allocate(sizeof(char) * (strlen(macroToModify->content) + strlen(content) + 1));
+    newContent = allocate(sizeof(char) * (strlen(macroToModify->content) + strlen(content) + NULL_BYTE));
 
     strcpy(newContent, macroToModify->content);
     free(macroToModify->content);

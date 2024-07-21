@@ -14,7 +14,7 @@ void *allocate(size_t size) {
 
     if (allocatedPointer == NULL) {
         printCriticalError("Failed to allocate enough memory. Exiting the program...");
-        exit(1);
+        exit(ERROR);
     }
 
     return allocatedPointer;
@@ -29,7 +29,7 @@ FILE *openFile(char fileName[], char extension[], char mode[]) {
     file = fopen(fileNameWithExtension, mode);
 
     if (file == NULL) {
-        errorMessage = malloc(sizeof(char) * (strlen(fileNameWithExtension) + 53 + 1));
+        errorMessage = malloc(sizeof(char) * (strlen(fileNameWithExtension) + ERROR_MESSAGE_LENGTH + NULL_BYTE));
 
         sprintf(errorMessage, "Failed to open file: %s. Moving on to the next file...", fileNameWithExtension);
         printCriticalError(errorMessage);
@@ -61,11 +61,11 @@ char *getNextToken(char line[]) {
 
     size = skipCharacters(line) - line;
 
-    if (size == 0) {
+    if (size == NO_TOKEN) {
         return NULL;
     }
 
-    token = allocate(sizeof(char) * (size + 1));
+    token = allocate(sizeof(char) * (size + NULL_BYTE));
     strncpy(token, line, size);
     token[size] = '\0';
     return token;
@@ -76,13 +76,13 @@ void removeEnding(char string[], char ending) {
 
     length = strlen(string);
 
-    if (string[length - 1] == ending) {
-        string[length - 1] = '\0';
+    if (string[length - LAST_INDEX_DIFF] == ending) {
+        string[length - LAST_INDEX_DIFF] = '\0';
     }
 }
 
 boolean checkIfLabel(char token[]) {
-    return token[strlen(token) - 1] == ':';
+    return token[strlen(token) - LAST_INDEX_DIFF] == ':';
 }
 
 boolean checkIfFollowedByComma(char line[]) {
@@ -119,19 +119,27 @@ char *addExtension(char fileName[], char extension[]) {
     fileNameLength = strlen(fileName);
     extensionLength = strlen(extension);
 
-    name = allocate(sizeof(char) * (fileNameLength + extensionLength + 2));
+    name = allocate(sizeof(char) * (fileNameLength + DOT_BYTE + extensionLength + NULL_BYTE));
 
     strcpy(name, fileName);
     name[fileNameLength] = '.';
-    strcpy(&name[fileNameLength + 1], extension);
-    name[fileNameLength + extensionLength + 1] = '\0';
+    strcpy(&name[fileNameLength + DOT_BYTE], extension);
+    name[fileNameLength + DOT_BYTE + extensionLength] = '\0';
 
     return name;
 }
 
+unsigned char convertDigitToNumber(char digit) {
+    if (!isdigit(digit)) {
+        return INVALID_DIGIT;
+    }
+
+    return (unsigned char)(digit - '0');
+}
+
 void printMessage(char message[], char fileName[], unsigned lineNumber, boolean isError, boolean isMacro) {
-    static unsigned errorCount = 0;
-    static unsigned warningCount = 0;
+    static unsigned errorCount = INITIAL_VALUE;
+    static unsigned warningCount = INITIAL_VALUE;
 
     if (isError) {
         printf("\n--- Error #%u ---\n", ++errorCount);

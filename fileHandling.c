@@ -16,9 +16,9 @@
 #include "wordList.h"
 
 void checkNoFiles(int fileCount) {
-    if (fileCount == 0) {
+    if (fileCount == NO_FILES) {
         printCriticalError("No files provided to compile. Add the file names (without the extensions) to compile as command line arguments. Exiting the program...");
-        exit(1);
+        exit(ERROR);
     }
 }
 
@@ -34,7 +34,7 @@ void compileFiles(char *fileNames[], int fileCount) {
     unsigned instructionCount;
     unsigned dataCount;
 
-    while (fileCount > 0) {
+    while (fileCount > NO_FILES) {
         code = createWord();
         data = createWord();
         macros = NULL;
@@ -43,8 +43,8 @@ void compileFiles(char *fileNames[], int fileCount) {
         usedLabels = NULL;
         foundLabels = NULL;
         shouldGenerateFiles = TRUE;
-        instructionCount = 0;
-        dataCount = 0;
+        instructionCount = INITIAL_VALUE;
+        dataCount = INITIAL_VALUE;
 
         if (!expandMacros(*fileNames, &macros)) {
             freeMacroTable(macros);

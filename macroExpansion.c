@@ -39,11 +39,11 @@ boolean expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros, char
     boolean isSuccessful;
     boolean isInsideMacro;
     unsigned lineNumber;
-    char line[82];
+    char line[MAX_LINE_LENGTH + NEWLINE_BYTE + NULL_BYTE];
 
     isSuccessful = TRUE;
     isInsideMacro = FALSE;
-    lineNumber = 0;
+    lineNumber = INITIAL_VALUE;
 
     while (fgets(line, sizeof(line), inputFile) != NULL) {
         lineNumber++;
@@ -77,13 +77,13 @@ boolean expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char
 
     token = getNextToken(current);
 
-    if (strcmp(token, "endmacr") == 0) {
+    if (strcmp(token, "endmacr") == EQUAL_STRINGS) {
         free(token);
         printMacroError("End of macro definition without declaring a macro.", fileName, lineNumber);
         return FALSE;
     }
 
-    if (strcmp(token, "macr") == 0) {
+    if (strcmp(token, "macr") == EQUAL_STRINGS) {
         free(token);
         current = skipCharacters(current);
         current = skipWhitespace(current);
@@ -133,7 +133,7 @@ boolean isEndOfMacro(char line[]) {
     line = skipWhitespace(line);
     token = getNextToken(line);
 
-    if (strcmp(token, "endmacr") != 0) {
+    if (strcmp(token, "endmacr") != EQUAL_STRINGS) {
         return FALSE;
     }
 

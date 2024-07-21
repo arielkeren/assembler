@@ -19,8 +19,8 @@ word *createWord() {
 
     newWord = allocate(sizeof(word));
 
-    newWord->data1 = 0;
-    newWord->data2 = 0;
+    newWord->data1 = INITIAL_VALUE;
+    newWord->data2 = INITIAL_VALUE;
     newWord->next = NULL;
 
     return newWord;

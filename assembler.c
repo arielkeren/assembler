@@ -2,8 +2,8 @@
 #include "globals.h"
 
 int main(int argc, char *argv[]) {
-    checkNoFiles(argc - 1);
-    compileFiles(&argv[1], argc - 1);
+    checkNoFiles(argc - ARGS_DIFF);
+    compileFiles(argv + ARGS_DIFF, argc - ARGS_DIFF);
 
-    return 0;
+    return SUCCESS;
 }

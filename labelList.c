@@ -18,7 +18,7 @@ void addLabel(label **labelList, char labelName[], unsigned lineNumber) {
 
 boolean containsLabel(label *labelList, char labelName[]) {
     while (labelList != NULL) {
-        if (strcmp(labelList->name, labelName) == 0) {
+        if (strcmp(labelList->name, labelName) == EQUAL_STRINGS) {
             return TRUE;
         }
 
@@ -32,7 +32,7 @@ unsigned char getLongestLabel(label *labelList) {
     unsigned char longest;
     unsigned char currentLength;
 
-    longest = 0;
+    longest = INITIAL_VALUE;
 
     while (labelList != NULL) {
         currentLength = (unsigned char)strlen(labelList->name);

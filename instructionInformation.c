@@ -5,39 +5,39 @@
 #include "globals.h"
 
 unsigned char getOperationIndex(char operation[]) {
-    static char *OPERATIONS[16] = {"mov", "cmp", "add", "sub", "lea", "clr", "not", "inc", "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"};
+    static char *OPERATIONS[OPERATION_COUNT] = {"mov", "cmp", "add", "sub", "lea", "clr", "not", "inc", "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"};
 
     unsigned char index;
 
-    for (index = 0; index < 16; index++) {
-        if (strcmp(operation, OPERATIONS[index]) == 0) {
+    for (index = INITIAL_VALUE; index < OPERATION_COUNT; index++) {
+        if (strcmp(operation, OPERATIONS[index]) == EQUAL_STRINGS) {
             return index;
         }
     }
 
-    return 16;
+    return INVALID_OPERATION;
 }
 
-unsigned char getOperandCount(char operation[]) {
+operandCount getOperandCount(char operation[]) {
     unsigned char operationIndex;
 
     operationIndex = getOperationIndex(operation);
 
-    if (operationIndex <= 4) {
-        return 2;
+    if (operationIndex <= LAST_OPERATION_WITH_TWO_OPERANDS) {
+        return TWO_OPERANDS;
     }
 
-    if (operationIndex <= 13) {
-        return 1;
+    if (operationIndex <= LAST_OPERATION_WITH_ONE_OPERAND) {
+        return ONE_OPERAND;
     }
 
-    return 0;
+    return NO_OPERANDS;
 }
 
 operandType getOperandType(char operand[]) {
-    switch (operand[0]) {
+    switch (*operand) {
         case 'r':
-            return ((operand[1] >= '0' && operand[1] <= '7') && operand[2] == '\0') ? DIRECT_REGISTER : DIRECT;
+            return ((operand[SECOND_INDEX] >= '0' && operand[SECOND_INDEX] <= '7') && operand[THIRD_INDEX] == '\0') ? DIRECT_REGISTER : DIRECT;
         case '*':
             return INDIRECT_REGISTER;
         case '#':

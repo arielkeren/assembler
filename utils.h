@@ -15,6 +15,7 @@ boolean checkIfLabel(char token[]);
 boolean checkIfFollowedByComma(char line[]);
 boolean checkForConsecutiveCommas(char line[]);
 char *addExtension(char fileName[], char extension[]);
+unsigned char convertDigitToNumber(char digit);
 void printMessage(char message[], char fileName[], unsigned lineNumber, boolean isError, boolean isMacro);
 void printError(char message[], char fileName[], unsigned lineNumber);
 void printMacroError(char message[], char fileName[], unsigned lineNumber);

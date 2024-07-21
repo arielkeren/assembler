@@ -32,16 +32,16 @@ boolean readFile(char fileName[], macro *macros, word *code, word *data, label *
 
 boolean readLines(char fileName[], FILE *file, macro *macros, word *code, word *data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
     boolean isSuccessful;
-    char line[82];
+    char line[MAX_LINE_LENGTH + NEWLINE_BYTE + NULL_BYTE];
     unsigned lineNumber;
 
     isSuccessful = TRUE;
-    lineNumber = 0;
+    lineNumber = INITIAL_VALUE;
 
     while (fgets(line, sizeof(line), file) != NULL) {
         lineNumber++;
 
-        if (line[strlen(line) - 1] != '\n' && !feof(file)) {
+        if (line[strlen(line) - LAST_INDEX_DIFF] != '\n' && !feof(file)) {
             printError("Line is too long. Maximum length is 80 characters (including whitespace).", fileName, lineNumber);
             isSuccessful = FALSE;
             continue;
@@ -54,7 +54,7 @@ boolean readLines(char fileName[], FILE *file, macro *macros, word *code, word *
 
         isSuccessful = isSuccessful && handleLine(fileName, line, lineNumber, macros, &code, &data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
-        if (*instructionCount + *dataCount > 3997) {
+        if (*instructionCount + *dataCount > TOTAL_MEMORY_CELLS - STARTING_MEMORY_ADDRESS) {
             printError("Too many words in the program - memory overflow.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
@@ -74,7 +74,70 @@ boolean handleLine(char fileName[], char line[], unsigned lineNumber, macro *mac
         return TRUE;
     }
 
-    isSuccessful = TRUE;
+    isSuccessful = handleLabel(fileName, line, lineNumber, macros, foundLabels, *instructionCount, *dataCount);
+    token = getNextToken(line);
+    nextToken = getNextToken(skipWhitespace(skipCharacters(line)));
+
+    if (checkIfLabel(token)) {
+        free(token);
+        token = nextToken;
+
+        line = skipCharacters(line);
+        line = skipWhitespace(line);
+        nextToken = getNextToken(skipWhitespace(skipCharacters(line)));
+    }
+
+    if (strcmp(token, ".entry") == EQUAL_STRINGS) {
+        if (containsLabel(*entryLabels, nextToken)) {
+            printError("Label already marked as entry.", fileName, lineNumber);
+            free(token);
+            free(nextToken);
+            return FALSE;
+        }
+
+        if (getMacroContent(macros, token) != NULL) {
+            printError("Label's name already taken by a macro.", fileName, lineNumber);
+            free(token);
+            free(nextToken);
+            return FALSE;
+        }
+
+        addLabel(entryLabels, nextToken, lineNumber);
+    } else if (strcmp(token, ".extern") == EQUAL_STRINGS) {
+        if (containsLabel(*externLabels, nextToken)) {
+            printError("Label already marked as extern.", fileName, lineNumber);
+            free(token);
+            free(nextToken);
+            return FALSE;
+        }
+
+        if (getMacroContent(macros, token) != NULL) {
+            printError("Label's name already taken by a macro.", fileName, lineNumber);
+            free(token);
+            free(nextToken);
+            return FALSE;
+        }
+
+        addLabel(externLabels, nextToken, lineNumber);
+    } else if (strcmp(token, ".data") == EQUAL_STRINGS) {
+        free(nextToken);
+        encodeNumberList(data, skipWhitespace(skipCharacters(line)), dataCount);
+    } else if (strcmp(token, ".string") == EQUAL_STRINGS) {
+        encodeString(data, nextToken, dataCount);
+        free(nextToken);
+    } else {
+        free(nextToken);
+        handleOperation(line, lineNumber, code, usedLabels, instructionCount);
+    }
+
+    free(token);
+    return isSuccessful;
+}
+
+boolean handleLabel(char fileName[], char line[], unsigned lineNumber, macro *macros, foundLabel **foundLabels, unsigned instructionCount, unsigned dataCount) {
+    char *token;
+    char *nextToken;
+
     token = getNextToken(line);
 
     if (checkIfLabel(token)) {
@@ -85,74 +148,44 @@ boolean handleLine(char fileName[], char line[], unsigned lineNumber, macro *mac
 
         if (getFoundLabel(*foundLabels, token) != NULL) {
             printError("Label already defined.", fileName, lineNumber);
-            isSuccessful = FALSE;
-        }
-
-        if (getMacroContent(macros, token) != NULL) {
-            printError("Label's name already taken by a macro.", fileName, lineNumber);
-            isSuccessful = FALSE;
-        }
-
-        if (strcmp(nextToken, ".entry") != 0 && strcmp(nextToken, ".extern") != 0) {
-            addFoundLabel(foundLabels, token);
-
-            if (strcmp(nextToken, ".data") == 0 || strcmp(nextToken, ".string") == 0) {
-                markAsData(*foundLabels);
-                setAddress(*foundLabels, *dataCount);
-            } else {
-                setAddress(*foundLabels, *instructionCount);
-            }
-        } else {
             free(token);
-        }
-
-        token = nextToken;
-    }
-
-    nextToken = getNextToken(skipWhitespace(skipCharacters(line)));
-
-    if (strcmp(token, ".entry") == 0) {
-        if (containsLabel(*entryLabels, nextToken)) {
-            printError("Label already marked as entry.", fileName, lineNumber);
-            isSuccessful = FALSE;
+            free(nextToken);
+            return FALSE;
         }
 
         if (getMacroContent(macros, token) != NULL) {
             printError("Label's name already taken by a macro.", fileName, lineNumber);
-            isSuccessful = FALSE;
+            free(token);
+            free(nextToken);
+            return FALSE;
         }
 
-        addLabel(entryLabels, nextToken, lineNumber);
-    } else if (strcmp(token, ".extern") == 0) {
-        if (containsLabel(*externLabels, nextToken)) {
-            printError("Label already marked as extern.", fileName, lineNumber);
-            isSuccessful = FALSE;
+        if (strcmp(nextToken, ".entry") == EQUAL_STRINGS && strcmp(nextToken, ".extern") == EQUAL_STRINGS) {
+            free(token);
+            free(nextToken);
+            return TRUE;
         }
 
-        if (getMacroContent(macros, token) != NULL) {
-            printError("Label's name already taken by a macro.", fileName, lineNumber);
-            isSuccessful = FALSE;
+        addFoundLabel(foundLabels, token);
+
+        if (strcmp(nextToken, ".data") == EQUAL_STRINGS || strcmp(nextToken, ".string") == EQUAL_STRINGS) {
+            markAsData(*foundLabels);
+            setAddress(*foundLabels, dataCount);
+        } else {
+            setAddress(*foundLabels, instructionCount);
         }
 
-        addLabel(externLabels, nextToken, lineNumber);
-    } else if (strcmp(token, ".data") == 0) {
-        encodeNumberList(data, skipWhitespace(skipCharacters(line)), dataCount);
         free(nextToken);
-    } else if (strcmp(token, ".string") == 0) {
-        encodeString(data, nextToken, dataCount);
-        free(nextToken);
-    } else {
-        handleOperation(line, lineNumber, code, usedLabels, instructionCount);
-        free(nextToken);
+        return TRUE;
     }
 
     free(token);
-    return isSuccessful;
+    return TRUE;
 }
 
 void handleOperation(char line[], unsigned lineNumber, word **code, usedLabel **usedLabels, unsigned *instructionCount) {
     char *token;
-    int operandCount;
+    operandCount operands;
     char *firstOperand;
     char *secondOperand;
     operandType firstOperandType;
@@ -165,10 +198,10 @@ void handleOperation(char line[], unsigned lineNumber, word **code, usedLabel **
     encodeMetadata(*code, 'A');
     encodeOperation(*code, token);
 
-    operandCount = getOperandCount(token);
+    operands = getOperandCount(token);
     free(token);
 
-    if (operandCount == 0) {
+    if (operands == NO_OPERANDS) {
         return;
     }
 
@@ -176,15 +209,15 @@ void handleOperation(char line[], unsigned lineNumber, word **code, usedLabel **
     line = skipWhitespace(line);
     firstOperand = getNextToken(line);
 
-    encodeOperand(*code, firstOperand, operandCount != 1);
+    encodeOperand(*code, firstOperand, operands != ONE_OPERAND);
     firstOperandType = getOperandType(firstOperand);
 
-    if (operandCount == 1) {
+    if (operands == ONE_OPERAND) {
         *code = addWord(*code);
         encodeExtraWord(*code, firstOperand, FALSE);
 
         if (firstOperandType == DIRECT) {
-            addUsedLabel(usedLabels, firstOperand, *instructionCount + 100, lineNumber, *code);
+            addUsedLabel(usedLabels, firstOperand, *instructionCount + STARTING_MEMORY_ADDRESS, lineNumber, *code);
         } else {
             free(firstOperand);
         }
@@ -210,7 +243,7 @@ void handleOperation(char line[], unsigned lineNumber, word **code, usedLabel **
         encodeExtraWord(*code, firstOperand, TRUE);
 
         if (firstOperandType == DIRECT) {
-            addUsedLabel(usedLabels, firstOperand, *instructionCount + 100, lineNumber, *code);
+            addUsedLabel(usedLabels, firstOperand, *instructionCount + STARTING_MEMORY_ADDRESS, lineNumber, *code);
         } else {
             free(firstOperand);
         }
@@ -220,7 +253,7 @@ void handleOperation(char line[], unsigned lineNumber, word **code, usedLabel **
         encodeExtraWord(*code, secondOperand, FALSE);
 
         if (secondOperandType == DIRECT) {
-            addUsedLabel(usedLabels, secondOperand, *instructionCount + 100, lineNumber, *code);
+            addUsedLabel(usedLabels, secondOperand, *instructionCount + STARTING_MEMORY_ADDRESS, lineNumber, *code);
         } else {
             free(secondOperand);
         }

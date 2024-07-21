@@ -26,7 +26,7 @@ void setAddress(foundLabel *foundLabelToModify, unsigned newAddress) {
 
 foundLabel *getFoundLabel(foundLabel *foundLabelList, char labelName[]) {
     while (foundLabelList != NULL) {
-        if (strcmp(foundLabelList->name, labelName) == 0) {
+        if (strcmp(foundLabelList->name, labelName) == EQUAL_STRINGS) {
             return foundLabelList;
         }
 

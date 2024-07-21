@@ -8,6 +8,10 @@ typedef enum { IMMEDIATE,
                INDIRECT_REGISTER,
                DIRECT_REGISTER } operandType;
 
+typedef enum { NO_OPERANDS,
+               ONE_OPERAND,
+               TWO_OPERANDS } operandCount;
+
 typedef struct macroStruct {
     char *name;
     char *content;
@@ -40,5 +44,58 @@ typedef struct foundLabelStruct {
     boolean isData;
     struct foundLabelStruct *next;
 } foundLabel;
+
+enum { FIRST_INDEX,
+       SECOND_INDEX,
+       THIRD_INDEX };
+
+enum { FIRST_BIT,
+       SECOND_BIT,
+       THIRD_BIT };
+
+#define SUCCESS 0
+#define ERROR 1
+
+#define ARGS_DIFF 1
+#define NO_FILES 0
+
+#define TOTAL_MEMORY_CELLS 4096
+#define BITS_PER_MEMORY_CELL 15
+#define STARTING_MEMORY_ADDRESS 100
+#define OPERATION_COUNT 16
+#define MAX_LINE_LENGTH 80
+#define MAX_NAME_LENGTH 31
+#define MAX_NUMBER 2047
+#define MIN_NUMBER (-2048)
+
+#define STARTING_DATA_BIT 0
+#define STARTING_NUMBER_BIT 3
+#define STARTING_LABEL_BIT 3
+#define STARTING_OPERATION_BIT 11
+#define STARTING_SOURCE_OPERAND_BIT 7
+#define STARTING_DESTINATION_OPERAND_BIT 3
+#define STARTING_SOURCE_REGISTER_BIT 6
+#define STARTING_DESTINATION_REGISTER_BIT 3
+
+#define EMPTY 0
+#define INITIAL_VALUE 0
+#define EQUAL_STRINGS 0
+#define LAST_INDEX_DIFF 1
+
+#define ERROR_MESSAGE_LENGTH 53
+
+#define NO_TOKEN 0
+
+#define INVALID_DIGIT 0
+
+#define INVALID_OPERATION 16
+#define LAST_OPERATION_WITH_TWO_OPERANDS 4
+#define LAST_OPERATION_WITH_ONE_OPERAND 13
+
+#define SINGLE_BIT 1
+#define BITS_PER_BYTE 8
+#define NULL_BYTE 1
+#define NEWLINE_BYTE 1
+#define DOT_BYTE 1
 
 #endif

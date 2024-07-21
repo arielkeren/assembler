@@ -35,9 +35,9 @@ boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
             return FALSE;
         }
 
-        if (strcmp(token, ".entry") == 0) {
+        if (strcmp(token, ".entry") == EQUAL_STRINGS) {
             printWarning("Label defined before .entry.", fileName, lineNumber);
-        } else if (strcmp(token, ".extern") == 0) {
+        } else if (strcmp(token, ".extern") == EQUAL_STRINGS) {
             printWarning("Label defined before .extern.", fileName, lineNumber);
         }
     }
@@ -47,13 +47,13 @@ boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
         isValid = FALSE;
     }
 
-    if (strcmp(token, ".entry") == 0) {
+    if (strcmp(token, ".entry") == EQUAL_STRINGS) {
         isValid = isValid && validateEntryExtern(skipWhitespace(skipCharacters(line)), fileName, lineNumber);
-    } else if (strcmp(token, ".extern") == 0) {
+    } else if (strcmp(token, ".extern") == EQUAL_STRINGS) {
         isValid = isValid && validateEntryExtern(skipWhitespace(skipCharacters(line)), fileName, lineNumber);
-    } else if (strcmp(token, ".data") == 0) {
+    } else if (strcmp(token, ".data") == EQUAL_STRINGS) {
         isValid = isValid && validateData(skipWhitespace(skipCharacters(line)), fileName, lineNumber);
-    } else if (strcmp(token, ".string") == 0) {
+    } else if (strcmp(token, ".string") == EQUAL_STRINGS) {
         isValid = isValid && validateString(skipWhitespace(skipCharacters(line)), fileName, lineNumber);
     } else {
         isValid = isValid && validateInstruction(line, fileName, lineNumber);
@@ -120,7 +120,7 @@ boolean validateName(char name[], char fileName[], unsigned lineNumber, boolean 
         isValid = FALSE;
     }
 
-    if (strlen(name) > 31) {
+    if (strlen(name) > MAX_NAME_LENGTH) {
         if (isLabel) {
             printError("Label is too long - maximum length is 31 characters.", fileName, lineNumber);
         } else {
@@ -130,7 +130,7 @@ boolean validateName(char name[], char fileName[], unsigned lineNumber, boolean 
         isValid = FALSE;
     }
 
-    if (getOperationIndex(name) != 16) {
+    if (getOperationIndex(name) != INVALID_OPERATION) {
         if (isLabel) {
             printError("Label cannot share the same name as an operation.", fileName, lineNumber);
         } else {
@@ -140,7 +140,7 @@ boolean validateName(char name[], char fileName[], unsigned lineNumber, boolean 
         isValid = FALSE;
     }
 
-    if (name[0] == 'r' && name[1] >= '0' && name[1] <= '7' && name[2] == '\0') {
+    if (name[FIRST_INDEX] == 'r' && name[SECOND_INDEX] >= '0' && name[SECOND_INDEX] <= '7' && name[THIRD_INDEX] == '\0') {
         if (isLabel) {
             printError("Label cannot share the same name as a register.", fileName, lineNumber);
         } else {
@@ -243,7 +243,7 @@ boolean validateString(char string[], char fileName[], unsigned lineNumber) {
         isValid = FALSE;
     }
 
-    if (token[strlen(token) - 1] != '\"') {
+    if (token[strlen(token) - LAST_INDEX_DIFF] != '\"') {
         printError("String does not end with a quotation mark.", fileName, lineNumber);
         isValid = FALSE;
     }
@@ -269,7 +269,7 @@ boolean validateString(char string[], char fileName[], unsigned lineNumber) {
 boolean validateInstruction(char instruction[], char fileName[], unsigned lineNumber) {
     char *operation;
     char *token;
-    unsigned char operandCount;
+    operandCount operands;
 
     operation = getNextToken(instruction);
 
@@ -278,17 +278,17 @@ boolean validateInstruction(char instruction[], char fileName[], unsigned lineNu
         return FALSE;
     }
 
-    operandCount = getOperandCount(operation);
+    operands = getOperandCount(operation);
     instruction = skipCharacters(instruction);
     instruction = skipWhitespace(instruction);
 
-    if (operandCount == 0 && *instruction != '\0') {
+    if (operands == NO_OPERANDS && *instruction != '\0') {
         printError("Extra non-whitespace characters after operation - it should have no operands.", fileName, lineNumber);
         free(operation);
         return FALSE;
     }
 
-    if (operandCount == 0) {
+    if (operands == NO_OPERANDS) {
         free(operation);
         return TRUE;
     }
@@ -301,7 +301,7 @@ boolean validateInstruction(char instruction[], char fileName[], unsigned lineNu
         return FALSE;
     }
 
-    if (!doesOperationAcceptOperand(operation, token, operandCount != 1)) {
+    if (!doesOperationAcceptOperand(operation, token, operands != ONE_OPERAND)) {
         printError("Operation does not accept the first operand - incompatible type.", fileName, lineNumber);
         return FALSE;
     }
@@ -309,25 +309,25 @@ boolean validateInstruction(char instruction[], char fileName[], unsigned lineNu
     free(token);
     instruction = skipCharacters(instruction);
 
-    if (operandCount == 1 && checkIfFollowedByComma(instruction)) {
+    if (operands == ONE_OPERAND && checkIfFollowedByComma(instruction)) {
         printError("Comma after the only operand.", fileName, lineNumber);
         return FALSE;
     }
 
-    if (operandCount == 2 && !checkIfFollowedByComma(instruction)) {
+    if (operands == TWO_OPERANDS && !checkIfFollowedByComma(instruction)) {
         printError("Missing comma between the first and the second operand.", fileName, lineNumber);
         return FALSE;
     }
 
     instruction = skipWhitespace(instruction);
 
-    if (operandCount == 1 && *instruction != '\0') {
+    if (operands == ONE_OPERAND && *instruction != '\0') {
         printError("Extra non-whitespace characters after the operation - it should have only one operand.", fileName, lineNumber);
         free(operation);
         return FALSE;
     }
 
-    if (operandCount == 1) {
+    if (operands == ONE_OPERAND) {
         free(operation);
         return TRUE;
     }
@@ -365,7 +365,7 @@ boolean validateInstruction(char instruction[], char fileName[], unsigned lineNu
 }
 
 boolean validateOperation(char operation[], char fileName[], unsigned lineNumber) {
-    if (getOperationIndex(operation) == 16) {
+    if (getOperationIndex(operation) == INVALID_OPERATION) {
         printError("Invalid operation.", fileName, lineNumber);
         return FALSE;
     }
@@ -400,12 +400,12 @@ boolean validateImmediate(char immediate[], char fileName[], unsigned lineNumber
 
     number = atoi(immediate);
 
-    if (number > 2047) {
+    if (number > MAX_NUMBER) {
         printError("Number is too large to store in just 12 bits - largest possible value is 2047.", fileName, lineNumber);
         return FALSE;
     }
 
-    if (number < -2048) {
+    if (number < MIN_NUMBER) {
         printError("Number is too small to store in just 12 bits - smallest possible value is -2048.", fileName, lineNumber);
         return FALSE;
     }
@@ -426,7 +426,7 @@ boolean validateIndirectRegister(char directRegister[], char fileName[], unsigne
         return FALSE;
     }
 
-    if (*directRegister > '7' || *directRegister < '0' || *(directRegister + 1) != '\0') {
+    if (directRegister[FIRST_INDEX] > '7' || directRegister[FIRST_INDEX] < '0' || directRegister[SECOND_INDEX] != '\0') {
         printError("Token does not specify a valid register - a register's number should be between 0 and 7, including 0 and 7.", fileName, lineNumber);
         return FALSE;
     }

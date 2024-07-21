@@ -8,48 +8,48 @@
 #include "wordList.h"
 
 void toggleBit(word *wordToModify, unsigned char bitPosition) {
-    if (bitPosition < 8) {
-        wordToModify->data1 |= (1 << bitPosition);
+    if (bitPosition < (sizeof(wordToModify->data1) * BITS_PER_BYTE)) {
+        wordToModify->data1 |= (SINGLE_BIT << bitPosition);
         return;
     }
 
-    wordToModify->data2 |= (1 << (bitPosition - 8));
+    wordToModify->data2 |= (SINGLE_BIT << (bitPosition - (sizeof(wordToModify->data1) * BITS_PER_BYTE)));
 }
 
 void applyMask(word *wordToModify, unsigned mask, unsigned char from) {
-    while (mask != 0 && from < 15) {
-        if (mask & 1) {
+    while (mask != EMPTY && from < BITS_PER_MEMORY_CELL) {
+        if (mask & SINGLE_BIT) {
             toggleBit(wordToModify, from);
         }
 
-        mask >>= 1;
+        mask >>= SINGLE_BIT;
         from++;
     }
 }
 
 void encodeOperation(word *wordToModify, char operation[]) {
-    applyMask(wordToModify, getOperationIndex(operation), 11);
+    applyMask(wordToModify, getOperationIndex(operation), STARTING_OPERATION_BIT);
 }
 
 void encodeOperand(word *wordToModify, char operand[], boolean isSource) {
     if (isSource) {
-        toggleBit(wordToModify, getOperandType(operand) + 7);
+        toggleBit(wordToModify, getOperandType(operand) + STARTING_SOURCE_OPERAND_BIT);
         return;
     }
 
-    toggleBit(wordToModify, getOperandType(operand) + 3);
+    toggleBit(wordToModify, getOperandType(operand) + STARTING_DESTINATION_OPERAND_BIT);
 }
 
 void encodeMetadata(word *wordToModify, char metadata) {
     switch (metadata) {
-        case 'A':
-            toggleBit(wordToModify, 2);
+        case 'E':
+            toggleBit(wordToModify, FIRST_BIT);
             break;
         case 'R':
-            toggleBit(wordToModify, 1);
+            toggleBit(wordToModify, SECOND_BIT);
             break;
-        case 'E':
-            toggleBit(wordToModify, 0);
+        case 'A':
+            toggleBit(wordToModify, THIRD_BIT);
             break;
         default:
             break;
@@ -57,26 +57,26 @@ void encodeMetadata(word *wordToModify, char metadata) {
 }
 
 void encodeNumber(word *wordToModify, int number) {
-    applyMask(wordToModify, number, 3);
+    applyMask(wordToModify, number, STARTING_NUMBER_BIT);
 }
 
-void encodeRegister(word *wordToModify, int registerNumber, boolean isSource) {
-    applyMask(wordToModify, registerNumber, isSource ? 6 : 3);
+void encodeRegister(word *wordToModify, unsigned char registerNumber, boolean isSource) {
+    applyMask(wordToModify, registerNumber, isSource ? STARTING_SOURCE_REGISTER_BIT : STARTING_DESTINATION_REGISTER_BIT);
 }
 
 void encodeExtraWord(word *wordToModify, char operand[], boolean isSource) {
     switch (getOperandType(operand)) {
         case DIRECT_REGISTER:
             encodeMetadata(wordToModify, 'A');
-            encodeRegister(wordToModify, atoi(&operand[1]), isSource);
+            encodeRegister(wordToModify, convertDigitToNumber(operand[SECOND_INDEX]), isSource);
             break;
         case INDIRECT_REGISTER:
             encodeMetadata(wordToModify, 'A');
-            encodeRegister(wordToModify, atoi(&operand[2]), isSource);
+            encodeRegister(wordToModify, convertDigitToNumber(operand[THIRD_INDEX]), isSource);
             break;
         case IMMEDIATE:
             encodeMetadata(wordToModify, 'A');
-            encodeNumber(wordToModify, atoi(&operand[1]));
+            encodeNumber(wordToModify, atoi(&operand[SECOND_INDEX]));
             break;
         default:
             break;
@@ -84,7 +84,7 @@ void encodeExtraWord(word *wordToModify, char operand[], boolean isSource) {
 }
 
 void encodeData(word *wordToModify, int data) {
-    applyMask(wordToModify, data, 0);
+    applyMask(wordToModify, data, STARTING_DATA_BIT);
 }
 
 void encodeString(word **data, char string[], unsigned *dataCount) {
@@ -119,5 +119,5 @@ void encodeNumberList(word **data, char numberList[], unsigned *dataCount) {
 }
 
 void encodeLabel(word *wordToModify, unsigned labelAddress) {
-    applyMask(wordToModify, labelAddress, 3);
+    applyMask(wordToModify, labelAddress, STARTING_LABEL_BIT);
 }
