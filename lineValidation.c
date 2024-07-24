@@ -12,11 +12,21 @@ boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
     boolean isValid;
     char *token;
 
-    isValid = TRUE;
+    if (*line == ';') {
+        return TRUE;
+    }
+
     line = skipWhitespace(line);
 
-    if (*line == '\0' || *line == ';') {
+    if (*line == '\0') {
         return TRUE;
+    }
+
+    isValid = TRUE;
+
+    if (*line == ';') {
+        printError("There should not be any whitespace characters before the semicolon in a comment line.", fileName, lineNumber);
+        isValid = FALSE;
     }
 
     token = getNextToken(line);

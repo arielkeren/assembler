@@ -62,9 +62,13 @@ boolean handleLine(char fileName[], char line[], unsigned lineNumber, macro *mac
     char *token;
     char *nextToken;
 
+    if (*line == ';') {
+        return TRUE;
+    }
+
     line = skipWhitespace(line);
 
-    if (*line == ';' || *line == '\0') {
+    if (*line == '\0') {
         return TRUE;
     }
 
