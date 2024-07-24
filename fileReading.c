@@ -46,7 +46,7 @@ boolean readLines(char fileName[], FILE *file, macro *macros, word *code, word *
             continue;
         }
 
-        isSuccessful = isSuccessful && handleLine(fileName, line, lineNumber, macros, &code, &data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
+        isSuccessful = handleLine(fileName, line, lineNumber, macros, &code, &data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount) && isSuccessful;
 
         if (*instructionCount + *dataCount > TOTAL_MEMORY_CELLS - STARTING_MEMORY_ADDRESS) {
             printError("Memory overflow. Too many words in the program.", fileName, lineNumber);
@@ -158,7 +158,7 @@ boolean handleLabel(char fileName[], char line[], unsigned lineNumber, macro *ma
             return FALSE;
         }
 
-        if (strcmp(nextToken, ".entry") == EQUAL_STRINGS && strcmp(nextToken, ".extern") == EQUAL_STRINGS) {
+        if (strcmp(nextToken, ".entry") == EQUAL_STRINGS || strcmp(nextToken, ".extern") == EQUAL_STRINGS) {
             free(token);
             free(nextToken);
             return TRUE;

@@ -58,15 +58,15 @@ boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
     }
 
     if (strcmp(token, ".entry") == EQUAL_STRINGS) {
-        isValid = isValid && validateEntryExtern(skipWhitespace(skipCharacters(line)), fileName, lineNumber);
+        isValid = validateEntryExtern(skipWhitespace(skipCharacters(line)), fileName, lineNumber) && isValid;
     } else if (strcmp(token, ".extern") == EQUAL_STRINGS) {
-        isValid = isValid && validateEntryExtern(skipWhitespace(skipCharacters(line)), fileName, lineNumber);
+        isValid = validateEntryExtern(skipWhitespace(skipCharacters(line)), fileName, lineNumber) && isValid;
     } else if (strcmp(token, ".data") == EQUAL_STRINGS) {
-        isValid = isValid && validateData(skipWhitespace(skipCharacters(line)), fileName, lineNumber);
+        isValid = validateData(skipWhitespace(skipCharacters(line)), fileName, lineNumber) && isValid;
     } else if (strcmp(token, ".string") == EQUAL_STRINGS) {
-        isValid = isValid && validateString(skipWhitespace(skipCharacters(line)), fileName, lineNumber);
+        isValid = validateString(skipWhitespace(skipCharacters(line)), fileName, lineNumber) && isValid;
     } else {
-        isValid = isValid && validateInstruction(line, fileName, lineNumber);
+        isValid = validateInstruction(line, fileName, lineNumber) && isValid;
     }
 
     free(token);
@@ -217,7 +217,7 @@ boolean validateData(char data[], char fileName[], unsigned lineNumber) {
         }
 
         token = getNextToken(data);
-        isValid = isValid && validateNumber(token, fileName, lineNumber);
+        isValid = validateNumber(token, fileName, lineNumber) && isValid;
         free(token);
 
         data = skipCharacters(data);
