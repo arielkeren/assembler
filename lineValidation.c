@@ -130,6 +130,26 @@ boolean validateName(char name[], char fileName[], unsigned lineNumber, boolean 
         isValid = FALSE;
     }
 
+    if (strcmp(name, "macr") == EQUAL_STRINGS) {
+        if (isLabel) {
+            printError("Label cannot be named \"macr\".", fileName, lineNumber);
+        } else {
+            printMacroError("Macro cannot be named \"macr\".", fileName, lineNumber);
+        }
+
+        isValid = FALSE;
+    }
+
+    if (strcmp(name, "endmacr") == EQUAL_STRINGS) {
+        if (isLabel) {
+            printError("Label cannot be named \"endmacr\".", fileName, lineNumber);
+        } else {
+            printMacroError("Macro cannot be named \"endmacr\".", fileName, lineNumber);
+        }
+
+        isValid = FALSE;
+    }
+
     if (getOperationIndex(name) != INVALID_OPERATION) {
         if (isLabel) {
             printError("Label cannot share the same name as an operation.", fileName, lineNumber);
