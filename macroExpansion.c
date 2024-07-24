@@ -47,7 +47,17 @@ boolean expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros, char
 
     while (fgets(line, sizeof(line), inputFile) != NULL) {
         lineNumber++;
-        isSuccessful = isSuccessful && expandLineMacros(inputFile, outputFile, macros, fileName, line, lineNumber, &isInsideMacro);
+
+        if (line[strlen(line) - LAST_INDEX_DIFF] != '\n' && !feof(inputFile)) {
+            printMacroError("Line is too long. Maximum length is 80 characters (including whitespace, not including the newline character).", fileName, lineNumber);
+            isSuccessful = FALSE;
+            while (getc(inputFile) != '\n' && !feof(inputFile));
+            continue;
+        }
+
+        if (!expandLineMacros(inputFile, outputFile, macros, fileName, line, lineNumber, &isInsideMacro)) {
+            isSuccessful = FALSE;
+        }
     }
 
     return isSuccessful;

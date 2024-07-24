@@ -41,12 +41,6 @@ boolean readLines(char fileName[], FILE *file, macro *macros, word *code, word *
     while (fgets(line, sizeof(line), file) != NULL) {
         lineNumber++;
 
-        if (line[strlen(line) - LAST_INDEX_DIFF] != '\n' && !feof(file)) {
-            printError("Line is too long. Maximum length is 80 characters (including whitespace).", fileName, lineNumber);
-            isSuccessful = FALSE;
-            continue;
-        }
-
         if (!validateLine(line, fileName, lineNumber)) {
             isSuccessful = FALSE;
             continue;
@@ -55,7 +49,7 @@ boolean readLines(char fileName[], FILE *file, macro *macros, word *code, word *
         isSuccessful = isSuccessful && handleLine(fileName, line, lineNumber, macros, &code, &data, entryLabels, externLabels, usedLabels, foundLabels, instructionCount, dataCount);
 
         if (*instructionCount + *dataCount > TOTAL_MEMORY_CELLS - STARTING_MEMORY_ADDRESS) {
-            printError("Too many words in the program - memory overflow.", fileName, lineNumber);
+            printError("Memory overflow. Too many words in the program.", fileName, lineNumber);
             isSuccessful = FALSE;
         }
     }
