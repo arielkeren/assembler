@@ -240,17 +240,34 @@ boolean validateData(char data[], char fileName[], unsigned lineNumber) {
 }
 
 boolean validateNumber(char number[], char fileName[], unsigned lineNumber) {
+    char *current;
+    int value;
+
+    current = number;
+
     if (*number == '+' || *number == '-') {
-        number++;
+        current++;
     }
 
-    while (*number != '\0') {
-        if (!isdigit(*number)) {
+    while (*current != '\0') {
+        if (!isdigit(*current)) {
             printError("Invalid integer.", fileName, lineNumber);
             return FALSE;
         }
 
-        number++;
+        current++;
+    }
+
+    value = atoi(number);
+
+    if (value > MAX_NUMBER) {
+        printError("Number is too large to store in just 15 bits - largest possible value is 16383.", fileName, lineNumber);
+        return FALSE;
+    }
+
+    if (value < MIN_NUMBER) {
+        printError("Number is too small to store in just 15 bits - smallest possible value is -16384.", fileName, lineNumber);
+        return FALSE;
     }
 
     return TRUE;
@@ -430,12 +447,12 @@ boolean validateImmediate(char immediate[], char fileName[], unsigned lineNumber
 
     number = atoi(immediate);
 
-    if (number > MAX_NUMBER) {
+    if (number > MAX_IMMEDIATE) {
         printError("Number is too large to store in just 12 bits - largest possible value is 2047.", fileName, lineNumber);
         return FALSE;
     }
 
-    if (number < MIN_NUMBER) {
+    if (number < MIN_IMMEDIATE) {
         printError("Number is too small to store in just 12 bits - smallest possible value is -2048.", fileName, lineNumber);
         return FALSE;
     }

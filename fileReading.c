@@ -43,6 +43,7 @@ boolean readLines(char fileName[], FILE *file, macro *macros, word *code, word *
 
         if (!validateLine(line, fileName, lineNumber)) {
             isSuccessful = FALSE;
+            handleLabel(fileName, skipWhitespace(line), lineNumber, macros, foundLabels, *instructionCount, *dataCount);
             continue;
         }
 
