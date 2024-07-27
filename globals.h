@@ -1,6 +1,9 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+typedef unsigned char position;
+typedef unsigned short mask;
+
 typedef enum { FALSE,
                TRUE } boolean;
 typedef enum { IMMEDIATE,

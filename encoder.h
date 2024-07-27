@@ -3,17 +3,17 @@
 
 #include "globals.h"
 
-void toggleBit(word *wordToModify, unsigned char bitPosition);
-void applyMask(word *wordToModify, unsigned mask, unsigned char from);
-void encodeOperation(word *wordToModify, char operation[]);
-void encodeOperand(word *wordToModify, char operand[], boolean isSource);
-void encodeMetadata(word *wordToModify, char metadata);
-void encodeNumber(word *wordToModify, int number);
-void encodeRegister(word *wordToModify, unsigned char registerNumber, boolean isSource);
-void encodeExtraWord(word *wordToModify, char operand[], boolean isSource);
-void encodeData(word *wordToModify, int data);
+void toggleBit(word *wordToModify, position bitPosition);
+void applyMask(word *wordToModify, mask bitMask, position from);
 void encodeString(word **data, char string[], unsigned *dataCount);
 void encodeNumberList(word **data, char numberList[], unsigned *dataCount);
-void encodeLabel(word *wordToModify, unsigned labelAddress);
+void encodeMetadata(word *wordToModify, char metadata);
+void encodeExtraWord(word *wordToModify, char operand[], boolean isSource);
+void encodeOperand(word *wordToModify, char operand[], boolean isSource);
+void encodeRegister(word *wordToModify, unsigned char registerNumber, boolean isSource);
+void encodeOperation(word *wordToModify, char operation[]);
+void encodeImmediate(word *wordToModify, short number);
+void encodeData(word *wordToModify, short data);
+void encodeLabel(word *wordToModify, unsigned short labelAddress);
 
 #endif
