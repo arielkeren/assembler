@@ -54,29 +54,58 @@ boolean doesOperationAcceptOperand(char operation[], char operand[], boolean isS
     index = getOperationIndex(operation);
     type = getOperandType(operand);
 
-    if (index == 14 || index == 15) {
+    if (index == RTS || index == STOP) {
         return FALSE;
     }
 
     if (isSource) {
-        if (index <= 3) {
-            return TRUE;
-        }
+        switch (type) {
+            case IMMEDIATE:
+                return index == MOV || index == CMP || index == ADD ||
+                       index == SUB;
 
-        if (index == 4) {
-            return type == DIRECT;
-        }
+            case DIRECT:
+                return index == MOV || index == CMP || index == ADD ||
+                       index == SUB || index == LEA;
 
-        return FALSE;
-    } else {
-        if (type == DIRECT || type == INDIRECT_REGISTER) {
-            return TRUE;
-        }
+            case INDIRECT_REGISTER:
+                return index == MOV || index == CMP || index == ADD ||
+                       index == SUB;
 
-        if (type == IMMEDIATE) {
-            return index == 1 || index == 12;
-        }
+            case DIRECT_REGISTER:
+                return index == MOV || index == CMP || index == ADD ||
+                       index == SUB;
 
-        return index <= 8 || index == 11 || index == 12;
+            default:
+                return FALSE;
+        }
+    }
+
+    switch (type) {
+        case IMMEDIATE:
+            return index == CMP || index == PRN;
+
+        case DIRECT:
+            return index == MOV || index == CMP || index == ADD ||
+                   index == SUB || index == LEA || index == CLR ||
+                   index == NOT || index == INC || index == DEC ||
+                   index == JMP || index == BNE || index == RED ||
+                   index == PRN || index == JSR;
+
+        case INDIRECT_REGISTER:
+            return index == MOV || index == CMP || index == ADD ||
+                   index == SUB || index == LEA || index == CLR ||
+                   index == NOT || index == INC || index == DEC ||
+                   index == JMP || index == BNE || index == RED ||
+                   index == PRN || index == JSR;
+
+        case DIRECT_REGISTER:
+            return index == MOV || index == CMP || index == ADD ||
+                   index == SUB || index == LEA || index == CLR ||
+                   index == NOT || index == INC || index == DEC ||
+                   index == RED || index == PRN;
+
+        default:
+            return FALSE;
     }
 }

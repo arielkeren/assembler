@@ -45,6 +45,23 @@ typedef struct foundLabelStruct {
     struct foundLabelStruct *next;
 } foundLabel;
 
+enum { MOV,
+       CMP,
+       ADD,
+       SUB,
+       LEA,
+       CLR,
+       NOT,
+       INC,
+       DEC,
+       JMP,
+       BNE,
+       RED,
+       PRN,
+       JSR,
+       RTS,
+       STOP };
+
 enum { FIRST_INDEX,
        SECOND_INDEX,
        THIRD_INDEX };
