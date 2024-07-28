@@ -138,8 +138,8 @@ unsigned char convertDigitToNumber(char digit) {
 }
 
 void printMessage(char message[], char fileName[], unsigned lineNumber, boolean isError, boolean isMacro) {
-    static unsigned errorCount = INITIAL_VALUE;
-    static unsigned warningCount = INITIAL_VALUE;
+    static unsigned long errorCount = INITIAL_VALUE;
+    static unsigned long warningCount = INITIAL_VALUE;
 
     if (isError) {
         printf("\n--- Error #%u ---\n", ++errorCount);
