@@ -87,34 +87,32 @@ Boolean handleLine(char fileName[], char line[], LineNumber lineNumber, Macro *m
     }
 
     if (strcmp(token, ".entry") == EQUAL_STRINGS) {
-        if (containsLabel(*entryLabels, nextToken)) {
-            printError("Label already marked as entry.", fileName, lineNumber);
-            free(token);
-            free(nextToken);
-            return FALSE;
-        }
-
         if (getMacroContent(macros, token) != NULL) {
             printError("Label's name already taken by a macro.", fileName, lineNumber);
             free(token);
             free(nextToken);
             return FALSE;
+        }
+
+        if (containsLabel(*entryLabels, nextToken)) {
+            free(token);
+            free(nextToken);
+            return isSuccessful;
         }
 
         addLabel(entryLabels, nextToken, lineNumber);
     } else if (strcmp(token, ".extern") == EQUAL_STRINGS) {
-        if (containsLabel(*externLabels, nextToken)) {
-            printError("Label already marked as extern.", fileName, lineNumber);
-            free(token);
-            free(nextToken);
-            return FALSE;
-        }
-
         if (getMacroContent(macros, token) != NULL) {
             printError("Label's name already taken by a macro.", fileName, lineNumber);
             free(token);
             free(nextToken);
             return FALSE;
+        }
+
+        if (containsLabel(*externLabels, nextToken)) {
+            free(token);
+            free(nextToken);
+            return isSuccessful;
         }
 
         addLabel(externLabels, nextToken, lineNumber);
