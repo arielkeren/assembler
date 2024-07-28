@@ -8,7 +8,7 @@
 #include "instructionInformation.h"
 #include "utils.h"
 
-Boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
+Boolean validateLine(char line[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
     char *token;
 
@@ -73,7 +73,7 @@ Boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
     return isValid;
 }
 
-Boolean validateEntryExtern(char label[], char fileName[], unsigned lineNumber) {
+Boolean validateEntryExtern(char label[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
     char *token;
 
@@ -97,15 +97,15 @@ Boolean validateEntryExtern(char label[], char fileName[], unsigned lineNumber) 
     return isValid;
 }
 
-Boolean validateLabel(char label[], char fileName[], unsigned lineNumber) {
+Boolean validateLabel(char label[], char fileName[], LineNumber lineNumber) {
     return validateName(label, fileName, lineNumber, TRUE);
 }
 
-Boolean validateMacro(char label[], char fileName[], unsigned lineNumber) {
+Boolean validateMacro(char label[], char fileName[], LineNumber lineNumber) {
     return validateName(label, fileName, lineNumber, FALSE);
 }
 
-Boolean validateName(char name[], char fileName[], unsigned lineNumber, Boolean isLabel) {
+Boolean validateName(char name[], char fileName[], LineNumber lineNumber, Boolean isLabel) {
     Boolean isValid;
 
     if (*name == '\0') {
@@ -160,7 +160,7 @@ Boolean validateName(char name[], char fileName[], unsigned lineNumber, Boolean 
         isValid = FALSE;
     }
 
-    if (getOperationIndex(name) != INVALID_OPERATION) {
+    if (getOperationIndex(name) != (Index)INVALID_OPERATION) {
         if (isLabel) {
             printError("Label cannot share the same name as an operation.", fileName, lineNumber);
         } else {
@@ -197,7 +197,7 @@ Boolean validateName(char name[], char fileName[], unsigned lineNumber, Boolean 
     return isValid;
 }
 
-Boolean validateData(char data[], char fileName[], unsigned lineNumber) {
+Boolean validateData(char data[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
     Boolean isFollowedByComma;
     char *token;
@@ -239,7 +239,7 @@ Boolean validateData(char data[], char fileName[], unsigned lineNumber) {
     return isValid;
 }
 
-Boolean validateNumber(char number[], char fileName[], unsigned lineNumber) {
+Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
     char *current;
     int value;
 
@@ -273,7 +273,7 @@ Boolean validateNumber(char number[], char fileName[], unsigned lineNumber) {
     return TRUE;
 }
 
-Boolean validateString(char string[], char fileName[], unsigned lineNumber) {
+Boolean validateString(char string[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
     char *token;
 
@@ -313,7 +313,7 @@ Boolean validateString(char string[], char fileName[], unsigned lineNumber) {
     return isValid;
 }
 
-Boolean validateInstruction(char instruction[], char fileName[], unsigned lineNumber) {
+Boolean validateInstruction(char instruction[], char fileName[], LineNumber lineNumber) {
     char *operation;
     char *token;
     OperandCount operands;
@@ -411,8 +411,8 @@ Boolean validateInstruction(char instruction[], char fileName[], unsigned lineNu
     return TRUE;
 }
 
-Boolean validateOperation(char operation[], char fileName[], unsigned lineNumber) {
-    if (getOperationIndex(operation) == INVALID_OPERATION) {
+Boolean validateOperation(char operation[], char fileName[], LineNumber lineNumber) {
+    if (getOperationIndex(operation) == (Index)INVALID_OPERATION) {
         printError("Invalid operation.", fileName, lineNumber);
         return FALSE;
     }
@@ -420,7 +420,7 @@ Boolean validateOperation(char operation[], char fileName[], unsigned lineNumber
     return TRUE;
 }
 
-Boolean validateOperand(char operand[], char fileName[], unsigned lineNumber) {
+Boolean validateOperand(char operand[], char fileName[], LineNumber lineNumber) {
     switch (getOperandType(operand)) {
         case IMMEDIATE:
             return validateImmediate(operand, fileName, lineNumber);
@@ -435,7 +435,7 @@ Boolean validateOperand(char operand[], char fileName[], unsigned lineNumber) {
     }
 }
 
-Boolean validateImmediate(char immediate[], char fileName[], unsigned lineNumber) {
+Boolean validateImmediate(char immediate[], char fileName[], LineNumber lineNumber) {
     int number;
 
     immediate++;
@@ -460,7 +460,7 @@ Boolean validateImmediate(char immediate[], char fileName[], unsigned lineNumber
     return TRUE;
 }
 
-Boolean validateIndirectRegister(char directRegister[], char fileName[], unsigned lineNumber) {
+Boolean validateIndirectRegister(char directRegister[], char fileName[], LineNumber lineNumber) {
     directRegister++;
     if (*directRegister != 'r') {
         printError("Token starts with an asterisk but does not include any register right after it (a label cannot start with an asterisk).", fileName, lineNumber);

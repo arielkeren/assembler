@@ -3,18 +3,18 @@
 
 #include "globals.h"
 
-Boolean validateLine(char line[], char fileName[], unsigned lineNumber);
-Boolean validateEntryExtern(char label[], char fileName[], unsigned lineNumber);
-Boolean validateLabel(char label[], char fileName[], unsigned lineNumber);
-Boolean validateMacro(char label[], char fileName[], unsigned lineNumber);
-Boolean validateName(char name[], char fileName[], unsigned lineNumber, Boolean isLabel);
-Boolean validateData(char data[], char fileName[], unsigned lineNumber);
-Boolean validateNumber(char number[], char fileName[], unsigned lineNumber);
-Boolean validateString(char string[], char fileName[], unsigned lineNumber);
-Boolean validateInstruction(char instruction[], char fileName[], unsigned lineNumber);
-Boolean validateOperation(char operation[], char fileName[], unsigned lineNumber);
-Boolean validateOperand(char operand[], char fileName[], unsigned lineNumber);
-Boolean validateImmediate(char immediate[], char fileName[], unsigned lineNumber);
-Boolean validateIndirectRegister(char directRegister[], char fileName[], unsigned lineNumber);
+Boolean validateLine(char line[], char fileName[], LineNumber lineNumber);
+Boolean validateEntryExtern(char label[], char fileName[], LineNumber lineNumber);
+Boolean validateLabel(char label[], char fileName[], LineNumber lineNumber);
+Boolean validateMacro(char label[], char fileName[], LineNumber lineNumber);
+Boolean validateName(char name[], char fileName[], LineNumber lineNumber, Boolean isLabel);
+Boolean validateData(char data[], char fileName[], LineNumber lineNumber);
+Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber);
+Boolean validateString(char string[], char fileName[], LineNumber lineNumber);
+Boolean validateInstruction(char instruction[], char fileName[], LineNumber lineNumber);
+Boolean validateOperation(char operation[], char fileName[], LineNumber lineNumber);
+Boolean validateOperand(char operand[], char fileName[], LineNumber lineNumber);
+Boolean validateImmediate(char immediate[], char fileName[], LineNumber lineNumber);
+Boolean validateIndirectRegister(char directRegister[], char fileName[], LineNumber lineNumber);
 
 #endif

@@ -6,7 +6,7 @@
 #include "globals.h"
 #include "utils.h"
 
-void addLabel(Label **labels, char labelName[], unsigned lineNumber) {
+void addLabel(Label **labels, char labelName[], LineNumber lineNumber) {
     Label *newLabel;
 
     newLabel = allocate(sizeof(Label));
@@ -28,14 +28,15 @@ Boolean containsLabel(Label *labels, char labelName[]) {
     return FALSE;
 }
 
-unsigned char getLongestLabel(Label *labels) {
-    unsigned char longest;
-    unsigned char currentLength;
+Length getLongestLabel(Label *labels) {
+    Length longest;
+    Length currentLength;
 
     longest = INITIAL_VALUE;
 
     while (labels != NULL) {
-        currentLength = (unsigned char)strlen(labels->name);
+        currentLength = (Length)strlen(labels->name);
+
         if (currentLength > longest) {
             longest = currentLength;
         }

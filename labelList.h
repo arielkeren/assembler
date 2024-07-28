@@ -3,9 +3,9 @@
 
 #include "globals.h"
 
-void addLabel(Label **labels, char labelName[], unsigned lineNumber);
+void addLabel(Label **labels, char labelName[], LineNumber lineNumber);
 Boolean containsLabel(Label *labels, char labelName[]);
-unsigned char getLongestLabel(Label *labels);
+Length getLongestLabel(Label *labels);
 void freeLabelList(Label *labels);
 void freeLabel(Label *label);
 

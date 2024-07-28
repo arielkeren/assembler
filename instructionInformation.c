@@ -4,10 +4,10 @@
 
 #include "globals.h"
 
-unsigned char getOperationIndex(char operation[]) {
+Index getOperationIndex(char operation[]) {
     static char *OPERATIONS[OPERATION_COUNT] = {"mov", "cmp", "add", "sub", "lea", "clr", "not", "inc", "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"};
 
-    unsigned char index;
+    Index index;
 
     for (index = INITIAL_VALUE; index < OPERATION_COUNT; index++) {
         if (strcmp(operation, OPERATIONS[index]) == EQUAL_STRINGS) {
@@ -19,7 +19,7 @@ unsigned char getOperationIndex(char operation[]) {
 }
 
 OperandCount getOperandCount(char operation[]) {
-    unsigned char operationIndex;
+    Index operationIndex;
 
     operationIndex = getOperationIndex(operation);
 
@@ -48,7 +48,7 @@ OperandType getOperandType(char operand[]) {
 }
 
 Boolean doesOperationAcceptOperand(char operation[], char operand[], Boolean isSource) {
-    unsigned char index;
+    Index index;
     OperandType type;
 
     index = getOperationIndex(operation);

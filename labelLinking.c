@@ -6,7 +6,7 @@
 #include "labelList.h"
 #include "utils.h"
 
-Boolean linkLabels(char fileName[], Label *externLabels, UsedLabel *usedLabels, FoundLabel *foundLabels, unsigned instructionCount) {
+Boolean linkLabels(char fileName[], Label *externLabels, UsedLabel *usedLabels, FoundLabel *foundLabels, WordCount instructionCount) {
     Boolean isSuccessful;
     FoundLabel *matchingFoundLabel;
 

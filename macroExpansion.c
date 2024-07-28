@@ -38,7 +38,7 @@ Boolean expandMacros(char fileName[], Macro **macros) {
 Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[]) {
     Boolean isSuccessful;
     Boolean isInsideMacro;
-    unsigned lineNumber;
+    LineNumber lineNumber;
     char line[MAX_LINE_LENGTH + NEWLINE_BYTE + NULL_BYTE];
 
     isSuccessful = TRUE;
@@ -63,7 +63,7 @@ Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char
     return isSuccessful;
 }
 
-Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[], char line[], unsigned lineNumber, Boolean *isInsideMacro) {
+Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[], char line[], LineNumber lineNumber, Boolean *isInsideMacro) {
     char *current;
     char *token;
     char *content;

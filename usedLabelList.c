@@ -5,7 +5,7 @@
 #include "globals.h"
 #include "utils.h"
 
-void addUsedLabel(UsedLabel **labels, char labelName[], Address address, unsigned lineNumber, Word *wordPointer) {
+void addUsedLabel(UsedLabel **labels, char labelName[], Address address, LineNumber lineNumber, Word *wordPointer) {
     UsedLabel *newLabel;
 
     newLabel = allocate(sizeof(UsedLabel));

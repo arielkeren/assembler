@@ -1,9 +1,13 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+typedef unsigned char Length;
 typedef unsigned char Position;
+typedef unsigned char Index;
 typedef unsigned short Mask;
 typedef unsigned short Address;
+typedef unsigned short WordCount;
+typedef unsigned long LineNumber;
 
 typedef enum { FALSE,
                TRUE } Boolean;
@@ -31,14 +35,14 @@ typedef struct WordNode {
 
 typedef struct LabelNode {
     char *name;
-    unsigned lineNumber;
+    LineNumber lineNumber;
     struct LabelNode *next;
 } Label;
 
 typedef struct UsedLabelNode {
     char *name;
     Address address;
-    unsigned lineNumber;
+    LineNumber lineNumber;
     Word *wordPointer;
     struct UsedLabelNode *next;
 } UsedLabel;

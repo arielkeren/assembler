@@ -8,7 +8,7 @@
 #include "labelList.h"
 #include "utils.h"
 
-void generateObFile(char fileName[], Word *code, Word *data, unsigned instructionCount, unsigned dataCount) {
+void generateObFile(char fileName[], Word *code, Word *data, WordCount instructionCount, WordCount dataCount) {
     FILE *file;
 
     file = openFile(fileName, "ob", "w");
@@ -25,10 +25,10 @@ void generateObFile(char fileName[], Word *code, Word *data, unsigned instructio
     fclose(file);
 }
 
-Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLabels, unsigned instructionCount, Boolean shouldGenerate) {
+Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLabels, WordCount instructionCount, Boolean shouldGenerate) {
     FoundLabel *matchingFoundLabel;
     FILE *file;
-    unsigned char longest;
+    Length longest;
 
     file = NULL;
     longest = getLongestLabel(entryLabels);
@@ -57,9 +57,9 @@ Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLa
         }
 
         if (matchingFoundLabel->isData) {
-            insertLabel(file, entryLabels->name, matchingFoundLabel->address + instructionCount + STARTING_MEMORY_ADDRESS, longest);
+            insertLabel(file, entryLabels->name, matchingFoundLabel->address + (Address)instructionCount + (Address)STARTING_MEMORY_ADDRESS, longest);
         } else {
-            insertLabel(file, entryLabels->name, matchingFoundLabel->address + STARTING_MEMORY_ADDRESS, longest);
+            insertLabel(file, entryLabels->name, matchingFoundLabel->address + (Address)STARTING_MEMORY_ADDRESS, longest);
         }
 
         entryLabels = entryLabels->next;
@@ -74,7 +74,7 @@ Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLa
 Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLabels, FoundLabel *foundLabels, Boolean shouldGenerate) {
     UsedLabel *currentUsedLabel;
     FILE *file;
-    unsigned char longest;
+    Length longest;
 
     file = NULL;
     longest = getLongestLabel(externLabels);
@@ -122,12 +122,12 @@ Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLab
 
 void insertWordList(FILE *file, Word *wordList, Address startingAddress) {
     while (wordList != NULL) {
-        fprintf(file, "%04hu %05o\n", startingAddress, wordList->data1 + ((unsigned)wordList->data2 << (sizeof(wordList->data1) * BITS_PER_BYTE)));
+        fprintf(file, "%04hu %05o\n", startingAddress, (unsigned)wordList->data1 + ((unsigned)wordList->data2 << (sizeof(wordList->data1) * BITS_PER_BYTE)));
         startingAddress++;
         wordList = wordList->next;
     }
 }
 
-void insertLabel(FILE *file, char labelName[], Address address, unsigned char longest) {
+void insertLabel(FILE *file, char labelName[], Address address, Length longest) {
     fprintf(file, "%-*s %04hu\n", longest, labelName, address);
 }

@@ -7,7 +7,7 @@
 
 Boolean expandMacros(char fileName[], Macro **macros);
 Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[]);
-Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[], char line[], unsigned lineNumber, Boolean *isInsideMacro);
+Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[], char line[], LineNumber lineNumber, Boolean *isInsideMacro);
 Boolean isEndOfMacro(char line[]);
 
 #endif

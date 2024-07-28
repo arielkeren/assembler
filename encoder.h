@@ -4,9 +4,9 @@
 #include "globals.h"
 
 void toggleBit(Word *word, Position bitPosition);
-void applyMask(Word *word, Mask bitMask, Position from);
-void encodeString(Word **data, char string[], unsigned *dataCount);
-void encodeNumberList(Word **data, char numberList[], unsigned *dataCount);
+void applyMask(Word *word, Mask mask, Position from);
+void encodeString(Word **data, char string[], WordCount *dataCount);
+void encodeNumberList(Word **data, char numberList[], WordCount *dataCount);
 void encodeMetadata(Word *word, char metadata);
 void encodeExtraWord(Word *word, char operand[], Boolean isSource);
 void encodeOperand(Word *word, char operand[], Boolean isSource);

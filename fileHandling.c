@@ -31,8 +31,8 @@ void compileFiles(char *fileNames[], int fileCount) {
     UsedLabel *usedLabels;
     FoundLabel *foundLabels;
     Boolean shouldGenerateFiles;
-    unsigned instructionCount;
-    unsigned dataCount;
+    WordCount instructionCount;
+    WordCount dataCount;
 
     while (fileCount > NO_FILES) {
         code = createWord();

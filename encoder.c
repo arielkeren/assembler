@@ -16,18 +16,18 @@ void toggleBit(Word *word, Position bitPosition) {
     word->data2 |= ((unsigned char)SINGLE_BIT << (bitPosition - (Position)(sizeof(word->data1) * BITS_PER_BYTE)));
 }
 
-void applyMask(Word *word, Mask bitMask, Position from) {
-    while (bitMask != (Mask)EMPTY && from < (Position)BITS_PER_MEMORY_CELL) {
-        if (bitMask & (Mask)SINGLE_BIT) {
+void applyMask(Word *word, Mask mask, Position from) {
+    while (mask != (Mask)EMPTY && from < (Position)BITS_PER_MEMORY_CELL) {
+        if (mask & (Mask)SINGLE_BIT) {
             toggleBit(word, from);
         }
 
-        bitMask >>= (Mask)SINGLE_BIT;
+        mask >>= (Mask)SINGLE_BIT;
         from++;
     }
 }
 
-void encodeString(Word **data, char string[], unsigned *dataCount) {
+void encodeString(Word **data, char string[], WordCount *dataCount) {
     string++;
 
     while (*string != '\"') {
@@ -42,7 +42,7 @@ void encodeString(Word **data, char string[], unsigned *dataCount) {
     *data = addWord(*data);
 }
 
-void encodeNumberList(Word **data, char numberList[], unsigned *dataCount) {
+void encodeNumberList(Word **data, char numberList[], WordCount *dataCount) {
     char *token;
 
     while (*numberList != '\0') {

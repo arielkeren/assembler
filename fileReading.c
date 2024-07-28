@@ -14,7 +14,7 @@
 #include "utils.h"
 #include "wordList.h"
 
-Boolean readFile(char fileName[], Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+Boolean readFile(char fileName[], Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount) {
     Boolean isSuccessful;
     FILE *file;
 
@@ -30,10 +30,10 @@ Boolean readFile(char fileName[], Macro *macros, Word *code, Word *data, Label *
     return isSuccessful;
 }
 
-Boolean readLines(char fileName[], FILE *file, Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+Boolean readLines(char fileName[], FILE *file, Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount) {
     Boolean isSuccessful;
     char line[MAX_LINE_LENGTH + NEWLINE_BYTE + NULL_BYTE];
-    unsigned lineNumber;
+    LineNumber lineNumber;
 
     isSuccessful = TRUE;
     lineNumber = INITIAL_VALUE;
@@ -58,7 +58,7 @@ Boolean readLines(char fileName[], FILE *file, Macro *macros, Word *code, Word *
     return isSuccessful;
 }
 
-Boolean handleLine(char fileName[], char line[], unsigned lineNumber, Macro *macros, Word **code, Word **data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount) {
+Boolean handleLine(char fileName[], char line[], LineNumber lineNumber, Macro *macros, Word **code, Word **data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount) {
     Boolean isSuccessful;
     char *token;
     char *nextToken;
@@ -133,7 +133,7 @@ Boolean handleLine(char fileName[], char line[], unsigned lineNumber, Macro *mac
     return isSuccessful;
 }
 
-Boolean handleLabel(char fileName[], char line[], unsigned lineNumber, Macro *macros, FoundLabel **foundLabels, unsigned instructionCount, unsigned dataCount) {
+Boolean handleLabel(char fileName[], char line[], LineNumber lineNumber, Macro *macros, FoundLabel **foundLabels, WordCount instructionCount, WordCount dataCount) {
     char *token;
     char *nextToken;
 
@@ -182,7 +182,7 @@ Boolean handleLabel(char fileName[], char line[], unsigned lineNumber, Macro *ma
     return TRUE;
 }
 
-void handleOperation(char line[], unsigned lineNumber, Word **code, UsedLabel **usedLabels, unsigned *instructionCount) {
+void handleOperation(char line[], LineNumber lineNumber, Word **code, UsedLabel **usedLabels, WordCount *instructionCount) {
     char *token;
     OperandCount operands;
     char *firstOperand;

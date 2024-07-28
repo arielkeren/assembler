@@ -3,7 +3,7 @@
 
 #include "globals.h"
 
-unsigned char getOperationIndex(char operation[]);
+Index getOperationIndex(char operation[]);
 OperandCount getOperandCount(char operation[]);
 OperandType getOperandType(char operand[]);
 Boolean doesOperationAcceptOperand(char operation[], char operand[], Boolean isSource);

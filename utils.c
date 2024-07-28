@@ -137,7 +137,7 @@ unsigned char convertDigitToNumber(char digit) {
     return (unsigned char)(digit - '0');
 }
 
-void printMessage(char message[], char fileName[], unsigned lineNumber, Boolean isError, Boolean isMacro) {
+void printMessage(char message[], char fileName[], LineNumber lineNumber, Boolean isError, Boolean isMacro) {
     static unsigned long errorCount = INITIAL_VALUE;
     static unsigned long warningCount = INITIAL_VALUE;
 
@@ -152,15 +152,15 @@ void printMessage(char message[], char fileName[], unsigned lineNumber, Boolean 
     printf("%s\n", message);
 }
 
-void printError(char message[], char fileName[], unsigned lineNumber) {
+void printError(char message[], char fileName[], LineNumber lineNumber) {
     printMessage(message, fileName, lineNumber, TRUE, FALSE);
 }
 
-void printMacroError(char message[], char fileName[], unsigned lineNumber) {
+void printMacroError(char message[], char fileName[], LineNumber lineNumber) {
     printMessage(message, fileName, lineNumber, TRUE, TRUE);
 }
 
-void printWarning(char message[], char fileName[], unsigned lineNumber) {
+void printWarning(char message[], char fileName[], LineNumber lineNumber) {
     printMessage(message, fileName, lineNumber, FALSE, FALSE);
 }
 
