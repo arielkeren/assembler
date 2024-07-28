@@ -8,8 +8,8 @@
 #include "instructionInformation.h"
 #include "utils.h"
 
-boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
-    boolean isValid;
+Boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
+    Boolean isValid;
     char *token;
 
     if (*line == ';') {
@@ -73,8 +73,8 @@ boolean validateLine(char line[], char fileName[], unsigned lineNumber) {
     return isValid;
 }
 
-boolean validateEntryExtern(char label[], char fileName[], unsigned lineNumber) {
-    boolean isValid;
+Boolean validateEntryExtern(char label[], char fileName[], unsigned lineNumber) {
+    Boolean isValid;
     char *token;
 
     token = getNextToken(label);
@@ -97,16 +97,16 @@ boolean validateEntryExtern(char label[], char fileName[], unsigned lineNumber) 
     return isValid;
 }
 
-boolean validateLabel(char label[], char fileName[], unsigned lineNumber) {
+Boolean validateLabel(char label[], char fileName[], unsigned lineNumber) {
     return validateName(label, fileName, lineNumber, TRUE);
 }
 
-boolean validateMacro(char label[], char fileName[], unsigned lineNumber) {
+Boolean validateMacro(char label[], char fileName[], unsigned lineNumber) {
     return validateName(label, fileName, lineNumber, FALSE);
 }
 
-boolean validateName(char name[], char fileName[], unsigned lineNumber, boolean isLabel) {
-    boolean isValid;
+Boolean validateName(char name[], char fileName[], unsigned lineNumber, Boolean isLabel) {
+    Boolean isValid;
 
     if (*name == '\0') {
         if (isLabel) {
@@ -197,9 +197,9 @@ boolean validateName(char name[], char fileName[], unsigned lineNumber, boolean 
     return isValid;
 }
 
-boolean validateData(char data[], char fileName[], unsigned lineNumber) {
-    boolean isValid;
-    boolean isFollowedByComma;
+Boolean validateData(char data[], char fileName[], unsigned lineNumber) {
+    Boolean isValid;
+    Boolean isFollowedByComma;
     char *token;
 
     if (*data == '\0') {
@@ -239,7 +239,7 @@ boolean validateData(char data[], char fileName[], unsigned lineNumber) {
     return isValid;
 }
 
-boolean validateNumber(char number[], char fileName[], unsigned lineNumber) {
+Boolean validateNumber(char number[], char fileName[], unsigned lineNumber) {
     char *current;
     int value;
 
@@ -273,8 +273,8 @@ boolean validateNumber(char number[], char fileName[], unsigned lineNumber) {
     return TRUE;
 }
 
-boolean validateString(char string[], char fileName[], unsigned lineNumber) {
-    boolean isValid;
+Boolean validateString(char string[], char fileName[], unsigned lineNumber) {
+    Boolean isValid;
     char *token;
 
     if (*string == '\0') {
@@ -313,10 +313,10 @@ boolean validateString(char string[], char fileName[], unsigned lineNumber) {
     return isValid;
 }
 
-boolean validateInstruction(char instruction[], char fileName[], unsigned lineNumber) {
+Boolean validateInstruction(char instruction[], char fileName[], unsigned lineNumber) {
     char *operation;
     char *token;
-    operandCount operands;
+    OperandCount operands;
 
     operation = getNextToken(instruction);
 
@@ -411,7 +411,7 @@ boolean validateInstruction(char instruction[], char fileName[], unsigned lineNu
     return TRUE;
 }
 
-boolean validateOperation(char operation[], char fileName[], unsigned lineNumber) {
+Boolean validateOperation(char operation[], char fileName[], unsigned lineNumber) {
     if (getOperationIndex(operation) == INVALID_OPERATION) {
         printError("Invalid operation.", fileName, lineNumber);
         return FALSE;
@@ -420,7 +420,7 @@ boolean validateOperation(char operation[], char fileName[], unsigned lineNumber
     return TRUE;
 }
 
-boolean validateOperand(char operand[], char fileName[], unsigned lineNumber) {
+Boolean validateOperand(char operand[], char fileName[], unsigned lineNumber) {
     switch (getOperandType(operand)) {
         case IMMEDIATE:
             return validateImmediate(operand, fileName, lineNumber);
@@ -435,7 +435,7 @@ boolean validateOperand(char operand[], char fileName[], unsigned lineNumber) {
     }
 }
 
-boolean validateImmediate(char immediate[], char fileName[], unsigned lineNumber) {
+Boolean validateImmediate(char immediate[], char fileName[], unsigned lineNumber) {
     int number;
 
     immediate++;
@@ -460,7 +460,7 @@ boolean validateImmediate(char immediate[], char fileName[], unsigned lineNumber
     return TRUE;
 }
 
-boolean validateIndirectRegister(char directRegister[], char fileName[], unsigned lineNumber) {
+Boolean validateIndirectRegister(char directRegister[], char fileName[], unsigned lineNumber) {
     directRegister++;
     if (*directRegister != 'r') {
         printError("Token starts with an asterisk but does not include any register right after it (a label cannot start with an asterisk).", fileName, lineNumber);

@@ -5,6 +5,6 @@
 
 #include "globals.h"
 
-boolean linkLabels(char fileName[], label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, unsigned instructionCount);
+Boolean linkLabels(char fileName[], Label *externLabels, UsedLabel *usedLabels, FoundLabel *foundLabels, unsigned instructionCount);
 
 #endif

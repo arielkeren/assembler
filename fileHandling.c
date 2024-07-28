@@ -23,14 +23,14 @@ void checkNoFiles(int fileCount) {
 }
 
 void compileFiles(char *fileNames[], int fileCount) {
-    word *code;
-    word *data;
-    macro *macros;
-    label *entryLabels;
-    label *externLabels;
-    usedLabel *usedLabels;
-    foundLabel *foundLabels;
-    boolean shouldGenerateFiles;
+    Word *code;
+    Word *data;
+    Macro *macros;
+    Label *entryLabels;
+    Label *externLabels;
+    UsedLabel *usedLabels;
+    FoundLabel *foundLabels;
+    Boolean shouldGenerateFiles;
     unsigned instructionCount;
     unsigned dataCount;
 

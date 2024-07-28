@@ -5,9 +5,9 @@
 
 #include "globals.h"
 
-boolean expandMacros(char fileName[], macro **macros);
-boolean expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros, char fileName[]);
-boolean expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char fileName[], char line[], unsigned lineNumber, boolean *isInsideMacro);
-boolean isEndOfMacro(char line[]);
+Boolean expandMacros(char fileName[], Macro **macros);
+Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[]);
+Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[], char line[], unsigned lineNumber, Boolean *isInsideMacro);
+Boolean isEndOfMacro(char line[]);
 
 #endif

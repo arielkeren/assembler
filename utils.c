@@ -81,11 +81,11 @@ void removeEnding(char string[], char ending) {
     }
 }
 
-boolean checkIfLabel(char token[]) {
+Boolean checkIfLabel(char token[]) {
     return token[strlen(token) - LAST_INDEX_DIFF] == ':';
 }
 
-boolean checkIfFollowedByComma(char line[]) {
+Boolean checkIfFollowedByComma(char line[]) {
     while (isspace(*line)) {
         line++;
     }
@@ -93,7 +93,7 @@ boolean checkIfFollowedByComma(char line[]) {
     return *line == ',';
 }
 
-boolean checkForConsecutiveCommas(char line[]) {
+Boolean checkForConsecutiveCommas(char line[]) {
     while (isspace(*line)) {
         line++;
     }
@@ -137,7 +137,7 @@ unsigned char convertDigitToNumber(char digit) {
     return (unsigned char)(digit - '0');
 }
 
-void printMessage(char message[], char fileName[], unsigned lineNumber, boolean isError, boolean isMacro) {
+void printMessage(char message[], char fileName[], unsigned lineNumber, Boolean isError, Boolean isMacro) {
     static unsigned long errorCount = INITIAL_VALUE;
     static unsigned long warningCount = INITIAL_VALUE;
 

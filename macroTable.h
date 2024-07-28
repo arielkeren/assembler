@@ -3,10 +3,10 @@
 
 #include "globals.h"
 
-char *getMacroContent(macro *macroTable, char macroName[]);
-void addMacro(macro **macroTable, char macroName[]);
-void addMacroContent(macro *macroToModify, char content[]);
-void freeMacroTable(macro *macroTable);
-void freeMacro(macro *macro);
+char *getMacroContent(Macro *macroTable, char macroName[]);
+void addMacro(Macro **macroTable, char macroName[]);
+void addMacroContent(Macro *macro, char content[]);
+void freeMacroTable(Macro *macroTable);
+void freeMacro(Macro *macro);
 
 #endif

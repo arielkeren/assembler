@@ -6,57 +6,57 @@
 #include "globals.h"
 #include "utils.h"
 
-void addLabel(label **labelList, char labelName[], unsigned lineNumber) {
-    label *newLabel;
+void addLabel(Label **labels, char labelName[], unsigned lineNumber) {
+    Label *newLabel;
 
-    newLabel = allocate(sizeof(label));
+    newLabel = allocate(sizeof(Label));
     newLabel->name = labelName;
     newLabel->lineNumber = lineNumber;
-    newLabel->next = *labelList;
-    *labelList = newLabel;
+    newLabel->next = *labels;
+    *labels = newLabel;
 }
 
-boolean containsLabel(label *labelList, char labelName[]) {
-    while (labelList != NULL) {
-        if (strcmp(labelList->name, labelName) == EQUAL_STRINGS) {
+Boolean containsLabel(Label *labels, char labelName[]) {
+    while (labels != NULL) {
+        if (strcmp(labels->name, labelName) == EQUAL_STRINGS) {
             return TRUE;
         }
 
-        labelList = labelList->next;
+        labels = labels->next;
     }
 
     return FALSE;
 }
 
-unsigned char getLongestLabel(label *labelList) {
+unsigned char getLongestLabel(Label *labels) {
     unsigned char longest;
     unsigned char currentLength;
 
     longest = INITIAL_VALUE;
 
-    while (labelList != NULL) {
-        currentLength = (unsigned char)strlen(labelList->name);
+    while (labels != NULL) {
+        currentLength = (unsigned char)strlen(labels->name);
         if (currentLength > longest) {
             longest = currentLength;
         }
 
-        labelList = labelList->next;
+        labels = labels->next;
     }
 
     return longest;
 }
 
-void freeLabelList(label *labelList) {
-    label *next;
+void freeLabelList(Label *labels) {
+    Label *next;
 
-    while (labelList != NULL) {
-        next = labelList->next;
-        freeLabel(labelList);
-        labelList = next;
+    while (labels != NULL) {
+        next = labels->next;
+        freeLabel(labels);
+        labels = next;
     }
 }
 
-void freeLabel(label *labelToFree) {
-    free(labelToFree->name);
-    free(labelToFree);
+void freeLabel(Label *label) {
+    free(label->name);
+    free(label);
 }

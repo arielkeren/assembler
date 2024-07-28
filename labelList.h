@@ -3,10 +3,10 @@
 
 #include "globals.h"
 
-void addLabel(label **labelList, char labelName[], unsigned lineNumber);
-boolean containsLabel(label *labelList, char labelName[]);
-unsigned char getLongestLabel(label *labelList);
-void freeLabelList(label *labelList);
-void freeLabel(label *labelToFree);
+void addLabel(Label **labels, char labelName[], unsigned lineNumber);
+Boolean containsLabel(Label *labels, char labelName[]);
+unsigned char getLongestLabel(Label *labels);
+void freeLabelList(Label *labels);
+void freeLabel(Label *label);
 
 #endif

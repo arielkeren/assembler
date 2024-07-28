@@ -5,30 +5,30 @@
 #include "globals.h"
 #include "utils.h"
 
-void addUsedLabel(usedLabel **usedLabels, char labelName[], address labelAddress, unsigned lineNumber, word *wordPointer) {
-    usedLabel *newUsedLabel;
+void addUsedLabel(UsedLabel **labels, char labelName[], Address address, unsigned lineNumber, Word *wordPointer) {
+    UsedLabel *newLabel;
 
-    newUsedLabel = allocate(sizeof(usedLabel));
-    newUsedLabel->name = labelName;
-    newUsedLabel->labelAddress = labelAddress;
-    newUsedLabel->lineNumber = lineNumber;
-    newUsedLabel->wordPointer = wordPointer;
+    newLabel = allocate(sizeof(UsedLabel));
+    newLabel->name = labelName;
+    newLabel->address = address;
+    newLabel->lineNumber = lineNumber;
+    newLabel->wordPointer = wordPointer;
 
-    newUsedLabel->next = *usedLabels;
-    *usedLabels = newUsedLabel;
+    newLabel->next = *labels;
+    *labels = newLabel;
 }
 
-void freeUsedLabelList(usedLabel *usedLabelList) {
-    usedLabel *next;
+void freeUsedLabelList(UsedLabel *labels) {
+    UsedLabel *next;
 
-    while (usedLabelList != NULL) {
-        next = usedLabelList->next;
-        freeUsedLabel(usedLabelList);
-        usedLabelList = next;
+    while (labels != NULL) {
+        next = labels->next;
+        freeUsedLabel(labels);
+        labels = next;
     }
 }
 
-void freeUsedLabel(usedLabel *usedLabelToFree) {
-    free(usedLabelToFree->name);
-    free(usedLabelToFree);
+void freeUsedLabel(UsedLabel *label) {
+    free(label->name);
+    free(label);
 }

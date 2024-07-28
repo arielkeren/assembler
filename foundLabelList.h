@@ -3,11 +3,11 @@
 
 #include "globals.h"
 
-void addFoundLabel(foundLabel **foundLabelList, char labelName[]);
-void markAsData(foundLabel *foundLabelToModify);
-void setAddress(foundLabel *foundLabelToModify, address newAddress);
-foundLabel *getFoundLabel(foundLabel *foundLabelList, char labelName[]);
-void freeFoundLabelList(foundLabel *foundLabelList);
-void freeFoundLabel(foundLabel *foundLabelToFree);
+void addFoundLabel(FoundLabel **labels, char labelName[]);
+void markAsData(FoundLabel *label);
+void setAddress(FoundLabel *label, Address newAddress);
+FoundLabel *getFoundLabel(FoundLabel *labels, char labelName[]);
+void freeFoundLabelList(FoundLabel *labels);
+void freeFoundLabel(FoundLabel *label);
 
 #endif

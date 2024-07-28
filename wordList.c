@@ -5,19 +5,19 @@
 #include "globals.h"
 #include "utils.h"
 
-word *addWord(word *wordList) {
-    word *newWord;
+Word *addWord(Word *words) {
+    Word *newWord;
 
     newWord = createWord();
-    wordList->next = newWord;
+    words->next = newWord;
 
     return newWord;
 }
 
-word *createWord() {
-    word *newWord;
+Word *createWord() {
+    Word *newWord;
 
-    newWord = allocate(sizeof(word));
+    newWord = allocate(sizeof(Word));
 
     newWord->data1 = INITIAL_VALUE;
     newWord->data2 = INITIAL_VALUE;
@@ -26,12 +26,12 @@ word *createWord() {
     return newWord;
 }
 
-void freeWordList(word *wordList) {
-    word *next;
+void freeWordList(Word *words) {
+    Word *next;
 
-    while (wordList != NULL) {
-        next = wordList->next;
-        free(wordList);
-        wordList = next;
+    while (words != NULL) {
+        next = words->next;
+        free(words);
+        words = next;
     }
 }

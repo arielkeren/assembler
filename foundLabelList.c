@@ -6,47 +6,47 @@
 #include "globals.h"
 #include "utils.h"
 
-void addFoundLabel(foundLabel **foundLabelList, char labelName[]) {
-    foundLabel *newFoundLabel;
+void addFoundLabel(FoundLabel **labels, char labelName[]) {
+    FoundLabel *newLabel;
 
-    newFoundLabel = allocate(sizeof(foundLabel));
-    newFoundLabel->name = labelName;
-    newFoundLabel->isData = FALSE;
-    newFoundLabel->next = *foundLabelList;
-    *foundLabelList = newFoundLabel;
+    newLabel = allocate(sizeof(FoundLabel));
+    newLabel->name = labelName;
+    newLabel->isData = FALSE;
+    newLabel->next = *labels;
+    *labels = newLabel;
 }
 
-void markAsData(foundLabel *foundLabelToModify) {
-    foundLabelToModify->isData = TRUE;
+void markAsData(FoundLabel *label) {
+    label->isData = TRUE;
 }
 
-void setAddress(foundLabel *foundLabelToModify, address newAddress) {
-    foundLabelToModify->labelAddress = newAddress;
+void setAddress(FoundLabel *label, Address newAddress) {
+    label->address = newAddress;
 }
 
-foundLabel *getFoundLabel(foundLabel *foundLabelList, char labelName[]) {
-    while (foundLabelList != NULL) {
-        if (strcmp(foundLabelList->name, labelName) == EQUAL_STRINGS) {
-            return foundLabelList;
+FoundLabel *getFoundLabel(FoundLabel *labels, char labelName[]) {
+    while (labels != NULL) {
+        if (strcmp(labels->name, labelName) == EQUAL_STRINGS) {
+            return labels;
         }
 
-        foundLabelList = foundLabelList->next;
+        labels = labels->next;
     }
 
     return NULL;
 }
 
-void freeFoundLabelList(foundLabel *foundLabelList) {
-    foundLabel *next;
+void freeFoundLabelList(FoundLabel *labels) {
+    FoundLabel *next;
 
-    while (foundLabelList != NULL) {
-        next = foundLabelList->next;
-        freeFoundLabel(foundLabelList);
-        foundLabelList = next;
+    while (labels != NULL) {
+        next = labels->next;
+        freeFoundLabel(labels);
+        labels = next;
     }
 }
 
-void freeFoundLabel(foundLabel *foundLabelToFree) {
-    free(foundLabelToFree->name);
-    free(foundLabelToFree);
+void freeFoundLabel(FoundLabel *label) {
+    free(label->name);
+    free(label);
 }

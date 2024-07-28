@@ -5,10 +5,10 @@
 
 #include "globals.h"
 
-void generateObFile(char fileName[], word *code, word *data, unsigned instructionCount, unsigned dataCount);
-boolean generateEntFile(char fileName[], label *entryLabels, foundLabel *foundLabels, unsigned instructionCount, boolean shouldGenerate);
-boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, boolean shouldGenerate);
-void insertWordList(FILE *file, word *wordList, address startingAddress);
-void insertLabel(FILE *file, char labelName[], address labelAddress, unsigned char longest);
+void generateObFile(char fileName[], Word *code, Word *data, unsigned instructionCount, unsigned dataCount);
+Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLabels, unsigned instructionCount, Boolean shouldGenerate);
+Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLabels, FoundLabel *foundLabels, Boolean shouldGenerate);
+void insertWordList(FILE *file, Word *wordList, Address startingAddress);
+void insertLabel(FILE *file, char labelName[], Address address, unsigned char longest);
 
 #endif

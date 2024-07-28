@@ -5,10 +5,10 @@
 
 #include "globals.h"
 
-boolean readFile(char fileName[], macro *macros, word *code, word *data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount);
-boolean readLines(char fileName[], FILE *file, macro *macros, word *code, word *data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount);
-boolean handleLine(char fileName[], char line[], unsigned lineNumber, macro *macros, word **code, word **data, label **entryLabels, label **externLabels, usedLabel **usedLabels, foundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount);
-boolean handleLabel(char fileName[], char line[], unsigned lineNumber, macro *macros, foundLabel **foundLabels, unsigned instructionCount, unsigned dataCount);
-void handleOperation(char line[], unsigned lineNumber, word **code, usedLabel **usedLabels, unsigned *instructionCount);
+Boolean readFile(char fileName[], Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount);
+Boolean readLines(char fileName[], FILE *file, Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount);
+Boolean handleLine(char fileName[], char line[], unsigned lineNumber, Macro *macros, Word **code, Word **data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, unsigned *instructionCount, unsigned *dataCount);
+Boolean handleLabel(char fileName[], char line[], unsigned lineNumber, Macro *macros, FoundLabel **foundLabels, unsigned instructionCount, unsigned dataCount);
+void handleOperation(char line[], unsigned lineNumber, Word **code, UsedLabel **usedLabels, unsigned *instructionCount);
 
 #endif

@@ -9,8 +9,8 @@
 #include "macroTable.h"
 #include "utils.h"
 
-boolean expandMacros(char fileName[], macro **macros) {
-    boolean isSuccessful;
+Boolean expandMacros(char fileName[], Macro **macros) {
+    Boolean isSuccessful;
     FILE *inputFile;
     FILE *outputFile;
 
@@ -35,9 +35,9 @@ boolean expandMacros(char fileName[], macro **macros) {
     return isSuccessful;
 }
 
-boolean expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros, char fileName[]) {
-    boolean isSuccessful;
-    boolean isInsideMacro;
+Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[]) {
+    Boolean isSuccessful;
+    Boolean isInsideMacro;
     unsigned lineNumber;
     char line[MAX_LINE_LENGTH + NEWLINE_BYTE + NULL_BYTE];
 
@@ -63,7 +63,7 @@ boolean expandFileMacros(FILE *inputFile, FILE *outputFile, macro **macros, char
     return isSuccessful;
 }
 
-boolean expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char fileName[], char line[], unsigned lineNumber, boolean *isInsideMacro) {
+Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[], char line[], unsigned lineNumber, Boolean *isInsideMacro) {
     char *current;
     char *token;
     char *content;
@@ -137,7 +137,7 @@ boolean expandLineMacros(FILE *inputFile, FILE *outputFile, macro **macros, char
     return TRUE;
 }
 
-boolean isEndOfMacro(char line[]) {
+Boolean isEndOfMacro(char line[]) {
     char *token;
 
     line = skipWhitespace(line);

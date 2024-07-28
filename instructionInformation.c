@@ -18,7 +18,7 @@ unsigned char getOperationIndex(char operation[]) {
     return INVALID_OPERATION;
 }
 
-operandCount getOperandCount(char operation[]) {
+OperandCount getOperandCount(char operation[]) {
     unsigned char operationIndex;
 
     operationIndex = getOperationIndex(operation);
@@ -34,7 +34,7 @@ operandCount getOperandCount(char operation[]) {
     return NO_OPERANDS;
 }
 
-operandType getOperandType(char operand[]) {
+OperandType getOperandType(char operand[]) {
     switch (*operand) {
         case 'r':
             return ((operand[SECOND_INDEX] >= '0' && operand[SECOND_INDEX] <= '7') && operand[THIRD_INDEX] == '\0') ? DIRECT_REGISTER : DIRECT;
@@ -47,9 +47,9 @@ operandType getOperandType(char operand[]) {
     }
 }
 
-boolean doesOperationAcceptOperand(char operation[], char operand[], boolean isSource) {
+Boolean doesOperationAcceptOperand(char operation[], char operand[], Boolean isSource) {
     unsigned char index;
-    operandType type;
+    OperandType type;
 
     index = getOperationIndex(operation);
     type = getOperandType(operand);

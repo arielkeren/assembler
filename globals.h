@@ -1,53 +1,54 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-typedef unsigned char position;
-typedef unsigned short mask;
-typedef unsigned short address;
+typedef unsigned char Position;
+typedef unsigned short Mask;
+typedef unsigned short Address;
 
 typedef enum { FALSE,
-               TRUE } boolean;
+               TRUE } Boolean;
+
 typedef enum { IMMEDIATE,
                DIRECT,
                INDIRECT_REGISTER,
-               DIRECT_REGISTER } operandType;
+               DIRECT_REGISTER } OperandType;
 
 typedef enum { NO_OPERANDS,
                ONE_OPERAND,
-               TWO_OPERANDS } operandCount;
+               TWO_OPERANDS } OperandCount;
 
-typedef struct macroStruct {
+typedef struct MacroNode {
     char *name;
     char *content;
-    struct macroStruct *next;
-} macro;
+    struct MacroNode *next;
+} Macro;
 
-typedef struct wordStruct {
+typedef struct WordNode {
     unsigned char data1;
     unsigned char data2;
-    struct wordStruct *next;
-} word;
+    struct WordNode *next;
+} Word;
 
-typedef struct labelStruct {
+typedef struct LabelNode {
     char *name;
     unsigned lineNumber;
-    struct labelStruct *next;
-} label;
+    struct LabelNode *next;
+} Label;
 
-typedef struct usedLabelStruct {
+typedef struct UsedLabelNode {
     char *name;
-    address labelAddress;
+    Address address;
     unsigned lineNumber;
-    word *wordPointer;
-    struct usedLabelStruct *next;
-} usedLabel;
+    Word *wordPointer;
+    struct UsedLabelNode *next;
+} UsedLabel;
 
-typedef struct foundLabelStruct {
+typedef struct FoundLabelNode {
     char *name;
-    address labelAddress;
-    boolean isData;
-    struct foundLabelStruct *next;
-} foundLabel;
+    Address address;
+    Boolean isData;
+    struct FoundLabelNode *next;
+} FoundLabel;
 
 enum { MOV,
        CMP,
