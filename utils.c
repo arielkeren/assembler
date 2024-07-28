@@ -72,17 +72,45 @@ char *getNextToken(char line[]) {
 }
 
 void removeEnding(char string[], char ending) {
-    size_t length;
+    Length length;
 
     length = strlen(string);
 
-    if (string[length - LAST_INDEX_DIFF] == ending) {
-        string[length - LAST_INDEX_DIFF] = '\0';
+    if (string[length - (Length)LAST_INDEX_DIFF] == ending) {
+        string[length - (Length)LAST_INDEX_DIFF] = '\0';
     }
 }
 
+Length getStringLength(char string[]) {
+    Length length;
+
+    for (length = (Length)strlen(string) - (Length)LAST_INDEX_DIFF; length >= (Length)SECOND_INDEX; length--) {
+        if (string[length] == '\"') {
+            return length - (Length)LAST_INDEX_DIFF;
+        }
+    }
+
+    return (Length)INVALID_STRING_LENGTH;
+}
+
+Boolean checkStringEnding(char string[]) {
+    Index index;
+
+    for (index = (Index)strlen(string) - (Index)LAST_INDEX_DIFF; index >= (Index)SECOND_INDEX; index--) {
+        if (string[index] == '\"') {
+            return TRUE;
+        }
+
+        if (!isspace(string[index])) {
+            return FALSE;
+        }
+    }
+
+    return FALSE;
+}
+
 Boolean checkIfLabel(char token[]) {
-    return token[strlen(token) - LAST_INDEX_DIFF] == ':';
+    return token[(Length)strlen(token) - (Length)LAST_INDEX_DIFF] == ':';
 }
 
 Boolean checkIfFollowedByComma(char line[]) {
@@ -119,12 +147,12 @@ char *addExtension(char fileName[], char extension[]) {
     fileNameLength = strlen(fileName);
     extensionLength = strlen(extension);
 
-    name = allocate(sizeof(char) * (fileNameLength + DOT_BYTE + extensionLength + NULL_BYTE));
+    name = allocate(sizeof(char) * (fileNameLength + (size_t)DOT_BYTE + extensionLength + (size_t)NULL_BYTE));
 
     strcpy(name, fileName);
     name[fileNameLength] = '.';
-    strcpy(&name[fileNameLength + DOT_BYTE], extension);
-    name[fileNameLength + DOT_BYTE + extensionLength] = '\0';
+    strcpy(&name[fileNameLength + (size_t)DOT_BYTE], extension);
+    name[fileNameLength + (size_t)DOT_BYTE + extensionLength] = '\0';
 
     return name;
 }

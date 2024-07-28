@@ -11,6 +11,8 @@ char *skipWhitespace(char line[]);
 char *skipCharacters(char line[]);
 char *getNextToken(char line[]);
 void removeEnding(char string[], char ending);
+Length getStringLength(char string[]);
+Boolean checkStringEnding(char string[]);
 Boolean checkIfLabel(char token[]);
 Boolean checkIfFollowedByComma(char line[]);
 Boolean checkForConsecutiveCommas(char line[]);

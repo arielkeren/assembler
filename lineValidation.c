@@ -275,7 +275,6 @@ Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
 
 Boolean validateString(char string[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
-    char *token;
 
     if (*string == '\0') {
         printError("No string specified.", fileName, lineNumber);
@@ -283,33 +282,17 @@ Boolean validateString(char string[], char fileName[], LineNumber lineNumber) {
     }
 
     isValid = TRUE;
-    token = getNextToken(string);
 
-    if (*token != '\"') {
+    if (*string != '\"') {
         printError("String does not start with a quotation mark.", fileName, lineNumber);
         isValid = FALSE;
     }
 
-    if (token[strlen(token) - LAST_INDEX_DIFF] != '\"') {
+    if (!checkStringEnding(string)) {
         printError("String does not end with a quotation mark.", fileName, lineNumber);
         isValid = FALSE;
     }
 
-    string = skipCharacters(string);
-
-    if (checkIfFollowedByComma(string)) {
-        printError("Comma after the string.", fileName, lineNumber);
-        isValid = FALSE;
-    }
-
-    string = skipWhitespace(string);
-
-    if (*string != '\0') {
-        printError("Extra non-whitespace characters after the string.", fileName, lineNumber);
-        isValid = FALSE;
-    }
-
-    free(token);
     return isValid;
 }
 

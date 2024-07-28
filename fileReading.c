@@ -120,8 +120,8 @@ Boolean handleLine(char fileName[], char line[], LineNumber lineNumber, Macro *m
         free(nextToken);
         encodeNumberList(data, skipWhitespace(skipCharacters(line)), dataCount);
     } else if (strcmp(token, ".string") == EQUAL_STRINGS) {
-        encodeString(data, nextToken, dataCount);
         free(nextToken);
+        encodeString(data, skipWhitespace(skipCharacters(line)), dataCount);
     } else {
         free(nextToken);
         handleOperation(line, lineNumber, code, usedLabels, instructionCount);

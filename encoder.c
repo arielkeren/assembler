@@ -28,14 +28,18 @@ void applyMask(Word *word, Mask mask, Position from) {
 }
 
 void encodeString(Word **data, char string[], WordCount *dataCount) {
+    Length length;
+
+    length = getStringLength(string);
     string++;
 
-    while (*string != '\"') {
+    while (length > (Length)EMPTY) {
         (*dataCount)++;
         *data = addWord(*data);
         encodeData(*data, (short)*string);
 
         string++;
+        length--;
     }
 
     (*dataCount)++;
