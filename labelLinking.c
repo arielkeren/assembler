@@ -26,9 +26,9 @@ boolean linkLabels(char fileName[], label *externLabels, usedLabel *usedLabels, 
             encodeMetadata(usedLabels->wordPointer, 'R');
 
             if (matchingFoundLabel->isData) {
-                encodeLabel(usedLabels->wordPointer, matchingFoundLabel->address + instructionCount + STARTING_MEMORY_ADDRESS);
+                encodeLabel(usedLabels->wordPointer, matchingFoundLabel->labelAddress + instructionCount + STARTING_MEMORY_ADDRESS);
             } else {
-                encodeLabel(usedLabels->wordPointer, matchingFoundLabel->address + STARTING_MEMORY_ADDRESS);
+                encodeLabel(usedLabels->wordPointer, matchingFoundLabel->labelAddress + STARTING_MEMORY_ADDRESS);
             }
         }
 

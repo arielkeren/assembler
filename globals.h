@@ -3,6 +3,7 @@
 
 typedef unsigned char position;
 typedef unsigned short mask;
+typedef unsigned short address;
 
 typedef enum { FALSE,
                TRUE } boolean;
@@ -35,7 +36,7 @@ typedef struct labelStruct {
 
 typedef struct usedLabelStruct {
     char *name;
-    unsigned address;
+    address labelAddress;
     unsigned lineNumber;
     word *wordPointer;
     struct usedLabelStruct *next;
@@ -43,7 +44,7 @@ typedef struct usedLabelStruct {
 
 typedef struct foundLabelStruct {
     char *name;
-    unsigned address;
+    address labelAddress;
     boolean isData;
     struct foundLabelStruct *next;
 } foundLabel;

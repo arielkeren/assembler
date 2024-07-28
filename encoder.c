@@ -118,6 +118,6 @@ void encodeData(word *wordToModify, short data) {
     applyMask(wordToModify, (mask)data, (position)STARTING_DATA_BIT);
 }
 
-void encodeLabel(word *wordToModify, unsigned short labelAddress) {
+void encodeLabel(word *wordToModify, address labelAddress) {
     applyMask(wordToModify, (mask)labelAddress, (position)STARTING_LABEL_BIT);
 }

@@ -20,8 +20,8 @@ void markAsData(foundLabel *foundLabelToModify) {
     foundLabelToModify->isData = TRUE;
 }
 
-void setAddress(foundLabel *foundLabelToModify, unsigned newAddress) {
-    foundLabelToModify->address = newAddress;
+void setAddress(foundLabel *foundLabelToModify, address newAddress) {
+    foundLabelToModify->labelAddress = newAddress;
 }
 
 foundLabel *getFoundLabel(foundLabel *foundLabelList, char labelName[]) {

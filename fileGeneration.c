@@ -19,8 +19,8 @@ void generateObFile(char fileName[], word *code, word *data, unsigned instructio
 
     fprintf(file, "%u %u\n", instructionCount, dataCount);
 
-    insertWordList(file, code, STARTING_MEMORY_ADDRESS);
-    insertWordList(file, data, instructionCount + STARTING_MEMORY_ADDRESS);
+    insertWordList(file, code, (address)STARTING_MEMORY_ADDRESS);
+    insertWordList(file, data, (address)instructionCount + (address)STARTING_MEMORY_ADDRESS);
 
     fclose(file);
 }
@@ -57,9 +57,9 @@ boolean generateEntFile(char fileName[], label *entryLabels, foundLabel *foundLa
         }
 
         if (matchingFoundLabel->isData) {
-            insertLabel(file, entryLabels->name, matchingFoundLabel->address + instructionCount + STARTING_MEMORY_ADDRESS, longest);
+            insertLabel(file, entryLabels->name, matchingFoundLabel->labelAddress + instructionCount + STARTING_MEMORY_ADDRESS, longest);
         } else {
-            insertLabel(file, entryLabels->name, matchingFoundLabel->address + STARTING_MEMORY_ADDRESS, longest);
+            insertLabel(file, entryLabels->name, matchingFoundLabel->labelAddress + STARTING_MEMORY_ADDRESS, longest);
         }
 
         entryLabels = entryLabels->next;
@@ -104,7 +104,7 @@ boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLab
                     }
                 }
 
-                insertLabel(file, externLabels->name, currentUsedLabel->address, longest);
+                insertLabel(file, externLabels->name, currentUsedLabel->labelAddress, longest);
             }
 
             currentUsedLabel = currentUsedLabel->next;
@@ -120,14 +120,14 @@ boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLab
     return shouldGenerate;
 }
 
-void insertWordList(FILE *file, word *wordList, unsigned startingAddress) {
+void insertWordList(FILE *file, word *wordList, address startingAddress) {
     while (wordList != NULL) {
-        fprintf(file, "%04u %05o\n", startingAddress, wordList->data1 + ((unsigned)wordList->data2 << (sizeof(wordList->data1) * BITS_PER_BYTE)));
+        fprintf(file, "%04hu %05o\n", startingAddress, wordList->data1 + ((unsigned)wordList->data2 << (sizeof(wordList->data1) * BITS_PER_BYTE)));
         startingAddress++;
         wordList = wordList->next;
     }
 }
 
-void insertLabel(FILE *file, char labelName[], unsigned address, unsigned char longest) {
-    fprintf(file, "%-*s %04u\n", longest, labelName, address);
+void insertLabel(FILE *file, char labelName[], address labelAddress, unsigned char longest) {
+    fprintf(file, "%-*s %04hu\n", longest, labelName, labelAddress);
 }

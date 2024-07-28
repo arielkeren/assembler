@@ -14,6 +14,6 @@ void encodeRegister(word *wordToModify, unsigned char registerNumber, boolean is
 void encodeOperation(word *wordToModify, char operation[]);
 void encodeImmediate(word *wordToModify, short number);
 void encodeData(word *wordToModify, short data);
-void encodeLabel(word *wordToModify, unsigned short labelAddress);
+void encodeLabel(word *wordToModify, address labelAddress);
 
 #endif

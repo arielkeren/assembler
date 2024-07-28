@@ -8,7 +8,7 @@
 void generateObFile(char fileName[], word *code, word *data, unsigned instructionCount, unsigned dataCount);
 boolean generateEntFile(char fileName[], label *entryLabels, foundLabel *foundLabels, unsigned instructionCount, boolean shouldGenerate);
 boolean generateExtFile(char fileName[], label *externLabels, usedLabel *usedLabels, foundLabel *foundLabels, boolean shouldGenerate);
-void insertWordList(FILE *file, word *wordList, unsigned startingAddress);
-void insertLabel(FILE *file, char labelName[], unsigned address, unsigned char longest);
+void insertWordList(FILE *file, word *wordList, address startingAddress);
+void insertLabel(FILE *file, char labelName[], address labelAddress, unsigned char longest);
 
 #endif
