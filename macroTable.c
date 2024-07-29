@@ -15,7 +15,7 @@ char *getMacroContent(Macro *macroTable, char macroName[]) {
         macroTable = macroTable->next;
     }
 
-    return NULL;
+    return (char *)NULL;
 }
 
 void addMacro(Macro **macroTable, char macroName[]) {
@@ -31,7 +31,7 @@ void addMacro(Macro **macroTable, char macroName[]) {
 void addMacroContent(Macro *macro, char content[]) {
     char *newContent;
 
-    newContent = allocate(sizeof(char) * (strlen(macro->content) + strlen(content) + NULL_BYTE));
+    newContent = allocate(sizeof(char) * (strlen(macro->content) + strlen(content) + (size_t)NULL_BYTE));
 
     strcpy(newContent, macro->content);
     free(macro->content);

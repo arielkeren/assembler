@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "encoder.h"
+#include "errorHandling.h"
 #include "foundLabelList.h"
 #include "globals.h"
 #include "instructionInformation.h"

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "errorHandling.h"
 #include "globals.h"
 #include "lineValidation.h"
 #include "macroTable.h"

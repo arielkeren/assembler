@@ -54,6 +54,16 @@ typedef struct FoundLabelNode {
     struct FoundLabelNode *next;
 } FoundLabel;
 
+typedef struct {
+    Word **code;
+    Word **data;
+    Macro **macros;
+    Label **entryLabels;
+    Label **externLabels;
+    UsedLabel **usedLabels;
+    FoundLabel **foundLabels;
+} ToFree;
+
 enum { MOV,
        CMP,
        ADD,
@@ -105,6 +115,7 @@ enum { FIRST_BIT,
 #define STARTING_SOURCE_REGISTER_BIT 6
 #define STARTING_DESTINATION_REGISTER_BIT 3
 
+#define NULL ((void *)0)
 #define EMPTY 0
 #define INITIAL_VALUE 0
 #define EQUAL_STRINGS 0

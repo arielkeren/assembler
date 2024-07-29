@@ -3,9 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "errorHandling.h"
 #include "fileGeneration.h"
 #include "fileReading.h"
 #include "foundLabelList.h"
+#include "freeingLogic.h"
 #include "globals.h"
 #include "labelLinking.h"
 #include "labelList.h"
@@ -23,28 +25,34 @@ void checkNoFiles(int fileCount) {
 }
 
 void compileFiles(char *fileNames[], int fileCount) {
-    Word *code;
-    Word *data;
-    Macro *macros;
-    Label *entryLabels;
-    Label *externLabels;
-    UsedLabel *usedLabels;
-    FoundLabel *foundLabels;
-    Boolean shouldGenerateFiles;
+    Word *code = NULL;
+    Word *data = NULL;
+
+    Macro *macros = NULL;
+    Label *entryLabels = NULL;
+    Label *externLabels = NULL;
+    UsedLabel *usedLabels = NULL;
+    FoundLabel *foundLabels = NULL;
+
     WordCount instructionCount;
     WordCount dataCount;
+    Boolean shouldGenerateFiles;
+
+    setToFree(&code, &data, &macros, &entryLabels, &externLabels, &usedLabels, &foundLabels);
 
     while (fileCount > NO_FILES) {
         code = createWord();
         data = createWord();
+
         macros = NULL;
         entryLabels = NULL;
         externLabels = NULL;
         usedLabels = NULL;
         foundLabels = NULL;
-        shouldGenerateFiles = TRUE;
+
         instructionCount = INITIAL_VALUE;
         dataCount = INITIAL_VALUE;
+        shouldGenerateFiles = TRUE;
 
         if (!expandMacros(*fileNames, &macros)) {
             freeMacroTable(macros);

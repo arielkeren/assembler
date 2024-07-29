@@ -1,6 +1,7 @@
 #include "labelLinking.h"
 
 #include "encoder.h"
+#include "errorHandling.h"
 #include "foundLabelList.h"
 #include "globals.h"
 #include "labelList.h"

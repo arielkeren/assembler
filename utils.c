@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "errorHandling.h"
+#include "freeingLogic.h"
 #include "globals.h"
 
 void *allocate(size_t size) {
@@ -14,6 +16,7 @@ void *allocate(size_t size) {
 
     if (allocatedPointer == NULL) {
         printCriticalError("Failed to allocate enough memory. Exiting the program...");
+        freeAll();
         exit(ERROR);
     }
 
@@ -29,7 +32,7 @@ FILE *openFile(char fileName[], char extension[], char mode[]) {
     file = fopen(fileNameWithExtension, mode);
 
     if (file == NULL) {
-        errorMessage = malloc(sizeof(char) * (strlen(fileNameWithExtension) + ERROR_MESSAGE_LENGTH + NULL_BYTE));
+        errorMessage = malloc(sizeof(char) * (strlen(fileNameWithExtension) + (size_t)ERROR_MESSAGE_LENGTH + (size_t)NULL_BYTE));
 
         sprintf(errorMessage, "Failed to open file: %s. Moving on to the next file...", fileNameWithExtension);
         printCriticalError(errorMessage);
@@ -45,6 +48,7 @@ char *skipWhitespace(char line[]) {
     while (isspace(*line) || *line == ',') {
         line++;
     }
+
     return line;
 }
 
@@ -52,6 +56,7 @@ char *skipCharacters(char line[]) {
     while (*line != '\0' && !isspace(*line) && *line != ',') {
         line++;
     }
+
     return line;
 }
 
@@ -65,7 +70,7 @@ char *getNextToken(char line[]) {
         return NULL;
     }
 
-    token = allocate(sizeof(char) * (size + NULL_BYTE));
+    token = allocate(sizeof(char) * (size + (size_t)NULL_BYTE));
     strncpy(token, line, size);
     token[size] = '\0';
     return token;
@@ -159,40 +164,8 @@ char *addExtension(char fileName[], char extension[]) {
 
 unsigned char convertDigitToNumber(char digit) {
     if (!isdigit(digit)) {
-        return INVALID_DIGIT;
+        return (unsigned char)INVALID_DIGIT;
     }
 
     return (unsigned char)(digit - '0');
-}
-
-void printMessage(char message[], char fileName[], LineNumber lineNumber, Boolean isError, Boolean isMacro) {
-    static unsigned long errorCount = INITIAL_VALUE;
-    static unsigned long warningCount = INITIAL_VALUE;
-
-    if (isError) {
-        printf("\n--- Error #%u ---\n", ++errorCount);
-    } else {
-        printf("\n--- Warning #%u ---\n", ++warningCount);
-    }
-
-    printf("File: %s.a%c\n", fileName, isMacro ? 's' : 'm');
-    printf("Line: %u\n", lineNumber);
-    printf("%s\n", message);
-}
-
-void printError(char message[], char fileName[], LineNumber lineNumber) {
-    printMessage(message, fileName, lineNumber, TRUE, FALSE);
-}
-
-void printMacroError(char message[], char fileName[], LineNumber lineNumber) {
-    printMessage(message, fileName, lineNumber, TRUE, TRUE);
-}
-
-void printWarning(char message[], char fileName[], LineNumber lineNumber) {
-    printMessage(message, fileName, lineNumber, FALSE, FALSE);
-}
-
-void printCriticalError(char message[]) {
-    printf("\n--- Critical Error ---\n");
-    printf("%s\n", message);
 }
