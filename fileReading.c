@@ -16,7 +16,7 @@
 #include <string.h> /* strcmp. */
 
 #include "encoder.h"                /* Encoding into words. */
-#include "errorHandling.h"          /* Printing errors. */
+#include "errorHandling.h"          /* Printing errors and warnings. */
 #include "foundLabelList.h"         /* Searching through the found label list. */
 #include "globals.h"                /* Constants and typedefs. */
 #include "instructionInformation.h" /* Information about the different instructions. */
@@ -101,30 +101,32 @@ Boolean handleLine(char fileName[], char line[], LineNumber lineNumber, Macro *m
 
     if (strcmp(token, ".entry") == EQUAL_STRINGS) {
         if (getMacroContent(macros, token) != NULL) {
-            printError("Label's name already taken by a macro.", fileName, lineNumber);
             free(token);
             free(nextToken);
+            printError("Label's name already taken by a macro.", fileName, lineNumber);
             return FALSE;
         }
 
         if (containsLabel(*entryLabels, nextToken)) {
             free(token);
             free(nextToken);
+            printWarning("Label already declared as entry.", fileName, lineNumber);
             return isSuccessful;
         }
 
         addLabel(entryLabels, nextToken, lineNumber);
     } else if (strcmp(token, ".extern") == EQUAL_STRINGS) {
         if (getMacroContent(macros, token) != NULL) {
-            printError("Label's name already taken by a macro.", fileName, lineNumber);
             free(token);
             free(nextToken);
+            printError("Label's name already taken by a macro.", fileName, lineNumber);
             return FALSE;
         }
 
         if (containsLabel(*externLabels, nextToken)) {
             free(token);
             free(nextToken);
+            printWarning("Label already declared as extern.", fileName, lineNumber);
             return isSuccessful;
         }
 
