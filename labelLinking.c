@@ -11,12 +11,11 @@
 
 #include "labelLinking.h"
 
-#include "encoder.h"
-#include "errorHandling.h"
-#include "foundLabelList.h"
-#include "globals.h"
-#include "labelList.h"
-#include "utils.h"
+#include "encoder.h"        /* Encoding label addresses into words. */
+#include "errorHandling.h"  /* Printing errors, if no definition is found for a label. */
+#include "foundLabelList.h" /* Searching through the found label list. */
+#include "globals.h"        /* Constants and typedefs. */
+#include "labelList.h"      /* Searching through the list of extern labels. */
 
 Boolean linkLabels(char fileName[], Label *externLabels, UsedLabel *usedLabels, FoundLabel *foundLabels, WordCount instructionCount) {
     Boolean isSuccessful;

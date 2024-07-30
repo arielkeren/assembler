@@ -11,14 +11,14 @@
 
 #include "lineValidation.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ctype.h>  /* isdigit, isalpha, isalnum. */
+#include <stdlib.h> /* free, atoi. */
+#include <string.h> /* strlen, strcmp. */
 
-#include "errorHandling.h"
-#include "globals.h"
-#include "instructionInformation.h"
-#include "utils.h"
+#include "errorHandling.h"          /* Printing errors and warnings. */
+#include "globals.h"                /* Constants and typedefs. */
+#include "instructionInformation.h" /* Information about the different instructions. */
+#include "utils.h"                  /* Parsing lines. */
 
 Boolean validateLine(char line[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;

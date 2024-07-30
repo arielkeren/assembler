@@ -14,14 +14,14 @@
 
 #include "utils.h"
 
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ctype.h>  /* isdigit and isspace. */
+#include <stdio.h>  /* fopen, sprintf. */
+#include <stdlib.h> /* malloc, free, exit. */
+#include <string.h> /* strlen, strcpy, strncpy. */
 
-#include "errorHandling.h"
-#include "freeingLogic.h"
-#include "globals.h"
+#include "errorHandling.h" /* Printing errors. */
+#include "freeingLogic.h"  /* Freeing memory. */
+#include "globals.h"       /* Constants and typedefs. */
 
 void *allocate(size_t size) {
     void *allocatedPointer;

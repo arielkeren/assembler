@@ -13,11 +13,11 @@
 
 #include "labelList.h"
 
-#include <stdlib.h>
-#include <string.h>
+#include <stdlib.h> /* free. */
+#include <string.h> /* strcmp, strlen. */
 
-#include "globals.h"
-#include "utils.h"
+#include "globals.h" /* Constants and typedefs. */
+#include "utils.h"   /* Allocating memory. */
 
 void addLabel(Label **labels, char labelName[], LineNumber lineNumber) {
     Label *newLabel;

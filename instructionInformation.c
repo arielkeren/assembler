@@ -11,9 +11,9 @@
 
 #include "instructionInformation.h"
 
-#include <string.h>
+#include <string.h> /* strcmp. */
 
-#include "globals.h"
+#include "globals.h" /* Constants and typedefs. */
 
 Index getOperationIndex(char operation[]) {
     static char *OPERATIONS[OPERATION_COUNT] = {"mov", "cmp", "add", "sub", "lea", "clr", "not", "inc", "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"};

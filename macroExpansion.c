@@ -12,15 +12,15 @@
 
 #include "macroExpansion.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h>  /* FILE, fclose, fgets, feof, getc, fputs. */
+#include <stdlib.h> /* free. */
+#include <string.h> /* strlen, strcmp. */
 
-#include "errorHandling.h"
-#include "globals.h"
-#include "lineValidation.h"
-#include "macroTable.h"
-#include "utils.h"
+#include "errorHandling.h"  /* Printing errors. */
+#include "globals.h"        /* Constants and typedefs. */
+#include "lineValidation.h" /* Checking if a macro's name is valid. */
+#include "macroTable.h"     /* Adding a new macro, adding content to a macro and searching if a macro exists. */
+#include "utils.h"          /* Opening the .as and .am files and parsing lines. */
 
 Boolean expandMacros(char fileName[], Macro **macros) {
     Boolean isSuccessful;

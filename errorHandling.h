@@ -12,7 +12,7 @@
 #ifndef ERROR_HANDLING_H
 #define ERROR_HANDLING_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 void printMessage(char message[], char fileName[], LineNumber lineNumber, Boolean isError, Boolean isMacro);
 void printError(char message[], char fileName[], LineNumber lineNumber);

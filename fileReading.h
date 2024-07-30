@@ -12,9 +12,9 @@
 #ifndef FILE_READING_H
 #define FILE_READING_H
 
-#include <stdio.h>
+#include <stdio.h> /* FILE. */
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 Boolean readFile(char fileName[], Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount);
 Boolean readLines(char fileName[], FILE *file, Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount);

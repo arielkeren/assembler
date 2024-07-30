@@ -4,7 +4,7 @@ assembler: assembler.o fileHandling.o errorHandling.o fileGeneration.o macroExpa
 assembler.o: assembler.c fileHandling.h globals.h
 	gcc -ansi -Wall -pedantic -c assembler.c
 
-fileHandling.o: fileHandling.c fileHandling.h errorHandling.h macroExpansion.h fileReading.h labelLinking.h fileGeneration.h freeingLogic.h macroTable.h wordList.h labelList.h foundLabelList.h usedLabelList.h utils.h globals.h
+fileHandling.o: fileHandling.c fileHandling.h errorHandling.h macroExpansion.h fileReading.h labelLinking.h fileGeneration.h freeingLogic.h macroTable.h wordList.h labelList.h foundLabelList.h usedLabelList.h globals.h
 	gcc -ansi -Wall -pedantic -c fileHandling.c
 
 errorHandling.o: errorHandling.c errorHandling.h globals.h
@@ -19,7 +19,7 @@ macroExpansion.o: macroExpansion.c macroExpansion.h errorHandling.h macroTable.h
 fileReading.o: fileReading.c fileReading.h errorHandling.h encoder.h lineValidation.h instructionInformation.h macroTable.h labelList.h foundLabelList.h usedLabelList.h utils.h globals.h
 	gcc -ansi -Wall -pedantic -c fileReading.c
 
-labelLinking.o: labelLinking.c labelLinking.h errorHandling.h encoder.h labelList.h foundLabelList.h utils.h globals.h
+labelLinking.o: labelLinking.c labelLinking.h errorHandling.h encoder.h labelList.h foundLabelList.h globals.h
 	gcc -ansi -Wall -pedantic -c labelLinking.c
 
 freeingLogic.o: freeingLogic.c freeingLogic.h wordList.h macroTable.h labelList.h foundLabelList.h usedLabelList.h globals.h

@@ -12,7 +12,7 @@
 #ifndef USED_LABEL_LIST_H
 #define USED_LABEL_LIST_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 void addUsedLabel(UsedLabel **labels, char labelName[], Address address, LineNumber lineNumber, Word *wordPointer);
 void freeUsedLabelList(UsedLabel *labels);

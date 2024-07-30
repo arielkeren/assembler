@@ -12,7 +12,7 @@
 #ifndef WORD_LIST_H
 #define WORD_LIST_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 Word *addWord(Word *wordList);
 Word *createWord();

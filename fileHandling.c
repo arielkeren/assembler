@@ -11,22 +11,20 @@
 
 #include "fileHandling.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> /* exit. */
 
-#include "errorHandling.h"
-#include "fileGeneration.h"
-#include "fileReading.h"
-#include "foundLabelList.h"
-#include "freeingLogic.h"
-#include "globals.h"
-#include "labelLinking.h"
-#include "labelList.h"
-#include "macroExpansion.h"
-#include "macroTable.h"
-#include "usedLabelList.h"
-#include "utils.h"
-#include "wordList.h"
+#include "errorHandling.h"  /* Printing an error if no files have been provided. */
+#include "fileGeneration.h" /* Generating the .ob, .ent and .ext files. */
+#include "fileReading.h"    /* Reading the .am file. */
+#include "foundLabelList.h" /* Freeing the found label list. */
+#include "freeingLogic.h"   /* Setting the pointers to each linked list in case of an allocation failure. */
+#include "globals.h"        /* Constants and typedefs. */
+#include "labelLinking.h"   /* Linking all the used labels with their definitions. */
+#include "labelList.h"      /* Freeing the 2 label lists. */
+#include "macroExpansion.h" /* Expanding the macros in the .as file to generate the .am file. */
+#include "macroTable.h"     /* Freeing the macro table. */
+#include "usedLabelList.h"  /* Freeing the used label list. */
+#include "wordList.h"       /* Creating dummy nodes and freeing the 2 word lists. */
 
 void checkNoFiles(int fileCount) {
     if (fileCount == NO_FILES) {

@@ -12,10 +12,10 @@
 
 #include "usedLabelList.h"
 
-#include <stdlib.h>
+#include <stdlib.h> /* free. */
 
-#include "globals.h"
-#include "utils.h"
+#include "globals.h" /* Constants and typedefs. */
+#include "utils.h"   /* Allocating memory. */
 
 void addUsedLabel(UsedLabel **labels, char labelName[], Address address, LineNumber lineNumber, Word *wordPointer) {
     UsedLabel *newLabel;

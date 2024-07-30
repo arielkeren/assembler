@@ -12,7 +12,7 @@
 #ifndef LINE_VALIDATION_H
 #define LINE_VALIDATION_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 Boolean validateLine(char line[], char fileName[], LineNumber lineNumber);
 Boolean validateEntryExtern(char label[], char fileName[], LineNumber lineNumber);

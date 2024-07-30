@@ -12,7 +12,7 @@
 #ifndef MACRO_TABLE_H
 #define MACRO_TABLE_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 char *getMacroContent(Macro *macroTable, char macroName[]);
 void addMacro(Macro **macroTable, char macroName[]);

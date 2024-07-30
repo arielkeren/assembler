@@ -9,8 +9,8 @@
  * Date: 30/07/2024
  */
 
-#include "fileHandling.h"
-#include "globals.h"
+#include "fileHandling.h" /* Handling the files in the command line arguments. */
+#include "globals.h"      /* Constants. */
 
 int main(int argc, char *argv[]) {
     checkNoFiles(argc - ARGS_DIFF);

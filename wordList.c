@@ -14,10 +14,10 @@
 
 #include "wordList.h"
 
-#include <stdlib.h>
+#include <stdlib.h> /* free. */
 
-#include "globals.h"
-#include "utils.h"
+#include "globals.h" /* Constants and typedefs. */
+#include "utils.h"   /* Allocating memory. */
 
 Word *addWord(Word *words) {
     Word *newWord;

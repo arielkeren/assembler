@@ -12,7 +12,7 @@
 #ifndef INSTRUCTION_INFORMATION_H
 #define INSTRUCTION_INFORMATION_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 Index getOperationIndex(char operation[]);
 OperandCount getOperandCount(char operation[]);

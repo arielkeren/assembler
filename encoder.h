@@ -12,7 +12,7 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 void toggleBit(Word *word, Position bitPosition);
 void applyMask(Word *word, Mask mask, Position from);

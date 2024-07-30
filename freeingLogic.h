@@ -12,7 +12,7 @@
 #ifndef FREEING_LOGIC_H
 #define FREEING_LOGIC_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 void freeAll();
 void setToFree(Word **code, Word **data, Macro **macros, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels);

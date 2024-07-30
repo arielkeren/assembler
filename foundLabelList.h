@@ -12,7 +12,7 @@
 #ifndef FOUND_LABEL_LIST_H
 #define FOUND_LABEL_LIST_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 void addFoundLabel(FoundLabel **labels, char labelName[]);
 void markAsData(FoundLabel *label);

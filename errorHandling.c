@@ -11,9 +11,9 @@
 
 #include "errorHandling.h"
 
-#include <stdio.h>
+#include <stdio.h> /* printf. */
 
-#include "globals.h"
+#include "globals.h" /* Constants and typedefs. */
 
 void printMessage(char message[], char fileName[], LineNumber lineNumber, Boolean isError, Boolean isMacro) {
     static unsigned long errorCount = INITIAL_VALUE;

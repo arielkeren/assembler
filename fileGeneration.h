@@ -12,9 +12,9 @@
 #ifndef FILE_GENERATION_H
 #define FILE_GENERATION_H
 
-#include <stdio.h>
+#include <stdio.h> /* FILE. */
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 void generateObFile(char fileName[], Word *code, Word *data, WordCount instructionCount, WordCount dataCount);
 Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLabels, WordCount instructionCount, Boolean shouldGenerate);

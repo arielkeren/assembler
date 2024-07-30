@@ -11,12 +11,12 @@
 
 #include "encoder.h"
 
-#include <stdlib.h>
+#include <stdlib.h> /* free, atoi. */
 
-#include "globals.h"
-#include "instructionInformation.h"
-#include "utils.h"
-#include "wordList.h"
+#include "globals.h"                /* Constants and typedefs. */
+#include "instructionInformation.h" /* Information about the different instructions. */
+#include "utils.h"                  /* Parsing lines. */
+#include "wordList.h"               /* Adding new words to the data list. */
 
 void toggleBit(Word *word, Position bitPosition) {
     if (bitPosition < (sizeof(word->data1) * BITS_PER_BYTE)) {

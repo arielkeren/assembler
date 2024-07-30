@@ -13,12 +13,12 @@
 
 #include "freeingLogic.h"
 
-#include "foundLabelList.h"
-#include "globals.h"
-#include "labelList.h"
-#include "macroTable.h"
-#include "usedLabelList.h"
-#include "wordList.h"
+#include "foundLabelList.h" /* Freeing the found label list. */
+#include "globals.h"        /* Constants and typedefs. */
+#include "labelList.h"      /* Freeing the 2 label lists. */
+#include "macroTable.h"     /* Freeing the macro table. */
+#include "usedLabelList.h"  /* Freeing the used label list. */
+#include "wordList.h"       /* Freeing the 2 word lists. */
 
 void freeAll() {
     freeingLogic(TRUE, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

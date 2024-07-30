@@ -12,7 +12,7 @@
 #ifndef LABEL_LIST_H
 #define LABEL_LIST_H
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 void addLabel(Label **labels, char labelName[], LineNumber lineNumber);
 Boolean containsLabel(Label *labels, char labelName[]);

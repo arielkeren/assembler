@@ -11,14 +11,14 @@
 
 #include "fileGeneration.h"
 
-#include <stdio.h>
-#include <string.h>
+#include <stdio.h>  /* fprintf, fclose. */
+#include <string.h> /* strcmp. */
 
-#include "errorHandling.h"
-#include "foundLabelList.h"
-#include "globals.h"
-#include "labelList.h"
-#include "utils.h"
+#include "errorHandling.h"  /* Printing errors. */
+#include "foundLabelList.h" /* Searching through the found label list. */
+#include "globals.h"        /* Constants and typedefs. */
+#include "labelList.h"      /* Getting the longest label's length in each label list. */
+#include "utils.h"          /* Opening the .ob file. */
 
 void generateObFile(char fileName[], Word *code, Word *data, WordCount instructionCount, WordCount dataCount) {
     FILE *file;

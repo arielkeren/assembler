@@ -12,9 +12,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <stdio.h>
+#include <stdio.h> /* FILE, size_t. */
 
-#include "globals.h"
+#include "globals.h" /* Typedefs. */
 
 void *allocate(size_t size);
 FILE *openFile(char fileName[], char extension[], char mode[]);

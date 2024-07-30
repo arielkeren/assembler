@@ -12,20 +12,20 @@
 
 #include "fileReading.h"
 
-#include <stdlib.h>
-#include <string.h>
+#include <stdlib.h> /* free. */
+#include <string.h> /* strcmp. */
 
-#include "encoder.h"
-#include "errorHandling.h"
-#include "foundLabelList.h"
-#include "globals.h"
-#include "instructionInformation.h"
-#include "labelList.h"
-#include "lineValidation.h"
-#include "macroTable.h"
-#include "usedLabelList.h"
-#include "utils.h"
-#include "wordList.h"
+#include "encoder.h"                /* Encoding into words. */
+#include "errorHandling.h"          /* Printing errors. */
+#include "foundLabelList.h"         /* Searching through the found label list. */
+#include "globals.h"                /* Constants and typedefs. */
+#include "instructionInformation.h" /* Information about the different instructions. */
+#include "labelList.h"              /* Searching through the entry and extern label lists. */
+#include "lineValidation.h"         /* Validating lines before adding new words. */
+#include "macroTable.h"             /* Searching through the macro table. */
+#include "usedLabelList.h"          /* Adding labels that are used as operands. */
+#include "utils.h"                  /* Opening the .am file and parsing lines. */
+#include "wordList.h"               /* Adding new words. */
 
 Boolean readFile(char fileName[], Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount) {
     Boolean isSuccessful;
