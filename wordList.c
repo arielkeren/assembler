@@ -1,3 +1,17 @@
+/*
+ * wordList.c
+ *
+ * Contains functions to interface with a word list and to free it.
+ * Also, contains a function to create a new word, which can be used as a dummy node.
+ * The 2 word lists contain all the words in the code part and in the data part of the .am file.
+ * They will eventually be used to generate the .ob file.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "wordList.h"
 
 #include <stdlib.h>

@@ -8,6 +8,7 @@
     "stdio.h": "c",
     "instructioninformation.h": "c",
     "labellinking.h": "c",
-    "wordlist.h": "c"
+    "wordlist.h": "c",
+    "usedlabellist.h": "c"
   }
 }

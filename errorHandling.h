@@ -1,3 +1,14 @@
+/*
+ * errorHandling.h
+ *
+ * Contains the function prototypes for the functions in errorHandling.c.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #ifndef ERROR_HANDLING_H
 #define ERROR_HANDLING_H
 

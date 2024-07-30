@@ -1,3 +1,15 @@
+/*
+ * foundLabelList.c
+ *
+ * Contains functions to interface with a found label list, to search through it and finally to free it.
+ * The found label list contains all the label definitions in the .am file.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "foundLabelList.h"
 
 #include <stdlib.h>

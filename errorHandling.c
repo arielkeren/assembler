@@ -1,3 +1,14 @@
+/*
+ * errorHandling.c
+ *
+ * Contains functions to print the different errors and warnings that could occur.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "errorHandling.h"
 
 #include <stdio.h>

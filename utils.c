@@ -1,3 +1,17 @@
+/*
+ * utils.c
+ *
+ * Contains utility functions that are used in the program:
+ * - Allocating memory
+ * - Opening files
+ * - Parsing lines
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "utils.h"
 
 #include <ctype.h>

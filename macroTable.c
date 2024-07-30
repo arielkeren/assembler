@@ -1,3 +1,15 @@
+/*
+ * macroTable.c
+ *
+ * Contains functions to interface with a macro table, to search through it and finally to free it.
+ * The macro table contains all the macro definitions in the .as file, along with their contents.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "macroTable.h"
 
 #include <stdlib.h>

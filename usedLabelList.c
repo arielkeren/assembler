@@ -1,3 +1,15 @@
+/*
+ * usedLabelList.c
+ *
+ * Contains functions to interface with a used label list and to free it.
+ * The used label list holds every label that is part of an instruction in the .am file.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "usedLabelList.h"
 
 #include <stdlib.h>

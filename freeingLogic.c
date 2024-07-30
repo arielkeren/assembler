@@ -1,3 +1,16 @@
+/*
+ * freeingLogic.c
+ *
+ * Contains functions to handle sudden freeing of the memory used by the program.
+ * Only executes when an allocation failure occurs.
+ * Needs to get the pointers to each linked list in memory to free it, in case of an allocation failure.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "freeingLogic.h"
 
 #include "foundLabelList.h"

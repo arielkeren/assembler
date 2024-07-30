@@ -1,3 +1,14 @@
+/*
+ * fileHandling.c
+ *
+ * Contains functions to handle the files given as command line arguments.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "fileHandling.h"
 
 #include <stdio.h>

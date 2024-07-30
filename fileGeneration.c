@@ -1,3 +1,14 @@
+/*
+ * fileGeneration.c
+ *
+ * Contains functions to generate the .ob, .ent and .ext files.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "fileGeneration.h"
 
 #include <stdio.h>

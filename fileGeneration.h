@@ -1,3 +1,14 @@
+/*
+ * fileGeneration.h
+ *
+ * Contains the function prototypes for the functions in fileGeneration.c.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #ifndef FILE_GENERATION_H
 #define FILE_GENERATION_H
 

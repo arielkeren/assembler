@@ -1,3 +1,14 @@
+/*
+ * instructionInformation.c
+ *
+ * Contains functions for getting the necessary information about the different instructions to encode them.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "instructionInformation.h"
 
 #include <string.h>

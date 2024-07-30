@@ -1,3 +1,14 @@
+/*
+ * labelLinking.c
+ *
+ * Contains a function to link all the used labels with their definitions.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "labelLinking.h"
 
 #include "encoder.h"

@@ -1,3 +1,15 @@
+/*
+ * macroExpansion.c
+ *
+ * Contains functions to expand the macros in the .as file.
+ * Generates the expanded .am file, which is used in later stages of the compilation.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "macroExpansion.h"
 
 #include <stdio.h>

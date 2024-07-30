@@ -1,3 +1,14 @@
+/*
+ * macroExpansion.h
+ *
+ * Contains the function prototypes for the functions in macroExpansion.c.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #ifndef MACRO_EXPANSION_H
 #define MACRO_EXPANSION_H
 

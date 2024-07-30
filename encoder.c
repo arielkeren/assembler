@@ -1,3 +1,14 @@
+/*
+ * encoder.c
+ *
+ * Contains functions to encode the different types of data into the memory cells.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "encoder.h"
 
 #include <stdlib.h>

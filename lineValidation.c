@@ -1,3 +1,14 @@
+/*
+ * lineValidation.c
+ *
+ * Contains functions to check for errors in each line of the .am file.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #include "lineValidation.h"
 
 #include <ctype.h>

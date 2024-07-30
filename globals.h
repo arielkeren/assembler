@@ -1,3 +1,14 @@
+/*
+ * globals.h
+ *
+ * Contains all the typedefs, structs, enums and constants used in the program.
+ *
+ * Name: Ariel Keren
+ * Course: C Lab, 20465
+ * Semester: 2024B
+ * Date: 30/07/2024
+ */
+
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
