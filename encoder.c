@@ -8,21 +8,21 @@
 #include "wordList.h"
 
 void toggleBit(Word *word, Position bitPosition) {
-    if (bitPosition < (Position)(sizeof(word->data1) * BITS_PER_BYTE)) {
-        word->data1 |= ((unsigned char)SINGLE_BIT << bitPosition);
+    if (bitPosition < (sizeof(word->data1) * BITS_PER_BYTE)) {
+        word->data1 |= (SINGLE_BIT << bitPosition);
         return;
     }
 
-    word->data2 |= ((unsigned char)SINGLE_BIT << (bitPosition - (Position)(sizeof(word->data1) * BITS_PER_BYTE)));
+    word->data2 |= (SINGLE_BIT << (bitPosition - (sizeof(word->data1) * BITS_PER_BYTE)));
 }
 
 void applyMask(Word *word, Mask mask, Position from) {
-    while (mask != (Mask)EMPTY && from < (Position)BITS_PER_MEMORY_CELL) {
-        if (mask & (Mask)SINGLE_BIT) {
+    while (mask != EMPTY && from < BITS_PER_MEMORY_CELL) {
+        if (mask & SINGLE_BIT) {
             toggleBit(word, from);
         }
 
-        mask >>= (Mask)SINGLE_BIT;
+        mask >>= SINGLE_BIT;
         from++;
     }
 }
@@ -33,7 +33,7 @@ void encodeString(Word **data, char string[], WordCount *dataCount) {
     length = getStringLength(string);
     string++;
 
-    while (length > (Length)EMPTY) {
+    while (length > EMPTY) {
         (*dataCount)++;
         *data = addWord(*data);
         encodeData(*data, (short)*string);
@@ -65,13 +65,13 @@ void encodeNumberList(Word **data, char numberList[], WordCount *dataCount) {
 void encodeMetadata(Word *word, char metadata) {
     switch (metadata) {
         case 'E':
-            toggleBit(word, (Position)FIRST_BIT);
+            toggleBit(word, FIRST_BIT);
             break;
         case 'R':
-            toggleBit(word, (Position)SECOND_BIT);
+            toggleBit(word, SECOND_BIT);
             break;
         case 'A':
-            toggleBit(word, (Position)THIRD_BIT);
+            toggleBit(word, THIRD_BIT);
             break;
         default:
             break;
@@ -99,29 +99,29 @@ void encodeExtraWord(Word *word, char operand[], Boolean isSource) {
 
 void encodeOperand(Word *word, char operand[], Boolean isSource) {
     if (isSource) {
-        toggleBit(word, (Position)getOperandType(operand) + (Position)STARTING_SOURCE_OPERAND_BIT);
+        toggleBit(word, (Position)getOperandType(operand) + STARTING_SOURCE_OPERAND_BIT);
         return;
     }
 
-    toggleBit(word, (Position)getOperandType(operand) + (Position)STARTING_DESTINATION_OPERAND_BIT);
+    toggleBit(word, (Position)getOperandType(operand) + STARTING_DESTINATION_OPERAND_BIT);
 }
 
 void encodeRegister(Word *word, unsigned char registerNumber, Boolean isSource) {
-    applyMask(word, (Mask)registerNumber, isSource ? (Position)STARTING_SOURCE_REGISTER_BIT : (Position)STARTING_DESTINATION_REGISTER_BIT);
+    applyMask(word, (Mask)registerNumber, isSource ? STARTING_SOURCE_REGISTER_BIT : STARTING_DESTINATION_REGISTER_BIT);
 }
 
 void encodeOperation(Word *word, char operation[]) {
-    applyMask(word, (Mask)getOperationIndex(operation), (Position)STARTING_OPERATION_BIT);
+    applyMask(word, (Mask)getOperationIndex(operation), STARTING_OPERATION_BIT);
 }
 
 void encodeImmediate(Word *word, short immediate) {
-    applyMask(word, (Mask)immediate, (Position)STARTING_NUMBER_BIT);
+    applyMask(word, (Mask)immediate, STARTING_NUMBER_BIT);
 }
 
 void encodeData(Word *word, short data) {
-    applyMask(word, (Mask)data, (Position)STARTING_DATA_BIT);
+    applyMask(word, (Mask)data, STARTING_DATA_BIT);
 }
 
 void encodeLabel(Word *word, Address address) {
-    applyMask(word, (Mask)address, (Position)STARTING_LABEL_BIT);
+    applyMask(word, (Mask)address, STARTING_LABEL_BIT);
 }

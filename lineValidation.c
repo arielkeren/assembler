@@ -161,7 +161,7 @@ Boolean validateName(char name[], char fileName[], LineNumber lineNumber, Boolea
         isValid = FALSE;
     }
 
-    if (getOperationIndex(name) != (Index)INVALID_OPERATION) {
+    if (getOperationIndex(name) != INVALID_OPERATION) {
         if (isLabel) {
             printError("Label cannot share the same name as an operation.", fileName, lineNumber);
         } else {
@@ -396,7 +396,7 @@ Boolean validateInstruction(char instruction[], char fileName[], LineNumber line
 }
 
 Boolean validateOperation(char operation[], char fileName[], LineNumber lineNumber) {
-    if (getOperationIndex(operation) == (Index)INVALID_OPERATION) {
+    if (getOperationIndex(operation) == INVALID_OPERATION) {
         printError("Invalid operation.", fileName, lineNumber);
         return FALSE;
     }

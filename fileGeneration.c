@@ -20,8 +20,8 @@ void generateObFile(char fileName[], Word *code, Word *data, WordCount instructi
 
     fprintf(file, "%u %u\n", instructionCount, dataCount);
 
-    insertWordList(file, code, (Address)STARTING_MEMORY_ADDRESS);
-    insertWordList(file, data, (Address)instructionCount + (Address)STARTING_MEMORY_ADDRESS);
+    insertWordList(file, code, STARTING_MEMORY_ADDRESS);
+    insertWordList(file, data, (Address)instructionCount + STARTING_MEMORY_ADDRESS);
 
     fclose(file);
 }
@@ -58,9 +58,9 @@ Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLa
         }
 
         if (matchingFoundLabel->isData) {
-            insertLabel(file, entryLabels->name, matchingFoundLabel->address + (Address)instructionCount + (Address)STARTING_MEMORY_ADDRESS, longest);
+            insertLabel(file, entryLabels->name, matchingFoundLabel->address + (Address)instructionCount + STARTING_MEMORY_ADDRESS, longest);
         } else {
-            insertLabel(file, entryLabels->name, matchingFoundLabel->address + (Address)STARTING_MEMORY_ADDRESS, longest);
+            insertLabel(file, entryLabels->name, matchingFoundLabel->address + STARTING_MEMORY_ADDRESS, longest);
         }
 
         entryLabels = entryLabels->next;
@@ -123,7 +123,7 @@ Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLab
 
 void insertWordList(FILE *file, Word *wordList, Address startingAddress) {
     while (wordList != NULL) {
-        fprintf(file, "%04hu %05o\n", startingAddress, (unsigned)wordList->data1 + ((unsigned)wordList->data2 << (sizeof(wordList->data1) * BITS_PER_BYTE)));
+        fprintf(file, "%04hu %05o\n", startingAddress, (unsigned short)wordList->data1 + ((unsigned short)wordList->data2 << (sizeof(wordList->data1) * BITS_PER_BYTE)));
         startingAddress++;
         wordList = wordList->next;
     }

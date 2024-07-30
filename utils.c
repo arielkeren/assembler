@@ -32,7 +32,7 @@ FILE *openFile(char fileName[], char extension[], char mode[]) {
     file = fopen(fileNameWithExtension, mode);
 
     if (file == NULL) {
-        errorMessage = malloc(sizeof(char) * (strlen(fileNameWithExtension) + (size_t)ERROR_MESSAGE_LENGTH + (size_t)NULL_BYTE));
+        errorMessage = malloc(sizeof(char) * (strlen(fileNameWithExtension) + ERROR_MESSAGE_LENGTH + NULL_BYTE));
 
         sprintf(errorMessage, "Failed to open file: %s. Moving on to the next file...", fileNameWithExtension);
         printCriticalError(errorMessage);
@@ -70,7 +70,7 @@ char *getNextToken(char line[]) {
         return NULL;
     }
 
-    token = allocate(sizeof(char) * (size + (size_t)NULL_BYTE));
+    token = allocate(sizeof(char) * (size + NULL_BYTE));
     strncpy(token, line, size);
     token[size] = '\0';
     return token;
@@ -79,29 +79,29 @@ char *getNextToken(char line[]) {
 void removeEnding(char string[], char ending) {
     Length length;
 
-    length = strlen(string);
+    length = (Length)strlen(string);
 
-    if (string[length - (Length)LAST_INDEX_DIFF] == ending) {
-        string[length - (Length)LAST_INDEX_DIFF] = '\0';
+    if (string[length - LAST_INDEX_DIFF] == ending) {
+        string[length - LAST_INDEX_DIFF] = '\0';
     }
 }
 
 Length getStringLength(char string[]) {
     Length length;
 
-    for (length = (Length)strlen(string) - (Length)LAST_INDEX_DIFF; length >= (Length)SECOND_INDEX; length--) {
+    for (length = (Length)strlen(string) - LAST_INDEX_DIFF; length >= SECOND_INDEX; length--) {
         if (string[length] == '\"') {
-            return length - (Length)LAST_INDEX_DIFF;
+            return length - LAST_INDEX_DIFF;
         }
     }
 
-    return (Length)INVALID_STRING_LENGTH;
+    return INVALID_STRING_LENGTH;
 }
 
 Boolean checkStringEnding(char string[]) {
     Index index;
 
-    for (index = (Index)strlen(string) - (Index)LAST_INDEX_DIFF; index >= (Index)SECOND_INDEX; index--) {
+    for (index = (Index)strlen(string) - LAST_INDEX_DIFF; index >= SECOND_INDEX; index--) {
         if (string[index] == '\"') {
             return TRUE;
         }
@@ -115,7 +115,7 @@ Boolean checkStringEnding(char string[]) {
 }
 
 Boolean checkIfLabel(char token[]) {
-    return token[(Length)strlen(token) - (Length)LAST_INDEX_DIFF] == ':';
+    return token[strlen(token) - LAST_INDEX_DIFF] == ':';
 }
 
 Boolean checkIfFollowedByComma(char line[]) {
@@ -152,19 +152,19 @@ char *addExtension(char fileName[], char extension[]) {
     fileNameLength = strlen(fileName);
     extensionLength = strlen(extension);
 
-    name = allocate(sizeof(char) * (fileNameLength + (size_t)DOT_BYTE + extensionLength + (size_t)NULL_BYTE));
+    name = allocate(sizeof(char) * (fileNameLength + DOT_BYTE + extensionLength + NULL_BYTE));
 
     strcpy(name, fileName);
     name[fileNameLength] = '.';
-    strcpy(&name[fileNameLength + (size_t)DOT_BYTE], extension);
-    name[fileNameLength + (size_t)DOT_BYTE + extensionLength] = '\0';
+    strcpy(&name[fileNameLength + DOT_BYTE], extension);
+    name[fileNameLength + DOT_BYTE + extensionLength] = '\0';
 
     return name;
 }
 
 unsigned char convertDigitToNumber(char digit) {
     if (!isdigit(digit)) {
-        return (unsigned char)INVALID_DIGIT;
+        return INVALID_DIGIT;
     }
 
     return (unsigned char)(digit - '0');
