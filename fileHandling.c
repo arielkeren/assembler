@@ -26,6 +26,12 @@
 #include "usedLabelList.h"  /* Freeing the used label list. */
 #include "wordList.h"       /* Creating dummy nodes and freeing the 2 word lists. */
 
+/**
+ * Checks whether or not no files have been provided as command line arguments.
+ * If no files have been provided, prints an error and exits the program.
+ *
+ * @param fileCount The number of files that have been provided.
+ */
 void checkNoFiles(int fileCount) {
     if (fileCount == NO_FILES) {
         printCriticalError("No files provided to compile. Add the file names (without the extensions) to compile as command line arguments. Exiting the program...");
@@ -33,6 +39,13 @@ void checkNoFiles(int fileCount) {
     }
 }
 
+/**
+ * Starts the compilation process of the provided files.
+ * Compiles each file separately.
+ *
+ * @param fileNames The names of the files to compile.
+ * @param fileCount The number of files to compile.
+ */
 void compileFiles(char *fileNames[], int fileCount) {
     Word *code = NULL;
     Word *data = NULL;

@@ -18,6 +18,15 @@
 #include "globals.h" /* Constants and typedefs. */
 #include "utils.h"   /* Allocating memory. */
 
+/**
+ * Searches for the given macro name in the given macro table.
+ * If found, returns its content.
+ * If not found, returns NULL.
+ *
+ * @param macroTable The macro table.
+ * @param macroName The macro name to search for.
+ * @return The macro's content, or NULL if not found.
+ */
 char *getMacroContent(Macro *macroTable, char macroName[]) {
     while (macroTable != NULL) {
         if (strcmp(macroTable->name, macroName) == EQUAL_STRINGS) {
@@ -30,6 +39,12 @@ char *getMacroContent(Macro *macroTable, char macroName[]) {
     return NULL;
 }
 
+/**
+ * Adds a new macro to the given macro table with the given name.
+ *
+ * @param macroTable The macro table to add the macro to.
+ * @param macroName The name of the new macro.
+ */
 void addMacro(Macro **macroTable, char macroName[]) {
     Macro *newMacro;
 
@@ -40,6 +55,12 @@ void addMacro(Macro **macroTable, char macroName[]) {
     *macroTable = newMacro;
 }
 
+/**
+ * Appends the given content to the given macro's content.
+ *
+ * @param macro The macro to add the content to.
+ * @param content The content to add.
+ */
 void addMacroContent(Macro *macro, char content[]) {
     char *newContent;
 
@@ -52,6 +73,11 @@ void addMacroContent(Macro *macro, char content[]) {
     macro->content = newContent;
 }
 
+/**
+ * Frees a macro table.
+ *
+ * @param macroTable The macro table to free.
+ */
 void freeMacroTable(Macro *macroTable) {
     Macro *next;
 
@@ -62,6 +88,11 @@ void freeMacroTable(Macro *macroTable) {
     }
 }
 
+/**
+ * Frees a single macro.
+ *
+ * @param macro The macro to free.
+ */
 void freeMacro(Macro *macro) {
     free(macro->name);
     free(macro->content);

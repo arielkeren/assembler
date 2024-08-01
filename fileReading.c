@@ -27,6 +27,23 @@
 #include "utils.h"                  /* Opening the .am file and parsing lines. */
 #include "wordList.h"               /* Adding new words. */
 
+/**
+ * Opens the .am file and starts reading it line by line.
+ * Modifies the given arguments to contain the information read from the .am file.
+ * Returns whether or not no errors occurred.
+ *
+ * @param fileName The name of the file to read.
+ * @param macros The macro table.
+ * @param code The code word list.
+ * @param data The data word list.
+ * @param entryLabels The list of entry labels.
+ * @param externLabels The list of extern labels.
+ * @param usedLabels The list of used labels.
+ * @param foundLabels The list of found labels.
+ * @param instructionCount The current instruction count to modify.
+ * @param dataCount The current data count to modify.
+ * @return TRUE if no errors occurred, FALSE otherwise or if the file could not be opened.
+ */
 Boolean readFile(char fileName[], Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount) {
     Boolean isSuccessful;
     FILE *file;
@@ -43,6 +60,24 @@ Boolean readFile(char fileName[], Macro *macros, Word *code, Word *data, Label *
     return isSuccessful;
 }
 
+/**
+ * Reads the lines of the .am file line by line.
+ * Modifies the given arguments to contain the information read from the .am file.
+ * Returns whether or not no errors occurred.
+ *
+ * @param fileName The name of the file to read.
+ * @param file The file to read.
+ * @param macros The macro table.
+ * @param code The code word list.
+ * @param data The data word list.
+ * @param entryLabels The list of entry labels.
+ * @param externLabels The list of extern labels.
+ * @param usedLabels The list of used labels.
+ * @param foundLabels The list of found labels.
+ * @param instructionCount The current instruction count to modify.
+ * @param dataCount The current data count to modify.
+ * @return TRUE if no errors occurred, FALSE otherwise.
+ */
 Boolean readLines(char fileName[], FILE *file, Macro *macros, Word *code, Word *data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount) {
     Boolean isSuccessful;
     char line[MAX_LINE_LENGTH + NEWLINE_BYTE + NULL_BYTE];
@@ -71,6 +106,25 @@ Boolean readLines(char fileName[], FILE *file, Macro *macros, Word *code, Word *
     return isSuccessful;
 }
 
+/**
+ * Handles a line of the .am file.
+ * Modifies the given arguments to contain the information read from the current line.
+ * Returns whether or not no errors occurred.
+ *
+ * @param fileName The name of the file to read.
+ * @param line The line that has been extracted from the .am file.
+ * @param lineNumber The current line's line number.
+ * @param macros The macro table.
+ * @param code The code word list.
+ * @param data The data word list.
+ * @param entryLabels The list of entry labels.
+ * @param externLabels The list of extern labels.
+ * @param usedLabels The list of used labels.
+ * @param foundLabels The list of found labels.
+ * @param instructionCount The current instruction count to modify.
+ * @param dataCount The current data count to modify.
+ * @return TRUE if no errors occurred, FALSE otherwise.
+ */
 Boolean handleLine(char fileName[], char line[], LineNumber lineNumber, Macro *macros, Word **code, Word **data, Label **entryLabels, Label **externLabels, UsedLabel **usedLabels, FoundLabel **foundLabels, WordCount *instructionCount, WordCount *dataCount) {
     Boolean isSuccessful;
     char *token;
@@ -146,6 +200,19 @@ Boolean handleLine(char fileName[], char line[], LineNumber lineNumber, Macro *m
     return isSuccessful;
 }
 
+/**
+ * Handles a potential label in the current line of the .am file.
+ * Modifies the given arguments to contain the new information.
+ *
+ * @param fileName The name of the file to read.
+ * @param line The current line.
+ * @param lineNumber The current line's line number.
+ * @param macros The macro table.
+ * @param foundLabels The list of found labels.
+ * @param instructionCount The current instruction count.
+ * @param dataCount The current data count.
+ * @return TRUE if no errors occurred, FALSE otherwise.
+ */
 Boolean handleLabel(char fileName[], char line[], LineNumber lineNumber, Macro *macros, FoundLabel **foundLabels, WordCount instructionCount, WordCount dataCount) {
     char *token;
     char *nextToken;
@@ -195,6 +262,16 @@ Boolean handleLabel(char fileName[], char line[], LineNumber lineNumber, Macro *
     return TRUE;
 }
 
+/**
+ * Handles an operation in the current line of the .am file.
+ * Modifies the given arguments to contain the new information.
+ *
+ * @param line The current line.
+ * @param lineNumber The current line's line number.
+ * @param code The code word list.
+ * @param usedLabels The list of used labels.
+ * @param instructionCount The current instruction count.
+ */
 void handleOperation(char line[], LineNumber lineNumber, Word **code, UsedLabel **usedLabels, WordCount *instructionCount) {
     char *token;
     OperandCount operands;
@@ -207,7 +284,7 @@ void handleOperation(char line[], LineNumber lineNumber, Word **code, UsedLabel 
 
     (*instructionCount)++;
     *code = addWord(*code);
-    encodeMetadata(*code, 'A');
+    encodeAddressingMode(*code, 'A');
     encodeOperation(*code, token);
 
     operands = getOperandCount(token);

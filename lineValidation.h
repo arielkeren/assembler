@@ -26,6 +26,6 @@ Boolean validateInstruction(char instruction[], char fileName[], LineNumber line
 Boolean validateOperation(char operation[], char fileName[], LineNumber lineNumber);
 Boolean validateOperand(char operand[], char fileName[], LineNumber lineNumber);
 Boolean validateImmediate(char immediate[], char fileName[], LineNumber lineNumber);
-Boolean validateIndirectRegister(char directRegister[], char fileName[], LineNumber lineNumber);
+Boolean validateIndirectRegister(char indirectRegister[], char fileName[], LineNumber lineNumber);
 
 #endif

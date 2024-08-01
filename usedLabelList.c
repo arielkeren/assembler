@@ -17,6 +17,15 @@
 #include "globals.h" /* Constants and typedefs. */
 #include "utils.h"   /* Allocating memory. */
 
+/**
+ * Adds a new used label to the given list of used labels with the given name, address, line number and word pointer.
+ *
+ * @param labels The list of used labels.
+ * @param labelName The new used label's name.
+ * @param address The new used label's word address.
+ * @param lineNumber The new used label's line number.
+ * @param wordPointer The new used label's word pointer.
+ */
 void addUsedLabel(UsedLabel **labels, char labelName[], Address address, LineNumber lineNumber, Word *wordPointer) {
     UsedLabel *newLabel;
 
@@ -30,6 +39,11 @@ void addUsedLabel(UsedLabel **labels, char labelName[], Address address, LineNum
     *labels = newLabel;
 }
 
+/**
+ * Frees a used label list.
+ *
+ * @param labels The used label list to free.
+ */
 void freeUsedLabelList(UsedLabel *labels) {
     UsedLabel *next;
 
@@ -40,6 +54,11 @@ void freeUsedLabelList(UsedLabel *labels) {
     }
 }
 
+/**
+ * Frees a single used label.
+ *
+ * @param label The used label to free.
+ */
 void freeUsedLabel(UsedLabel *label) {
     free(label->name);
     free(label);

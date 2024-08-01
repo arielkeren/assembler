@@ -20,6 +20,17 @@
 #include "instructionInformation.h" /* Information about the different instructions. */
 #include "utils.h"                  /* Parsing lines. */
 
+/**
+ * Checks and returns if the given line is valid.
+ * Only checks for errors and warnings that can be found with no reference to the existing state of the program.
+ * Prints errors and warnings to stdout.
+ * NOTE: Warnings do not mean the line is invalid. They are only printed.
+ *
+ * @param line The line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if the line contains no errors, FALSE otherwise.
+ */
 Boolean validateLine(char line[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
     char *token;
@@ -85,6 +96,15 @@ Boolean validateLine(char line[], char fileName[], LineNumber lineNumber) {
     return isValid;
 }
 
+/**
+ * Checks and returns if the given entry/extern declaration is valid.
+ * Prints all the errors to stdout.
+ *
+ * @param label The entry/extern declaration to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateEntryExtern(char label[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
     char *token;
@@ -109,14 +129,51 @@ Boolean validateEntryExtern(char label[], char fileName[], LineNumber lineNumber
     return isValid;
 }
 
+/**
+ * Checks and returns if the given label name is valid.
+ * Prints all the errors to stdout.
+ *
+ * @param label The label to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateLabel(char label[], char fileName[], LineNumber lineNumber) {
     return validateName(label, fileName, lineNumber, TRUE);
 }
 
+/**
+ * Checks and returns if the given macro name is valid.
+ * Prints all the errors to stdout.
+ *
+ * @param label The macro to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateMacro(char label[], char fileName[], LineNumber lineNumber) {
     return validateName(label, fileName, lineNumber, FALSE);
 }
 
+/**
+ * Checks and returns if the given name is valid.
+ * Prints all the errors to stdout.
+ * Names are either label names or macro names, as they follow the same rules:
+ * 1. Non-empty.
+ * 2. Starts with a lowercase or uppercase letter in the English alphabet.
+ * 3. Has a length of at most 31 characters.
+ * 4. Is not a keyword in the language (includes "macr", "endmacr", operation names, register names).
+ * 5. The characters not including the first character have to be either:
+ * - Lowercase characters in the English alphabet.
+ * - Uppercase characters in the English alphabet.
+ * - Digits.
+ * - The underscore character.
+ *
+ * @param name The name to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateName(char name[], char fileName[], LineNumber lineNumber, Boolean isLabel) {
     Boolean isValid;
 
@@ -209,6 +266,15 @@ Boolean validateName(char name[], char fileName[], LineNumber lineNumber, Boolea
     return isValid;
 }
 
+/**
+ * Checks and returns if the given .data line is valid.
+ * Prints all the errors to stdout.
+ *
+ * @param data The .data line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateData(char data[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
     Boolean isFollowedByComma;
@@ -251,6 +317,18 @@ Boolean validateData(char data[], char fileName[], LineNumber lineNumber) {
     return isValid;
 }
 
+/**
+ * Checks and returns if the given number in some .data line is valid.
+ * Prints all the errors to stdout.
+ * The number has to be between -16384 and 16383, including both (to fit in 15 bits).
+ * Also, the number can include a plus or minus sign in the beginning.
+ * Aside from that, the number has to include only decimal digits.
+ *
+ * @param number The number to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
     char *current;
     int value;
@@ -285,6 +363,15 @@ Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
     return TRUE;
 }
 
+/**
+ * Checks and returns if the given .string line is valid.
+ * Prints all the errors to stdout.
+ *
+ * @param string The .string line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateString(char string[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;
 
@@ -308,6 +395,15 @@ Boolean validateString(char string[], char fileName[], LineNumber lineNumber) {
     return isValid;
 }
 
+/**
+ * Checks and returns if the given instruction line (not .data, .string, .entry, .extern) is valid.
+ * Prints all the errors to stdout.
+ *
+ * @param instruction The instruction line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateInstruction(char instruction[], char fileName[], LineNumber lineNumber) {
     char *operation;
     char *token;
@@ -406,6 +502,15 @@ Boolean validateInstruction(char instruction[], char fileName[], LineNumber line
     return TRUE;
 }
 
+/**
+ * Checks and returns if the given operation is valid.
+ * Prints all the errors to stdout.
+ *
+ * @param operation The operation to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateOperation(char operation[], char fileName[], LineNumber lineNumber) {
     if (getOperationIndex(operation) == INVALID_OPERATION) {
         printError("Invalid operation.", fileName, lineNumber);
@@ -415,6 +520,15 @@ Boolean validateOperation(char operation[], char fileName[], LineNumber lineNumb
     return TRUE;
 }
 
+/**
+ * Checks and returns if the given operand is valid.
+ * Prints all the errors to stdout.
+ *
+ * @param operand The operand to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateOperand(char operand[], char fileName[], LineNumber lineNumber) {
     switch (getOperandType(operand)) {
         case IMMEDIATE:
@@ -430,6 +544,18 @@ Boolean validateOperand(char operand[], char fileName[], LineNumber lineNumber) 
     }
 }
 
+/**
+ * Checks and returns if the given immediate value is valid.
+ * Prints all the errors to stdout.
+ * The immediate value has to be between -2048 and 2047, including both (to fit in 12 bits).
+ * Also, it could begin with a plus or minus sign (after the hash symbol).
+ * Aside from the hash symbol and possible sign, it has to include only decimal digits.
+ *
+ * @param immediate The immediate value to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
 Boolean validateImmediate(char immediate[], char fileName[], LineNumber lineNumber) {
     int number;
 
@@ -455,20 +581,30 @@ Boolean validateImmediate(char immediate[], char fileName[], LineNumber lineNumb
     return TRUE;
 }
 
-Boolean validateIndirectRegister(char directRegister[], char fileName[], LineNumber lineNumber) {
-    directRegister++;
-    if (*directRegister != 'r') {
+/**
+ * Checks and returns if the given indirect register is valid.
+ * Prints all the errors to stdout.
+ * The possible indirect registers are *r0, *r1, *r2, *r3, *r4, *r5, *r6, *r7.
+ *
+ * @param indirectRegister The indirect register to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
+Boolean validateIndirectRegister(char indirectRegister[], char fileName[], LineNumber lineNumber) {
+    indirectRegister++;
+    if (*indirectRegister != 'r') {
         printError("Token starts with an asterisk but does not include any register right after it (a label cannot start with an asterisk).", fileName, lineNumber);
         return FALSE;
     }
 
-    directRegister++;
-    if (*directRegister == '\0') {
+    indirectRegister++;
+    if (*indirectRegister == '\0') {
         printError("Token looks like it should be a register, but does not specify which one (a label cannot start with an asterisk).", fileName, lineNumber);
         return FALSE;
     }
 
-    if (directRegister[FIRST_INDEX] > '7' || directRegister[FIRST_INDEX] < '0' || directRegister[SECOND_INDEX] != '\0') {
+    if (indirectRegister[FIRST_INDEX] > '7' || indirectRegister[FIRST_INDEX] < '0' || indirectRegister[SECOND_INDEX] != '\0') {
         printError("Token does not specify a valid register - a register's number should be between 0 and 7, including 0 and 7.", fileName, lineNumber);
         return FALSE;
     }

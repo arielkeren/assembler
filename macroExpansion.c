@@ -22,6 +22,16 @@
 #include "macroTable.h"     /* Adding a new macro, adding content to a macro and searching if a macro exists. */
 #include "utils.h"          /* Opening the .as and .am files and parsing lines. */
 
+/**
+ * Expands the macros in the .as file.
+ * Opens the .as for reading and the .am for writing.
+ * Generates the expanded .am file, which is used in later stages of the compilation.
+ * Returns whether or not the macro expansion was successful.
+ *
+ * @param fileName The name of the source file.
+ * @param macros The macro table.
+ * @return TRUE if the macro expansion was successful, FALSE otherwise.
+ */
 Boolean expandMacros(char fileName[], Macro **macros) {
     Boolean isSuccessful;
     FILE *inputFile;
@@ -48,6 +58,18 @@ Boolean expandMacros(char fileName[], Macro **macros) {
     return isSuccessful;
 }
 
+/**
+ * Expands the macros in the .as file line by line.
+ * Inserts each line into the .am file if they don't contain macros.
+ * Remembers definitions of macros and expands them when seen.
+ * Returns whether or not the macro expansion was successful.
+ *
+ * @param inputFile The .as file.
+ * @param outputFile The .am file.
+ * @param macros The macro table.
+ * @param fileName The name of the source file.
+ * @return TRUE if the macro expansion was successful, FALSE otherwise.
+ */
 Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[]) {
     Boolean isSuccessful;
     Boolean isInsideMacro;
@@ -76,6 +98,23 @@ Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char
     return isSuccessful;
 }
 
+/**
+ * Handles each line of the .as file.
+ * Determines whether the line contains a macro defintion.
+ * If so, fills in the macro's content.
+ * If there is a reference to an already-defined macro, inserts its content into the .am file.
+ * Otherwise, just inserts the current line into the .am file.
+ * Returns whether or not the handling the line was successful.
+ *
+ * @param inputFile The .as file.
+ * @param outputFile The .am file.
+ * @param macros The macro table.
+ * @param fileName The name of the source file.
+ * @param line The current line.
+ * @param lineNumber The current line's line number.
+ * @param isInsideMacro Whether or not the current line is part of some macro's definition.
+ * @return TRUE if the handling of the line was successful, FALSE otherwise.
+ */
 Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char fileName[], char line[], LineNumber lineNumber, Boolean *isInsideMacro) {
     char *current;
     char *token;
@@ -150,6 +189,12 @@ Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros, char
     return TRUE;
 }
 
+/**
+ * Checks and returns whether the given line is the end of some macro's definition.
+ *
+ * @param line The line to check.
+ * @return TRUE if the line is the end of some macro's definition, FALSE otherwise.
+ */
 Boolean isEndOfMacro(char line[]) {
     char *token;
 

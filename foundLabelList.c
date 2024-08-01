@@ -18,6 +18,12 @@
 #include "globals.h" /* Constants and typedefs. */
 #include "utils.h"   /* Allocating memory. */
 
+/**
+ * Adds a new found label to a list of found labels.
+ *
+ * @param labels The list of found labels.
+ * @param labelName The new found label's name.
+ */
 void addFoundLabel(FoundLabel **labels, char labelName[]) {
     FoundLabel *newLabel;
 
@@ -28,14 +34,33 @@ void addFoundLabel(FoundLabel **labels, char labelName[]) {
     *labels = newLabel;
 }
 
+/**
+ * Marks a found label as data.
+ *
+ * @param label The found label to mark as data.
+ */
 void markAsData(FoundLabel *label) {
     label->isData = TRUE;
 }
 
+/**
+ * Sets the address of a found label.
+ *
+ * @param label The found label to set the address of.
+ * @param newAddress The new address.
+ */
 void setAddress(FoundLabel *label, Address newAddress) {
     label->address = newAddress;
 }
 
+/**
+ * Searches and returns a found label from a list of found labels with its name.
+ * Returns NULL if no found label with the given name exists.
+ *
+ * @param labels The list of found labels.
+ * @param labelName The name of the label to search for.
+ * @return The found label with the given name or NULL if not found.
+ */
 FoundLabel *getFoundLabel(FoundLabel *labels, char labelName[]) {
     while (labels != NULL) {
         if (strcmp(labels->name, labelName) == EQUAL_STRINGS) {
@@ -48,6 +73,11 @@ FoundLabel *getFoundLabel(FoundLabel *labels, char labelName[]) {
     return NULL;
 }
 
+/**
+ * Frees a list of found labels.
+ *
+ * @param labels The list of found labels to free.
+ */
 void freeFoundLabelList(FoundLabel *labels) {
     FoundLabel *next;
 
@@ -58,6 +88,11 @@ void freeFoundLabelList(FoundLabel *labels) {
     }
 }
 
+/**
+ * Frees a single found label.
+ *
+ * @param label The found label to free.
+ */
 void freeFoundLabel(FoundLabel *label) {
     free(label->name);
     free(label);

@@ -17,6 +17,18 @@
 #include "globals.h"        /* Constants and typedefs. */
 #include "labelList.h"      /* Searching through the list of extern labels. */
 
+/**
+ * Links all the instances of used labels with their definitions.
+ * Modifies the words in the code and data parts to include the addresses of the labels.
+ * Also, checks and returns whether or not all of the used labels are defined or declared as extern.
+ *
+ * @param fileName The name of the current file that is being compiled.
+ * @param externLabels The list of extern labels.
+ * @param usedLabels The list of used labels.
+ * @param foundLabels The list of found labels.
+ * @param instructionCount The final instruction count.
+ * @return TRUE if no errors occurred (all labels are defined or declared as extern), FALSE otherwise.
+ */
 Boolean linkLabels(char fileName[], Label *externLabels, UsedLabel *usedLabels, FoundLabel *foundLabels, WordCount instructionCount) {
     Boolean isSuccessful;
     FoundLabel *matchingFoundLabel;
@@ -28,13 +40,13 @@ Boolean linkLabels(char fileName[], Label *externLabels, UsedLabel *usedLabels, 
 
         if (matchingFoundLabel == NULL) {
             if (containsLabel(externLabels, usedLabels->name)) {
-                encodeMetadata(usedLabels->wordPointer, 'E');
+                encodeAddressingMode(usedLabels->wordPointer, 'E');
             } else {
                 printError("Definition of label not found.", fileName, usedLabels->lineNumber);
                 isSuccessful = FALSE;
             }
         } else {
-            encodeMetadata(usedLabels->wordPointer, 'R');
+            encodeAddressingMode(usedLabels->wordPointer, 'R');
 
             if (matchingFoundLabel->isData) {
                 encodeLabel(usedLabels->wordPointer, matchingFoundLabel->address + (Address)instructionCount + STARTING_MEMORY_ADDRESS);

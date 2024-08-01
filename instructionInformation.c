@@ -15,6 +15,12 @@
 
 #include "globals.h" /* Constants and typedefs. */
 
+/**
+ * Computes and returns the unique index of the given operation from an array in memory.
+ *
+ * @param operation The operation to get the index of.
+ * @return The unique index of the given operation.
+ */
 Index getOperationIndex(char operation[]) {
     static char *OPERATIONS[OPERATION_COUNT] = {"mov", "cmp", "add", "sub", "lea", "clr", "not", "inc", "dec", "jmp", "bne", "red", "prn", "jsr", "rts", "stop"};
 
@@ -29,6 +35,13 @@ Index getOperationIndex(char operation[]) {
     return INVALID_OPERATION;
 }
 
+/**
+ * Computes and returns the number of operands the given operation expects to get.
+ * Can be either 0, 1 or 2.
+ *
+ * @param operation The operation to get the number of operands for.
+ * @return The number of operands the given operation expects to get (0, 1 or 2).
+ */
 OperandCount getOperandCount(char operation[]) {
     Index operationIndex;
 
@@ -45,6 +58,13 @@ OperandCount getOperandCount(char operation[]) {
     return NO_OPERANDS;
 }
 
+/**
+ * Computes and returns the type (addressing mode) of the given operand.
+ * Can be either IMMEDIATE, DIRECT, INDIRECT_REGISTER or DIRECT_REGISTER.
+ *
+ * @param operand The operand to get the type (addressing mode) of.
+ * @return The type (addressing mode) of the operand.
+ */
 OperandType getOperandType(char operand[]) {
     switch (*operand) {
         case 'r':
@@ -58,6 +78,14 @@ OperandType getOperandType(char operand[]) {
     }
 }
 
+/**
+ * Checks and returns whether or not the given operation can receive the given operand.
+ *
+ * @param operation The operation to check.
+ * @param operand The operand to check.
+ * @param isSource Whether the operand is the source or the destination of the instruction.
+ * @return Whether or not the given operation can receive the given operand.
+ */
 Boolean doesOperationAcceptOperand(char operation[], char operand[], Boolean isSource) {
     Index index;
     OperandType type;

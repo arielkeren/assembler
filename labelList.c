@@ -19,6 +19,13 @@
 #include "globals.h" /* Constants and typedefs. */
 #include "utils.h"   /* Allocating memory. */
 
+/**
+ * Adds a new label to the label list.
+ *
+ * @param labels The label list.
+ * @param labelName The new label's name.
+ * @param lineNumber The new label's line number.
+ */
 void addLabel(Label **labels, char labelName[], LineNumber lineNumber) {
     Label *newLabel;
 
@@ -29,6 +36,14 @@ void addLabel(Label **labels, char labelName[], LineNumber lineNumber) {
     *labels = newLabel;
 }
 
+/**
+ * Searches for the given label name in the given label list.
+ * Returns whether or not it has been found.
+ *
+ * @param labels The label list.
+ * @param labelName The name of the label to search for.
+ * @return TRUE if the label exists, FALSE otherwise.
+ */
 Boolean containsLabel(Label *labels, char labelName[]) {
     while (labels != NULL) {
         if (strcmp(labels->name, labelName) == EQUAL_STRINGS) {
@@ -41,6 +56,12 @@ Boolean containsLabel(Label *labels, char labelName[]) {
     return FALSE;
 }
 
+/**
+ * Computes and returns the length of the longest label in the given label list.
+ *
+ * @param labels The label list to compute the length of the longest label in.
+ * @return The length of the longest label in the given label list.
+ */
 Length getLongestLabel(Label *labels) {
     Length longest;
     Length currentLength;
@@ -60,6 +81,11 @@ Length getLongestLabel(Label *labels) {
     return longest;
 }
 
+/**
+ * Frees a list of labels.
+ *
+ * @param labels The label list to free.
+ */
 void freeLabelList(Label *labels) {
     Label *next;
 
@@ -70,6 +96,11 @@ void freeLabelList(Label *labels) {
     }
 }
 
+/**
+ * Frees a single label.
+ *
+ * @param label The label to free.
+ */
 void freeLabel(Label *label) {
     free(label->name);
     free(label);
