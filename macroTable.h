@@ -14,9 +14,9 @@
 
 #include "globals.h" /* Typedefs. */
 
-char *getMacroContent(Macro *macroTable, char macroName[]);
 void addMacro(Macro **macroTable, char macroName[]);
 void addMacroContent(Macro *macro, char content[]);
+char *getMacroContent(Macro *macroTable, char macroName[]);
 void freeMacroTable(Macro *macroTable);
 void freeMacro(Macro *macro);
 

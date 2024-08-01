@@ -27,7 +27,8 @@
  * Tries to allocate memory of the given size on the heap.
  * If succeeds, returns the pointer to the allocated memory.
  * If fails, prints an error message, frees all memory used by the linked lists and exits.
- * NOTE: Does not do anything to the allocated memory.
+ * NOTE: Does not initialize the allocated memory.
+ * IMPORTANT: The caller must free the returned memory.
  *
  * @param size The size of the memory to allocate in bytes.
  * @return A pointer to the allocated memory if successful.
@@ -50,6 +51,7 @@ void *allocate(size_t size) {
  * Tries to open a file with the given name and extension in the given mode.
  * If succeeds, returns the pointer to the opened file.
  * If fails, prints an error message and returns NULL.
+ * IMPORTANT: The caller must close the returned file.
  *
  * @param fileName The name of the file to open.
  * @param extension The extension of the file to open (should not include the dot).
@@ -116,6 +118,7 @@ char *skipCharacters(char line[]) {
  * Stops the token at the first whitespace character or comma.
  * If the first character in the given line is whitespace or a comma, returns NULL.
  * Allocates a new string and copies the token into it.
+ * IMPORTANT: The caller must free the returned string.
  *
  * @param line The line to get the next token from.
  * @return A pointer to a newly allocated string containing the next token in the given line.

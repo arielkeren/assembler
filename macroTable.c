@@ -19,28 +19,8 @@
 #include "utils.h"   /* Allocating memory. */
 
 /**
- * Searches for the given macro name in the given macro table.
- * If found, returns its content.
- * If not found, returns NULL.
- *
- * @param macroTable The macro table.
- * @param macroName The macro name to search for.
- * @return The macro's content, or NULL if not found.
- */
-char *getMacroContent(Macro *macroTable, char macroName[]) {
-    while (macroTable != NULL) {
-        if (strcmp(macroTable->name, macroName) == EQUAL_STRINGS) {
-            return macroTable->content;
-        }
-
-        macroTable = macroTable->next;
-    }
-
-    return NULL;
-}
-
-/**
  * Adds a new macro to the given macro table with the given name.
+ * IMPORTANT: The caller must free the new macro.
  *
  * @param macroTable The macro table to add the macro to.
  * @param macroName The name of the new macro.
@@ -71,6 +51,27 @@ void addMacroContent(Macro *macro, char content[]) {
     strcat(newContent, content);
 
     macro->content = newContent;
+}
+
+/**
+ * Searches for the given macro name in the given macro table.
+ * If found, returns its content.
+ * If not found, returns NULL.
+ *
+ * @param macroTable The macro table.
+ * @param macroName The macro name to search for.
+ * @return The macro's content, or NULL if not found.
+ */
+char *getMacroContent(Macro *macroTable, char macroName[]) {
+    while (macroTable != NULL) {
+        if (strcmp(macroTable->name, macroName) == EQUAL_STRINGS) {
+            return macroTable->content;
+        }
+
+        macroTable = macroTable->next;
+    }
+
+    return NULL;
 }
 
 /**

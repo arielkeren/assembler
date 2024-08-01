@@ -19,6 +19,7 @@
 
 /**
  * Adds a new used label to the given list of used labels with the given name, address, line number and word pointer.
+ * IMPORTANT: The caller must free the new used label.
  *
  * @param labels The list of used labels.
  * @param labelName The new used label's name.

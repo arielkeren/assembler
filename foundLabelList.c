@@ -20,6 +20,7 @@
 
 /**
  * Adds a new found label to a list of found labels.
+ * IMPORTANT: The caller must free the new found label.
  *
  * @param labels The list of found labels.
  * @param labelName The new found label's name.

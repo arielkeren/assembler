@@ -21,6 +21,7 @@
 
 /**
  * Adds a new label to the label list.
+ * IMPORTANT: The caller must free the new label.
  *
  * @param labels The label list.
  * @param labelName The new label's name.
