@@ -208,7 +208,7 @@ void encodeOperation(Word *word, char operation[]) {
  * @param immediate The immediate value to encode (-2048 to 2047, inclusive).
  */
 void encodeImmediate(Word *word, short immediate) {
-    applyMask(word, (Mask)immediate, STARTING_NUMBER_BIT);
+    applyMask(word, (Mask)immediate, STARTING_IMMEDIATE_BIT);
 }
 
 /**

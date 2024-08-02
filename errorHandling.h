@@ -18,6 +18,8 @@ void printMessage(char message[], char fileName[], LineNumber lineNumber, Boolea
 void printError(char message[], char fileName[], LineNumber lineNumber);
 void printMacroError(char message[], char fileName[], LineNumber lineNumber);
 void printWarning(char message[], char fileName[], LineNumber lineNumber);
-void printCriticalError(char message[]);
+void printFileError(char fileName[]);
+void printAllocationError();
+void printNoFilesError();
 
 #endif

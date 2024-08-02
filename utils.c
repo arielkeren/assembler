@@ -39,7 +39,7 @@ void *allocate(size_t size) {
     allocatedPointer = malloc(size);
 
     if (allocatedPointer == NULL) {
-        printCriticalError("Failed to allocate enough memory. Exiting the program...");
+        printAllocationError();
         freeAll();
         exit(ERROR);
     }
@@ -60,19 +60,13 @@ void *allocate(size_t size) {
  */
 FILE *openFile(char fileName[], char extension[], char mode[]) {
     char *fileNameWithExtension;
-    char *errorMessage;
     FILE *file;
 
     fileNameWithExtension = addExtension(fileName, extension);
     file = fopen(fileNameWithExtension, mode);
 
     if (file == NULL) {
-        errorMessage = malloc(sizeof(char) * (strlen(fileNameWithExtension) + ERROR_MESSAGE_LENGTH + NULL_BYTE));
-
-        sprintf(errorMessage, "Failed to open file: %s. Moving on to the next file...", fileNameWithExtension);
-        printCriticalError(errorMessage);
-
-        free(errorMessage);
+        printFileError(fileNameWithExtension);
     }
 
     free(fileNameWithExtension);
@@ -129,7 +123,7 @@ char *getNextToken(char line[]) {
 
     size = skipCharacters(line) - line;
 
-    if (size == NO_TOKEN) {
+    if (size == EMPTY) {
         return NULL;
     }
 
