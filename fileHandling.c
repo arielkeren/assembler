@@ -29,6 +29,8 @@
 /**
  * Checks whether or not no files have been provided as command line arguments.
  * If no files have been provided, prints an error and exits the program.
+ *
+ * Assumes that the given file count is the number of file names provided as command line arguments.
  */
 void checkNoFiles(int fileCount) {
     if (fileCount == NO_FILES) {
@@ -40,6 +42,9 @@ void checkNoFiles(int fileCount) {
 /**
  * Starts the compilation process of the provided files.
  * Compiles each file separately.
+ *
+ * Assumes that the given file names array is not NULL and contains only non-NULL and null-terminated file names.
+ * Assumes that the given file count is the number of file names to try to compile from the given file names array.
  *
  * @param fileNames The names of the files to compile.
  * @param fileCount The number of files to compile.

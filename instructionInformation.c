@@ -18,6 +18,8 @@
 /**
  * Computes and returns the unique index of the given operation from an array in memory.
  *
+ * Assumes that the given operation is not NULL and is null-terminated.
+ *
  * @param operation The operation to get the index of.
  * @return The unique index of the given operation.
  */
@@ -38,6 +40,8 @@ Index getOperationIndex(char operation[]) {
 /**
  * Computes and returns the number of operands the given operation expects to get.
  * Can be either 0, 1 or 2.
+ *
+ * Assumes that the given operation is not NULL, is null-terminated and represents an actual operation.
  *
  * @param operation The operation to get the number of operands for.
  * @return The number of operands the given operation expects to get (0, 1 or 2).
@@ -62,6 +66,8 @@ OperandCount getOperandCount(char operation[]) {
  * Computes and returns the type (addressing mode) of the given operand.
  * Can be either IMMEDIATE, DIRECT, INDIRECT_REGISTER or DIRECT_REGISTER.
  *
+ * Assumes that the given operand is not NULL, is null-terminated and represents an actual operand.
+ *
  * @param operand The operand to get the type (addressing mode) of.
  * @return The type (addressing mode) of the operand.
  */
@@ -80,6 +86,9 @@ OperandType getOperandType(char operand[]) {
 
 /**
  * Checks and returns whether or not the given operation can receive the given operand.
+ *
+ * Assumes that the given operation is not NULL, is null-terminated and represents an actual operation.
+ * Assumes that the given operand is not NULL, is null-terminated and represents an actual operand.
  *
  * @param operation The operation to check.
  * @param operand The operand to check.

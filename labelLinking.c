@@ -22,6 +22,9 @@
  * Modifies the words in the code and data parts to include the addresses of the labels.
  * Also, checks and returns whether or not all of the used labels are defined or declared as extern.
  *
+ * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the instruction count is the final instruction count of the file to compile.
+ *
  * @param fileName The name of the current file that is being compiled.
  * @param externLabels The list of extern labels.
  * @param usedLabels The list of used labels.

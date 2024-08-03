@@ -22,21 +22,27 @@
  * Adds a new macro to the given macro table with the given name.
  * IMPORTANT: The caller must free the new macro.
  *
- * @param macroTable The macro table to add the macro to.
+ * Assumes that the given pointer to the macros is not NULL.
+ * Assumes that the given macro name is not NULL and is null-terminated.
+ *
+ * @param macros The macro table to add the macro to.
  * @param macroName The name of the new macro.
  */
-void addMacro(Macro **macroTable, char macroName[]) {
+void addMacro(Macro **macros, char macroName[]) {
     Macro *newMacro;
 
     newMacro = allocate(sizeof(Macro));
     newMacro->name = macroName;
     newMacro->content = "";
-    newMacro->next = *macroTable;
-    *macroTable = newMacro;
+    newMacro->next = *macros;
+    *macros = newMacro;
 }
 
 /**
  * Appends the given content to the given macro's content.
+ *
+ * Assumes that the given macro pointer is not NULL.
+ * Assumes that the given content is not NULL and is null-terminated.
  *
  * @param macro The macro to add the content to.
  * @param content The content to add.
@@ -58,17 +64,19 @@ void addMacroContent(Macro *macro, char content[]) {
  * If found, returns its content.
  * If not found, returns NULL.
  *
- * @param macroTable The macro table.
+ * Assumes that the given macro name is not NULL and is null-terminated.
+ *
+ * @param macros The macro table.
  * @param macroName The macro name to search for.
  * @return The macro's content, or NULL if not found.
  */
-char *getMacroContent(Macro *macroTable, char macroName[]) {
-    while (macroTable != NULL) {
-        if (strcmp(macroTable->name, macroName) == EQUAL_STRINGS) {
-            return macroTable->content;
+char *getMacroContent(Macro *macros, char macroName[]) {
+    while (macros != NULL) {
+        if (strcmp(macros->name, macroName) == EQUAL_STRINGS) {
+            return macros->content;
         }
 
-        macroTable = macroTable->next;
+        macros = macros->next;
     }
 
     return NULL;
@@ -77,20 +85,24 @@ char *getMacroContent(Macro *macroTable, char macroName[]) {
 /**
  * Frees a macro table.
  *
- * @param macroTable The macro table to free.
+ * Assumes that the given macro table has not been freed yet.
+ *
+ * @param macros The macro table to free.
  */
-void freeMacroTable(Macro *macroTable) {
+void freeMacroTable(Macro *macros) {
     Macro *next;
 
-    while (macroTable != NULL) {
-        next = macroTable->next;
-        freeMacro(macroTable);
-        macroTable = next;
+    while (macros != NULL) {
+        next = macros->next;
+        freeMacro(macros);
+        macros = next;
     }
 }
 
 /**
  * Frees a single macro.
+ *
+ * Assumes that the given macro is not NULL and has not been freed yet.
  *
  * @param macro The macro to free.
  */

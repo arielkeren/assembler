@@ -24,6 +24,8 @@
  * Returns a pointer to the new word.
  * IMPORTANT: The caller must free the new word.
  *
+ * Assumes that the given word pointer is not NULL.
+ *
  * @param words The word list to add the new word to.
  * @return A pointer to the new word.
  */
@@ -57,6 +59,8 @@ Word *createWord() {
 
 /**
  * Frees a word list.
+ *
+ * Assumes that the given words have not been freed yet.
  *
  * @param words The word list to free.
  */

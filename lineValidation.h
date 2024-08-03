@@ -17,7 +17,7 @@
 Boolean validateLine(char line[], char fileName[], LineNumber lineNumber);
 Boolean validateEntryExtern(char label[], char fileName[], LineNumber lineNumber);
 Boolean validateLabel(char label[], char fileName[], LineNumber lineNumber);
-Boolean validateMacro(char label[], char fileName[], LineNumber lineNumber);
+Boolean validateMacro(char macro[], char fileName[], LineNumber lineNumber);
 Boolean validateName(char name[], char fileName[], LineNumber lineNumber, Boolean isLabel);
 Boolean validateData(char data[], char fileName[], LineNumber lineNumber);
 Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber);

@@ -23,6 +23,9 @@
  * Adds a new label to the label list.
  * IMPORTANT: The caller must free the new label.
  *
+ * Assumes that the pointer to the labels is not NULL.
+ * Assumes that the label name is not NULL and is null-terminated.
+ *
  * @param labels The label list.
  * @param labelName The new label's name.
  * @param lineNumber The new label's line number.
@@ -40,6 +43,8 @@ void addLabel(Label **labels, char labelName[], LineNumber lineNumber) {
 /**
  * Searches for the given label name in the given label list.
  * Returns whether or not it has been found.
+ *
+ * Assumes that the given label name is not NULL and is null-terminated.
  *
  * @param labels The label list.
  * @param labelName The name of the label to search for.
@@ -85,6 +90,8 @@ Length getLongestLabel(Label *labels) {
 /**
  * Frees a list of labels.
  *
+ * Assumes that the given labels have not been freed yet.
+ *
  * @param labels The label list to free.
  */
 void freeLabelList(Label *labels) {
@@ -99,6 +106,8 @@ void freeLabelList(Label *labels) {
 
 /**
  * Frees a single label.
+ *
+ * Assumes that the given label is not NULL and has not been freed yet.
  *
  * @param label The label to free.
  */

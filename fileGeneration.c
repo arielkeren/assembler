@@ -36,6 +36,8 @@
  * <Address> <Word>
  * ...
  *
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
  * @param fileName The name of the .ob file to generate.
  * @param code List that represents the words in the code part.
  * @param data List that represents the words in the data part.
@@ -67,6 +69,8 @@ void generateObFile(char fileName[], Word *code, Word *data, WordCount instructi
  * <Label> <Address>
  * <Label> <Address>
  * ...
+ *
+ * Assumes that the given file name is not NULL and is null-terminated.
  *
  * @param fileName The name of the .ent file to generate.
  * @param entryLabels The list of labels marked as entry.
@@ -131,6 +135,8 @@ Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLa
  * <Label> <Address>
  * ...
  *
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
  * @param fileName The name of the .ext file to generate.
  * @param externLabels The list of labels marked as extern.
  * @param usedLabels The list of used labels to check for every instance of the labels.
@@ -192,6 +198,9 @@ Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLab
  * The address of the first word will be the given starting address.
  * The following addresses will be automatically incremented by one each time.
  *
+ * Assumes that the given file pointer is not NULL.
+ * Assumes that the starting address is valid, so that all the words will fit in the made-up memory until address 4095.
+ *
  * @param file The file to insert the words into.
  * @param words The list of words to insert.
  * @param startingAddress The address of the first word in the list.
@@ -206,6 +215,11 @@ void insertWords(FILE *file, Word *words, Address startingAddress) {
 
 /**
  * Inserts the given label into the given file, along with an address.
+ *
+ * Assumes that the given file pointer is not NULL.
+ * Assumes that the given label name string is not NULL and is null-terminated.
+ * Assumes that the given address is between 100 and 4095, inclusive (to fit in the made-up memory).
+ * Assumes that the given longest label's length is the number of characters in the longest label.
  *
  * @param file The file to insert the label into.
  * @param labelName The name of the label to insert.
