@@ -54,7 +54,7 @@ void generateObFile(char fileName[], Word *code, Word *data,
         return;
     }
 
-    fprintf(file, "%u %u\n", instructionCount, dataCount);
+    fprintf(file, "%u %u", instructionCount, dataCount);
 
     insertWords(file, code, STARTING_MEMORY_ADDRESS);
     insertWords(file, data,
@@ -241,7 +241,7 @@ void insertWords(FILE *file, Word *words, Address startingAddress) {
         shiftedData2 = (unsigned short)words->data2
                        << (sizeof(words->data1) * BITS_PER_BYTE);
 
-        fprintf(file, "%04hu %05o\n", startingAddress,
+        fprintf(file, "\n%04hu %05o", startingAddress,
                 (unsigned short)words->data1 + shiftedData2);
         startingAddress++;
         words = words->next;
