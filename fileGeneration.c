@@ -17,8 +17,8 @@
 #include "errorHandling.h"  /* Printing errors. */
 #include "foundLabelList.h" /* Searching through the found label list. */
 #include "globals.h"        /* Constants and typedefs. */
-#include "labelList.h"      /* Getting the longest label's length in each label list. */
-#include "utils.h"          /* Opening the .ob file. */
+#include "labelList.h" /* Getting the longest label's length in each label list. */
+#include "utils.h"     /* Opening the .ob file. */
 
 /**
  * Generates the <fileName>.ob file in the following format:
@@ -44,7 +44,8 @@
  * @param instructionCount The number of words in the code part.
  * @param dataCount The number of words in the data part.
  */
-void generateObFile(char fileName[], Word *code, Word *data, WordCount instructionCount, WordCount dataCount) {
+void generateObFile(char fileName[], Word *code, Word *data,
+                    WordCount instructionCount, WordCount dataCount) {
     FILE *file;
 
     file = openFile(fileName, "ob", "w");
@@ -56,15 +57,22 @@ void generateObFile(char fileName[], Word *code, Word *data, WordCount instructi
     fprintf(file, "%u %u\n", instructionCount, dataCount);
 
     insertWords(file, code, STARTING_MEMORY_ADDRESS);
-    insertWords(file, data, (Address)instructionCount + STARTING_MEMORY_ADDRESS);
+    insertWords(file, data,
+                (Address)instructionCount + STARTING_MEMORY_ADDRESS);
 
     fclose(file);
 }
 
 /**
- * Returns whether or not more files should be generated after this one (an error occured).
- * The labels are padded to the number of characters of the longest label with spaces to the right.
- * The addresses are decimal and padded to be 4 digits long with zeros to the left.
+ * Returns whether or not more files should be generated after this one (an
+ * error occured).
+ *
+ * The labels are padded to the number of characters of the longest label with
+ * spaces to the right.
+ *
+ * The addresses are decimal and padded to be 4 digits long with zeros to the
+ * left.
+ *
  * Generates the <fileName>.ent file in the following format:
  * <Label> <Address>
  * <Label> <Address>
@@ -76,10 +84,13 @@ void generateObFile(char fileName[], Word *code, Word *data, WordCount instructi
  * @param entryLabels The list of labels marked as entry.
  * @param foundLabels The list of found labels to check for missing definitions.
  * @param instructionCount The number of words in the code part.
- * @param shouldGenerate Whether the .ent file should be generated. If not, only checks for missing definitions.
+ * @param shouldGenerate Whether the .ent file should be generated. If not, only
+ * checks for missing definitions.
  * @return Whether or not more files should be generated after the .ent file.
  */
-Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLabels, WordCount instructionCount, Boolean shouldGenerate) {
+Boolean generateEntFile(char fileName[], Label *entryLabels,
+                        FoundLabel *foundLabels, WordCount instructionCount,
+                        Boolean shouldGenerate) {
     FoundLabel *matchingFoundLabel;
     FILE *file;
     Length longest;
@@ -91,7 +102,8 @@ Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLa
         matchingFoundLabel = getFoundLabel(foundLabels, entryLabels->name);
 
         if (matchingFoundLabel == NULL) {
-            printError("Label marked as .entry, but definition not found.", fileName, entryLabels->lineNumber);
+            printError("Label marked as .entry, but definition not found.",
+                       fileName, entryLabels->lineNumber);
             shouldGenerate = FALSE;
             entryLabels = entryLabels->next;
             continue;
@@ -111,9 +123,14 @@ Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLa
         }
 
         if (matchingFoundLabel->isData) {
-            insertLabel(file, entryLabels->name, matchingFoundLabel->address + (Address)instructionCount + STARTING_MEMORY_ADDRESS, longest);
+            insertLabel(file, entryLabels->name,
+                        matchingFoundLabel->address +
+                            (Address)instructionCount + STARTING_MEMORY_ADDRESS,
+                        longest);
         } else {
-            insertLabel(file, entryLabels->name, matchingFoundLabel->address + STARTING_MEMORY_ADDRESS, longest);
+            insertLabel(file, entryLabels->name,
+                        matchingFoundLabel->address + STARTING_MEMORY_ADDRESS,
+                        longest);
         }
 
         entryLabels = entryLabels->next;
@@ -127,9 +144,12 @@ Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLa
 }
 
 /**
- * Returns whether or not more files should be generated after this one (an error occured).
- * The labels are padded to the number of characters of the longest label with spaces to the right.
- * The addresses are decimal and padded to be 4 digits long with zeros to the left.
+ * Returns whether or not more files should be generated after this one (an
+ * error occured).
+ * The labels are padded to the number of characters of the longest label with
+ * spaces to the right.
+ * The addresses are decimal and padded to be 4 digits long with zeros to the
+ * left.
  * Generates the <fileName>.ext file in the following format:
  * <Label> <Address>
  * <Label> <Address>
@@ -139,12 +159,17 @@ Boolean generateEntFile(char fileName[], Label *entryLabels, FoundLabel *foundLa
  *
  * @param fileName The name of the .ext file to generate.
  * @param externLabels The list of labels marked as extern.
- * @param usedLabels The list of used labels to check for every instance of the labels.
- * @param foundLabels The list of found labels to check for labels that are extern and also defined (invalid).
- * @param shouldGenerate Whether the .ext file should be generated. If not, only checks for errors.
+ * @param usedLabels The list of used labels to check for every instance of the
+ * labels.
+ * @param foundLabels The list of found labels to check for labels that are
+ * extern and also defined (invalid).
+ * @param shouldGenerate Whether the .ext file should be generated. If not, only
+ * checks for errors.
  * @return Whether or not more files should be generated after the .ext file.
  */
-Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLabels, FoundLabel *foundLabels, Boolean shouldGenerate) {
+Boolean generateExtFile(char fileName[], Label *externLabels,
+                        UsedLabel *usedLabels, FoundLabel *foundLabels,
+                        Boolean shouldGenerate) {
     UsedLabel *currentUsedLabel;
     FILE *file;
     Length longest;
@@ -154,7 +179,8 @@ Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLab
 
     while (externLabels != NULL) {
         if (getFoundLabel(foundLabels, externLabels->name) != NULL) {
-            printError("Label marked as .extern, but also defined.", fileName, externLabels->lineNumber);
+            printError("Label marked as .extern, but also defined.", fileName,
+                       externLabels->lineNumber);
             shouldGenerate = FALSE;
             externLabels = externLabels->next;
             continue;
@@ -168,7 +194,8 @@ Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLab
         currentUsedLabel = usedLabels;
 
         while (currentUsedLabel != NULL) {
-            if (strcmp(externLabels->name, currentUsedLabel->name) == EQUAL_STRINGS) {
+            if (strcmp(externLabels->name, currentUsedLabel->name) ==
+                EQUAL_STRINGS) {
                 if (file == NULL) {
                     file = openFile(fileName, "ext", "w");
 
@@ -177,7 +204,8 @@ Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLab
                     }
                 }
 
-                insertLabel(file, externLabels->name, currentUsedLabel->address, longest);
+                insertLabel(file, externLabels->name, currentUsedLabel->address,
+                            longest);
             }
 
             currentUsedLabel = currentUsedLabel->next;
@@ -199,15 +227,22 @@ Boolean generateExtFile(char fileName[], Label *externLabels, UsedLabel *usedLab
  * The following addresses will be automatically incremented by one each time.
  *
  * Assumes that the given file pointer is not NULL.
- * Assumes that the starting address is valid, so that all the words will fit in the made-up memory until address 4095.
+ * Assumes that the starting address is valid, so that all the words will fit in
+ * the made-up memory until address 4095.
  *
  * @param file The file to insert the words into.
  * @param words The list of words to insert.
  * @param startingAddress The address of the first word in the list.
  */
 void insertWords(FILE *file, Word *words, Address startingAddress) {
+    unsigned short shiftedData2;
+
     while (words != NULL) {
-        fprintf(file, "%04hu %05o\n", startingAddress, (unsigned short)words->data1 + ((unsigned short)words->data2 << (sizeof(words->data1) * BITS_PER_BYTE)));
+        shiftedData2 = (unsigned short)words->data2
+                       << (sizeof(words->data1) * BITS_PER_BYTE);
+
+        fprintf(file, "%04hu %05o\n", startingAddress,
+                (unsigned short)words->data1 + shiftedData2);
         startingAddress++;
         words = words->next;
     }
@@ -218,14 +253,17 @@ void insertWords(FILE *file, Word *words, Address startingAddress) {
  *
  * Assumes that the given file pointer is not NULL.
  * Assumes that the given label name string is not NULL and is null-terminated.
- * Assumes that the given address is between 100 and 4095, inclusive (to fit in the made-up memory).
- * Assumes that the given longest label's length is the number of characters in the longest label.
+ * Assumes that the given address is between 100 and 4095, inclusive (to fit in
+ * the made-up memory).
+ * Assumes that the given longest label's length is the number of characters in
+ * the longest label.
  *
  * @param file The file to insert the label into.
  * @param labelName The name of the label to insert.
  * @param address The address associated with the label.
  * @param longest The number of characters in the longest label.
  */
-void insertLabel(FILE *file, char labelName[], Address address, Length longest) {
+void insertLabel(FILE *file, char labelName[], Address address,
+                 Length longest) {
     fprintf(file, "%-*s %04hu\n", longest, labelName, address);
 }

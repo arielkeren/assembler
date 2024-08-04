@@ -1,8 +1,10 @@
 /*
  * macroTable.c
  *
- * Contains functions to interface with a macro table, to search through it and finally to free it.
- * The macro table contains all the macro definitions in the .as file, along with their contents.
+ * Contains functions to interface with a macro table, to search through it and
+ * finally to free it.
+ * The macro table contains all the macro definitions in the .as file, along
+ * with their contents.
  *
  * Name: Ariel Keren
  * Course: C Lab, 20465
@@ -50,7 +52,8 @@ void addMacro(Macro **macros, char macroName[]) {
 void addMacroContent(Macro *macro, char content[]) {
     char *newContent;
 
-    newContent = allocate(sizeof(char) * (strlen(macro->content) + strlen(content) + NULL_BYTE));
+    newContent = allocate(
+        sizeof(char) * (strlen(macro->content) + strlen(content) + NULL_BYTE));
 
     strcpy(newContent, macro->content);
     free(macro->content);

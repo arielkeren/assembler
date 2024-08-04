@@ -2,8 +2,10 @@
  * wordList.c
  *
  * Contains functions to interface with a word list and to free it.
- * Also, contains a function to create a new word, which can be used as a dummy node.
- * The 2 word lists contain all the words in the code part and in the data part of the .am file.
+ * Also, contains a function to create a new word, which can be used as a dummy
+ * node.
+ * The 2 word lists contain all the words in the code part and in the data part
+ * of the .am file.
  * They will eventually be used to generate the .ob file.
  *
  * Name: Ariel Keren

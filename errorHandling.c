@@ -1,7 +1,8 @@
 /*
  * errorHandling.c
  *
- * Contains functions to print the different errors and warnings that could occur.
+ * Contains functions to print the different errors and warnings that could
+ * occur.
  *
  * Name: Ariel Keren
  * Course: C Lab, 20465
@@ -27,7 +28,8 @@
  * @param isError Whether the message is an error or a warning.
  * @param isMacro Whether the message is a macro error or not.
  */
-void printMessage(char message[], char fileName[], LineNumber lineNumber, Boolean isError, Boolean isMacro) {
+void printMessage(char message[], char fileName[], LineNumber lineNumber,
+                  Boolean isError, Boolean isMacro) {
     static unsigned long errorCount = INITIAL_VALUE;
     static unsigned long warningCount = INITIAL_VALUE;
 
@@ -57,7 +59,8 @@ void printError(char message[], char fileName[], LineNumber lineNumber) {
 }
 
 /**
- * Prints a macro error in the .as file to stdout according to the arguments given.
+ * Prints a macro error in the .as file to stdout according to the arguments
+ * given.
  *
  * Assumes that the given message is not NULL and is null-terminated.
  * Assumes that the given file name is not NULL and is null-terminated.
@@ -94,23 +97,34 @@ void printWarning(char message[], char fileName[], LineNumber lineNumber) {
  */
 void printFileError(char fileName[]) {
     printf("\n--- File Error ---\n");
-    printf("Could not open the file by the name of: %s. Moving on to the next file, or exiting if there are no more files...\n", fileName);
+    printf("Could not open the file by the name of: %s.\n");
+    printf(
+        "Moving on to the next file, or exiting if there are no more "
+        "files...\n",
+        fileName);
 }
 
 /**
  * Prints a allocation error to stdout.
- * An allocation error can occur if some memory could not be allocated for some reason.
+ * An allocation error can occur if some memory could not be allocated for some
+ * reason.
  */
 void printAllocationError() {
     printf("\n--- Allocation Error ---\n");
-    printf("Failed to allocate enough memory. Exiting the program...\n");
+    printf("Failed to allocate enough memory.\n");
+    printf("Exiting the program...\n");
 }
 
 /**
  * Prints a no files error to stdout.
- * A no files error can occur if no files have been provided as command line arguments.
+ * A no files error can occur if no files have been provided as command line
+ * arguments.
  */
 void printNoFilesError() {
     printf("\n--- No Files Error ---\n");
-    printf("No files provided to compile. Add the .as files' names to compile (without the .as extensions) as command line arguments. Exiting the program...\n");
+    printf("No files provided to compile.\n");
+    printf(
+        "Add the .as files' names to compile (without the .as extensions) as "
+        "command line arguments.\n");
+    printf("Exiting the program...\n");
 }

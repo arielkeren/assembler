@@ -17,11 +17,14 @@
  * Expects file names to be given as command line arguments.
  * Uses these names to read the .as source files.
  * Compiles them and generates the following files (if successful):
- * - .ob: Contains the words that need to be loaded into memory in octal representation.
+ * - .ob: Contains the words that need to be loaded into memory in octal
+ * representation.
  * - .ent: Contains the entry labels, along with their addresses.
- * - .ext: Contains the extern labels, along with the addresses they have been used at.
+ * - .ext: Contains the extern labels, along with the addresses they have been
+ * used at.
  *
- * @param argc The number of command line arguments (including the program's name).
+ * @param argc The number of command line arguments (including the program's
+ * name).
  * @param argv The command line arguments (including the program's name).
  * @return 0 when runs successfully.
  */

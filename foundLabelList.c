@@ -1,7 +1,8 @@
 /*
  * foundLabelList.c
  *
- * Contains functions to interface with a found label list, to search through it and finally to free it.
+ * Contains functions to interface with a found label list, to search through it
+ * and finally to free it.
  * The found label list contains all the label definitions in the .am file.
  *
  * Name: Ariel Keren
@@ -45,15 +46,14 @@ void addFoundLabel(FoundLabel **labels, char labelName[]) {
  *
  * @param label The found label to mark as data.
  */
-void markAsData(FoundLabel *label) {
-    label->isData = TRUE;
-}
+void markAsData(FoundLabel *label) { label->isData = TRUE; }
 
 /**
  * Sets the address of a found label.
  *
  * Assumes that the given label pointer is not NULL.
- * Assumes that the new address is valid, so that the final address will fit in the made-up memory.
+ * Assumes that the new address is valid, so that the final address will fit in
+ * the made-up memory.
  *
  * @param label The found label to set the address of.
  * @param newAddress The new address.

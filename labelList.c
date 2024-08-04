@@ -1,8 +1,10 @@
 /*
  * labelList.h
  *
- * Contains functions to interface with a label list, to search through it and finally to free it.
- * The 2 label lists used in the program contain all the labels marked entry and extern in the .am file.
+ * Contains functions to interface with a label list, to search through it and
+ * finally to free it.
+ * The 2 label lists used in the program contain all the labels marked entry and
+ * extern in the .am file.
  * They will eventually be used to generate the .ent and .ext files.
  *
  * Name: Ariel Keren
