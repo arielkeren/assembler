@@ -94,7 +94,9 @@ Boolean generateEntFile(char fileName[], Label *entryLabels,
     FoundLabel *matchingFoundLabel;
     FILE *file;
     Length longest;
+    Boolean isFirst;
 
+    isFirst = TRUE;
     file = NULL;
     longest = getLongestLabel(entryLabels);
 
@@ -126,13 +128,14 @@ Boolean generateEntFile(char fileName[], Label *entryLabels,
             insertLabel(file, entryLabels->name,
                         matchingFoundLabel->address +
                             (Address)instructionCount + STARTING_MEMORY_ADDRESS,
-                        longest);
+                        longest, isFirst);
         } else {
             insertLabel(file, entryLabels->name,
                         matchingFoundLabel->address + STARTING_MEMORY_ADDRESS,
-                        longest);
+                        longest, isFirst);
         }
 
+        isFirst = FALSE;
         entryLabels = entryLabels->next;
     }
 
@@ -173,6 +176,7 @@ Boolean generateExtFile(char fileName[], Label *externLabels,
     UsedLabel *currentUsedLabel;
     FILE *file;
     Length longest;
+    Boolean isFirst;
 
     file = NULL;
     longest = getLongestLabel(externLabels);
@@ -205,7 +209,8 @@ Boolean generateExtFile(char fileName[], Label *externLabels,
                 }
 
                 insertLabel(file, externLabels->name, currentUsedLabel->address,
-                            longest);
+                            longest, isFirst);
+                isFirst = FALSE;
             }
 
             currentUsedLabel = currentUsedLabel->next;
@@ -262,8 +267,10 @@ void insertWords(FILE *file, Word *words, Address startingAddress) {
  * @param labelName The name of the label to insert.
  * @param address The address associated with the label.
  * @param longest The number of characters in the longest label.
+ * @param isFirst Whether this is the first label to be inserted into some file.
  */
-void insertLabel(FILE *file, char labelName[], Address address,
-                 Length longest) {
-    fprintf(file, "%-*s %04hu\n", longest, labelName, address);
+void insertLabel(FILE *file, char labelName[], Address address, Length longest,
+                 Boolean isFirst) {
+    fprintf(file, "%s%-*s %04hu", isFirst ? "" : "\n", longest, labelName,
+            address);
 }

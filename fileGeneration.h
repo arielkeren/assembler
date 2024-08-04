@@ -129,7 +129,9 @@ void insertWords(FILE *file, Word *words, Address startingAddress);
  * @param labelName The name of the label to insert.
  * @param address The address associated with the label.
  * @param longest The number of characters in the longest label.
+ * @param isFirst Whether this is the first label to be inserted into some file.
  */
-void insertLabel(FILE *file, char labelName[], Address address, Length longest);
+void insertLabel(FILE *file, char labelName[], Address address, Length longest,
+                 Boolean isFirst);
 
 #endif
