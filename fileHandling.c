@@ -32,6 +32,8 @@
  *
  * Assumes that the given file count is the number of file names provided as
  * command line arguments.
+ *
+ * @param fileCount The number of files provided as command line arguments.
  */
 void checkNoFiles(int fileCount) {
     if (fileCount == NO_FILES) {

@@ -193,7 +193,7 @@ Boolean validateMacro(char macro[], char fileName[], LineNumber lineNumber) {
  * 3. Has a length of at most 31 characters.
  * 4. Is not a keyword in the language (includes "macr", "endmacr", operation
  * names, register names).
- * 5. The characters not including the first character have to be either:
+ * 5. The characters, not including the first character, have to be either:
  * - Lowercase characters in the English alphabet.
  * - Uppercase characters in the English alphabet.
  * - Digits.

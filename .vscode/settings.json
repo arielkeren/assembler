@@ -9,6 +9,7 @@
     "instructioninformation.h": "c",
     "labellinking.h": "c",
     "wordlist.h": "c",
-    "usedlabellist.h": "c"
+    "usedlabellist.h": "c",
+    "filegeneration.h": "c"
   }
 }
