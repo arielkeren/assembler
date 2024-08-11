@@ -1,7 +1,7 @@
 /*
  * labelLinking.c
  *
- * Contains a function to link all the used labels with their definitions.
+ * Contains functions to link all the used labels with their definitions.
  *
  * Name: Ariel Keren
  * Course: C Lab, 20465
@@ -38,39 +38,94 @@
  */
 Boolean linkLabels(char fileName[], Label *externLabels, UsedLabel *usedLabels,
                    FoundLabel *foundLabels, WordCount instructionCount) {
-    Boolean isSuccessful;
-    FoundLabel *matchingFoundLabel;
+    Boolean isSuccessful; /* Whether all the used labels are defined somehow. */
+    FoundLabel *matchingFoundLabel; /* The current used label's defintion. */
 
     isSuccessful = TRUE;
 
+    /* Loop over the used labels and link their definitions to the words. */
     while (usedLabels != NULL) {
+        /* Get the possible definition of the current used label. */
         matchingFoundLabel = getFoundLabel(foundLabels, usedLabels->name);
 
+        /* Check if the used label is undefined. */
         if (matchingFoundLabel == NULL) {
-            if (containsLabel(externLabels, usedLabels->name)) {
-                encodeAddressingMode(usedLabels->wordPointer, 'E');
-            } else {
-                printError("Definition of label not found.", fileName,
-                           usedLabels->lineNumber);
-                isSuccessful = FALSE;
-            }
+            /* The label could still be declared as extern. */
+            isSuccessful =
+                handleUndefinedLabel(fileName, externLabels, usedLabels) &&
+                isSuccessful;
         } else {
-            encodeAddressingMode(usedLabels->wordPointer, 'R');
-
-            if (matchingFoundLabel->isData) {
-                encodeLabel(usedLabels->wordPointer,
-                            matchingFoundLabel->address +
-                                (Address)instructionCount +
-                                STARTING_MEMORY_ADDRESS);
-            } else {
-                encodeLabel(
-                    usedLabels->wordPointer,
-                    matchingFoundLabel->address + STARTING_MEMORY_ADDRESS);
-            }
+            /* Encode the label's definition's address into the target word. */
+            handleDefinedLabel(usedLabels, matchingFoundLabel,
+                               instructionCount);
         }
 
+        /* Move on to the next used label. */
         usedLabels = usedLabels->next;
     }
 
     return isSuccessful;
+}
+
+/**
+ * Handles an undefined label.
+ * Returns whether the label has been declared as extern.
+ * If so, sets the addressing mode of the target word to E.
+ * If not, prints an error.
+ *
+ * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the given used label is not NULL.
+ *
+ * @param fileName The name of the current file that is being compiled.
+ * @param externLabels The list of extern labels.
+ * @param usedLabel The undefined used label.
+ * @return TRUE if the label has been declared as extern, FALSE otherwise.
+ */
+Boolean handleUndefinedLabel(char fileName[], Label *externLabels,
+                             UsedLabel *usedLabel) {
+    /* Check if the label is declared as extern. */
+    if (containsLabel(externLabels, usedLabel->name)) {
+        /* Mark the target word as extern. */
+        encodeAddressingMode(usedLabel->wordPointer, 'E');
+        /* This label is valid. */
+        return TRUE;
+    }
+
+    /* Print an error, as the label has no defintion. */
+    printError("Definition of label not found.", fileName,
+               usedLabel->lineNumber);
+    /* This label is invalid. */
+    return FALSE;
+}
+
+/**
+ * Handles a defined label.
+ * Sets the addressing mode of the target word to R.
+ * Encodes the label's definition's address into the target word, based on
+ * whether the label is defined in the data part or in the code part.
+ *
+ * Assumes that the given used label is not NULL.
+ * Assumes that the given found label is not NULL.
+ *
+ * @param usedLabel The defined used label.
+ * @param foundLabel The matching found label.
+ * @param instructionCount The final instruction count.
+ */
+void handleDefinedLabel(UsedLabel *usedLabel, FoundLabel *foundLabel,
+                        WordCount instructionCount) {
+    /* Mark the target word as a label that is defined in the same file. */
+    encodeAddressingMode(usedLabel->wordPointer, 'R');
+
+    /* Check if the label is defined in the data part. */
+    if (foundLabel->isData) {
+        /* Add to the label's address the instruction count and encode. */
+        encodeLabel(usedLabel->wordPointer, foundLabel->address +
+                                                (Address)instructionCount +
+                                                STARTING_MEMORY_ADDRESS);
+        return;
+    }
+
+    /* Encode the label in the code part. */
+    encodeLabel(usedLabel->wordPointer,
+                foundLabel->address + STARTING_MEMORY_ADDRESS);
 }

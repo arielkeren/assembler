@@ -29,8 +29,10 @@
  * @return 0 when runs successfully.
  */
 int main(int argc, char *argv[]) {
+    /* Check the possibility of no files being provided. */
     checkNoFiles(argc - ARGS_DIFF);
-    compileFiles(argv + ARGS_DIFF, argc - ARGS_DIFF);
+    /* Start the compilation process of every file provided. */
+    compileAllFiles(argv + ARGS_DIFF, argc - ARGS_DIFF);
 
     return SUCCESS;
 }

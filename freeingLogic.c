@@ -28,7 +28,10 @@
  * Assumes that the pointers to all the linked lists in the program have been
  * set.
  */
-void freeAll() { freeingLogic(TRUE, NULL, NULL, NULL, NULL, NULL, NULL, NULL); }
+void freeAll() {
+    /* Call the freeing logic to free the linked lists. */
+    freeingLogic(TRUE, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+}
 
 /**
  * Sets the pointers to each linked list in memory to free it, in case of an
@@ -48,6 +51,7 @@ void freeAll() { freeingLogic(TRUE, NULL, NULL, NULL, NULL, NULL, NULL, NULL); }
 void setToFree(Word **code, Word **data, Macro **macros, Label **entryLabels,
                Label **externLabels, UsedLabel **usedLabels,
                FoundLabel **foundLabels) {
+    /* Pass all the pointers to the freeing logic. */
     freeingLogic(FALSE, code, data, macros, entryLabels, externLabels,
                  usedLabels, foundLabels);
 }
@@ -76,13 +80,16 @@ void setToFree(Word **code, Word **data, Macro **macros, Label **entryLabels,
 void freeingLogic(Boolean shouldFree, Word **code, Word **data, Macro **macros,
                   Label **entryLabels, Label **externLabels,
                   UsedLabel **usedLabels, FoundLabel **foundLabels) {
-    static ToFree toFree;
+    static ToFree toFree; /* The struct that holds all the pointers to free. */
 
+    /* Check whether to free or set the pointers. */
     if (shouldFree) {
+        /* Free all the linked lists. */
         freeLists(&toFree);
         return;
     }
 
+    /* Set all the pointers according to the arguments. */
     toFree.code = code;
     toFree.data = data;
     toFree.macros = macros;
@@ -100,6 +107,7 @@ void freeingLogic(Boolean shouldFree, Word **code, Word **data, Macro **macros,
  * @param toFree The pointers to the linked lists to free.
  */
 void freeLists(ToFree *toFree) {
+    /* Free all the linked lists in the given struct. */
     freeWordList(*toFree->code);
     freeWordList(*toFree->data);
     freeMacroTable(*toFree->macros);

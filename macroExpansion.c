@@ -38,28 +38,36 @@
  * @return TRUE if the macro expansion was successful, FALSE otherwise.
  */
 Boolean expandMacros(char fileName[], Macro **macros) {
-    Boolean isSuccessful;
-    FILE *inputFile;
-    FILE *outputFile;
+    Boolean isSuccessful; /* Whether the macro expansion is successful. */
+    FILE *inputFile;      /* The .as file. */
+    FILE *outputFile;     /* The .am file. */
 
+    /* Try to open the .as file. */
     inputFile = openFile(fileName, "as", "r");
 
+    /* Check if the .as file could not be opened. */
     if (inputFile == NULL) {
         return FALSE;
     }
 
+    /* Try to open the .am file. */
     outputFile = openFile(fileName, "am", "w");
 
+    /* Check if the .am file could not be opened. */
     if (outputFile == NULL) {
+        /* Close the open .as file. */
         fclose(inputFile);
         return FALSE;
     }
 
+    /* Expand the macros in the .as file into the .am file. */
     isSuccessful = expandFileMacros(inputFile, outputFile, macros, fileName);
 
+    /* Close both files. */
     fclose(inputFile);
     fclose(outputFile);
 
+    /* Return if the macro expansion was successful. */
     return isSuccessful;
 }
 
@@ -82,34 +90,45 @@ Boolean expandMacros(char fileName[], Macro **macros) {
  */
 Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros,
                          char fileName[]) {
-    Boolean isSuccessful;
-    Boolean isInsideMacro;
-    LineNumber lineNumber;
-    char line[MAX_LINE_LENGTH + NEWLINE_BYTE + NULL_BYTE];
+    Boolean isSuccessful;  /* Whether the macro expansion is successful. */
+    Boolean isInsideMacro; /* Whether the current line is part of a macro. */
+    LineNumber lineNumber; /* The current line's line number. */
+    char line[MAX_LINE_LENGTH + NEWLINE_BYTE + NULL_BYTE]; /* Current line. */
 
+    /* Initialize the necessary variables. */
     isSuccessful = TRUE;
     isInsideMacro = FALSE;
     lineNumber = INITIAL_VALUE;
 
+    /* Read each line of the .as file. */
     while (fgets(line, sizeof(line), inputFile) != NULL) {
+        /* Update the line number. */
         lineNumber++;
 
+        /* Check if the line is too long (more than 80 characters). */
         if (line[strlen(line) - LAST_INDEX_DIFF] != '\n' && !feof(inputFile)) {
+            /* Print an error message. */
             printMacroError(
                 "Line is too long. Maximum length is 80 characters (including "
                 "whitespace, not including the newline character).",
                 fileName, lineNumber);
             isSuccessful = FALSE;
+
+            /* Skip the rest of the line. */
             while (getc(inputFile) != '\n' && !feof(inputFile));
+            /* Move on to the next line. */
             continue;
         }
 
+        /* Handle the current line. */
         if (!expandLineMacros(inputFile, outputFile, macros, fileName, line,
                               lineNumber, &isInsideMacro)) {
+            /* Finish the macro expansion and stop, in case of an error. */
             isSuccessful = FALSE;
         }
     }
 
+    /* Return if the macro expansion was successful. */
     return isSuccessful;
 }
 
@@ -143,106 +162,177 @@ Boolean expandFileMacros(FILE *inputFile, FILE *outputFile, Macro **macros,
 Boolean expandLineMacros(FILE *inputFile, FILE *outputFile, Macro **macros,
                          char fileName[], char line[], LineNumber lineNumber,
                          Boolean *isInsideMacro) {
-    char *current;
-    char *token;
-    char *content;
+    char *token; /* The first token in the line. */
 
+    /* Check if the line is part of a macro. */
     if (*isInsideMacro) {
-        if (isEndOfMacro(line)) {
-            *isInsideMacro = FALSE;
-            return TRUE;
-        }
-
-        addMacroContent(*macros, line);
-        return TRUE;
+        return handleInsideMacro(*macros, fileName, line, lineNumber,
+                                 isInsideMacro);
     }
 
-    current = skipWhitespace(line);
-
-    if (*current == '\0') {
+    /* Check if the line is empty. */
+    if (*skipWhitespace(line) == '\0') {
+        /* Write the line to the .am file. */
         fputs(line, outputFile);
         return TRUE;
     }
 
-    token = getNextToken(current);
+    /* Get the first token in the line. */
+    token = getNextToken(skipWhitespace(line));
 
+    /* Check if the first token is "endmacr", but not after a macro. */
     if (strcmp(token, "endmacr") == EQUAL_STRINGS) {
+        /* This is invalid. */
         free(token);
         printMacroError("End of macro definition without declaring a macro.",
                         fileName, lineNumber);
+
         return FALSE;
     }
 
+    /* Check if the line is the start of a macro definition. */
     if (strcmp(token, "macr") == EQUAL_STRINGS) {
         free(token);
-        current = skipCharacters(current);
-        current = skipWhitespace(current);
 
-        if (*current == '\0') {
-            printMacroError("Macro definition without a name.", fileName,
-                            lineNumber);
+        /* Check if the definition is valid. */
+        if (!validateMacroDefinition(line, fileName, lineNumber)) {
             return FALSE;
         }
 
-        if (*skipWhitespace(skipCharacters(current)) != '\0') {
-            printMacroError(
-                "Extra non-whitespace characters after the macro name.",
-                fileName, lineNumber);
-            return FALSE;
-        }
+        /* Perform some more validation and add the macro if it is valid. */
+        *isInsideMacro =
+            handleMacroDefinition(macros, fileName, line, lineNumber);
 
-        token = getNextToken(current);
-
-        if (!validateMacro(token, fileName, lineNumber)) {
-            free(token);
-            return FALSE;
-        }
-
-        if (getMacroContent(*macros, token) != NULL) {
-            printMacroError("Macro with the same name already defined.",
-                            fileName, lineNumber);
-            return FALSE;
-        }
-
-        addMacro(macros, token);
-        *isInsideMacro = TRUE;
-        return TRUE;
+        /* isInsideMacro should be TRUE, otherwise the macro is invalid. */
+        return *isInsideMacro;
     }
 
-    content = getMacroContent(*macros, token);
-    if (content != NULL) {
-        free(token);
-        fputs(content, outputFile);
-        return TRUE;
-    }
-
+    /* Decide whether to write the line or expand a macro. */
+    writeLine(outputFile, *macros, line, token);
+    /* The token is no longer used. */
     free(token);
-    fputs(line, outputFile);
+
     return TRUE;
 }
 
 /**
- * Checks and returns whether the given line is the end of some macro's
- * definition.
+ * Handles a potential macro definition in the given line.
+ * Returns whether or not the definition is valid.
+ * If the definition is valid, adds the macro.
+ * If the definition is invalid, prints an error message.
  *
+ * Assumes that the given pointer to the macros is not NULL.
+ * Assumes that the given file name is not NULL and is null-terminated.
  * Assumes that the given line is not NULL and is null-terminated.
  *
- * @param line The line to check.
- * @return TRUE if the line is the end of some macro's definition, FALSE
- * otherwise.
+ * @param macros The macro table.
+ * @param fileName The name of the source file.
+ * @param line The current line.
+ * @param lineNumber The current line's line number.
+ * @return TRUE if the definition is valid, FALSE otherwise.
  */
-Boolean isEndOfMacro(char line[]) {
-    char *token;
+Boolean handleMacroDefinition(Macro **macros, char fileName[], char line[],
+                              LineNumber lineNumber) {
+    char *macroName; /* The name of the macro. */
 
+    /* Skip the "macr" keyword to get the macro name. */
     line = skipWhitespace(line);
-    token = getNextToken(line);
-
-    if (strcmp(token, "endmacr") != EQUAL_STRINGS) {
-        return FALSE;
-    }
-
     line = skipCharacters(line);
     line = skipWhitespace(line);
 
-    return *line == '\0';
+    /* Get the macro name. */
+    macroName = getNextToken(line);
+
+    /* Check if the macro name does not follow the rules. */
+    if (!validateMacro(macroName, fileName, lineNumber)) {
+        free(macroName);
+        return FALSE;
+    }
+
+    /* Check if the macro is already defined. */
+    if (getMacroContent(*macros, macroName) != NULL) {
+        free(macroName);
+        printMacroError("Macro with the same name already defined.", fileName,
+                        lineNumber);
+        return FALSE;
+    }
+
+    /* After all the checks, add the macro. */
+    addMacro(macros, macroName);
+    return TRUE;
+}
+
+/**
+ * Handles lines that are part of a macro definition.
+ * Sets the isInsideMacro flag to FALSE if the given line is the macro's end.
+ * Returns whether or not the line is valid.
+ * If so and if it is not the end, adds the line to the macro's content.
+ *
+ * Assumes that the given macro pointer is not NULL.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the given line is not NULL and is null-terminated.
+ * Assumes that the given isInsideMacro pointer is not NULL.
+ *
+ * @param macro The macro that this line is a part of.
+ * @param fileName The name of the source file.
+ * @param line The current line.
+ * @param lineNumber The current line's line number.
+ * @param isInsideMacro The pointer to the isInsideMacro flag.
+ */
+Boolean handleInsideMacro(Macro *macro, char fileName[], char line[],
+                          LineNumber lineNumber, Boolean *isInsideMacro) {
+    char *token; /* The first token in the line. */
+
+    /* Get the first token. */
+    token = getNextToken(skipWhitespace(line));
+
+    /* Check if the line is the end of the macro. */
+    if (token != NULL && strcmp(token, "endmacr") == EQUAL_STRINGS) {
+        free(token);
+        /* Stop the macro definition. */
+        *isInsideMacro = FALSE;
+
+        /* Check if this "endmacr" line is valid. */
+        return validateMacroEnd(line, fileName, lineNumber);
+    }
+
+    /* Free the token if it is not empty. */
+    if (token != NULL) {
+        free(token);
+    }
+
+    /* Add the line to the macro's content. */
+    addMacroContent(macro, line);
+    return TRUE;
+}
+
+/**
+ * If the given line contains ONLY an already-defined macro's name, expands the
+ * macro's content into the given output file.
+ * Otherwise, writes the given line into the given output file.
+ *
+ * Assumes that the given output file pointer is not NULL.
+ * Assumes that the given line is not NULL and is null-terminated.
+ * Assumes that the given token is not NULL and is null-terminated.
+ *
+ * @param outputFile The .am file pointer.
+ * @param macros The macro table.
+ * @param line The current line.
+ * @param token The first token in the line (to check for a macro).
+ */
+void writeLine(FILE *outputFile, Macro *macros, char line[], char token[]) {
+    char *content; /* The macro's content. */
+
+    /* Check if the given line consists of a single token. */
+    if (*skipWhitespace(skipCharacters(skipWhitespace(line))) == '\0') {
+        /* Check if the token is an already-defined macro's name. */
+        content = getMacroContent(macros, token);
+        /* If so, expand the macro's content. If not, write the actual line. */
+        fputs(content == NULL ? line : content, outputFile);
+
+        return;
+    }
+
+    /* Write the line, as it definitely is not a call to a macro. */
+    fputs(line, outputFile);
 }

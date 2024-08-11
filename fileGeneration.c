@@ -18,7 +18,7 @@
 #include "foundLabelList.h" /* Searching through the found label list. */
 #include "globals.h"        /* Constants and typedefs. */
 #include "labelList.h" /* Getting the longest label's length in each label list. */
-#include "utils.h"     /* Opening the .ob file. */
+#include "utils.h"     /* Creating the output files. */
 
 /**
  * Generates the <fileName>.ob file in the following format:
@@ -46,20 +46,27 @@
  */
 void generateObFile(char fileName[], Word *code, Word *data,
                     WordCount instructionCount, WordCount dataCount) {
-    FILE *file;
+    FILE *file; /* The .ob file to write to. */
 
+    /* Open the .ob file. */
     file = openFile(fileName, "ob", "w");
 
+    /* Check if the there was a problem opening the file. */
     if (file == NULL) {
+        /* Do not generate the file. */
         return;
     }
 
-    fprintf(file, "%u %u", instructionCount, dataCount);
+    /* Write the instruction and data count to the file. */
+    fprintf(file, "%hu %hu", instructionCount, dataCount);
 
+    /* Start at address 100 and write the code part to the file. */
     insertWords(file, code, STARTING_MEMORY_ADDRESS);
+    /* Write at the end of the code part and write the data part. */
     insertWords(file, data,
                 (Address)instructionCount + STARTING_MEMORY_ADDRESS);
 
+    /* Close the no longer used file. */
     fclose(file);
 }
 
@@ -91,58 +98,69 @@ void generateObFile(char fileName[], Word *code, Word *data,
 Boolean generateEntFile(char fileName[], Label *entryLabels,
                         FoundLabel *foundLabels, WordCount instructionCount,
                         Boolean shouldGenerate) {
-    FoundLabel *matchingFoundLabel;
-    FILE *file;
-    Length longest;
-    Boolean isFirst;
+    FoundLabel *matchingFoundLabel; /* The entry label's possible defintion. */
+    FILE *file;                     /* The .ent file. */
+    Length longest;                 /* The longest label's length. */
+    Boolean isFirst; /* Whether this is the first label inserted. */
 
+    /* Initialize the necessary variables. */
     isFirst = TRUE;
     file = NULL;
     longest = getLongestLabel(entryLabels);
 
+    /* Loop over the entry labels. */
     while (entryLabels != NULL) {
+        /* Get the entry label's possible definition. */
         matchingFoundLabel = getFoundLabel(foundLabels, entryLabels->name);
 
+        /* Check if there is no defintion. */
         if (matchingFoundLabel == NULL) {
+            /* It is invalid for an entry label to have no definition. */
             printError("Label marked as .entry, but definition not found.",
                        fileName, entryLabels->lineNumber);
             shouldGenerate = FALSE;
+
+            /* Move on to the next label. */
             entryLabels = entryLabels->next;
             continue;
         }
 
+        /* Check if there was some kind of error. */
         if (!shouldGenerate) {
+            /* Move on to the next label. */
             entryLabels = entryLabels->next;
             continue;
         }
 
+        /* Check if the file has not been opened yet. */
         if (file == NULL) {
+            /* Try opening the .ent file. */
             file = openFile(fileName, "ent", "w");
 
+            /* Check if there was a problem opening the file. */
             if (file == NULL) {
+                /* An error occured. */
                 return FALSE;
             }
         }
 
-        if (matchingFoundLabel->isData) {
-            insertLabel(file, entryLabels->name,
-                        matchingFoundLabel->address +
-                            (Address)instructionCount + STARTING_MEMORY_ADDRESS,
-                        longest, isFirst);
-        } else {
-            insertLabel(file, entryLabels->name,
-                        matchingFoundLabel->address + STARTING_MEMORY_ADDRESS,
-                        longest, isFirst);
-        }
+        /* Insert the label's name and definition into the .ent file. */
+        insertLabelDefinition(file, entryLabels->name, matchingFoundLabel,
+                              instructionCount, longest, isFirst);
 
+        /* The first label has already been inserted. */
         isFirst = FALSE;
+        /* Move on to the next label. */
         entryLabels = entryLabels->next;
     }
 
+    /* Check if a file was opened. */
     if (file != NULL) {
+        /* Close the file, as it is no longer needed. */
         fclose(file);
     }
 
+    /* Return if the files after this one should be generated. */
     return shouldGenerate;
 }
 
@@ -173,56 +191,53 @@ Boolean generateEntFile(char fileName[], Label *entryLabels,
 Boolean generateExtFile(char fileName[], Label *externLabels,
                         UsedLabel *usedLabels, FoundLabel *foundLabels,
                         Boolean shouldGenerate) {
-    UsedLabel *currentUsedLabel;
-    FILE *file;
-    Length longest;
-    Boolean isFirst;
+    FILE *file;      /* The .ext file. */
+    Length longest;  /* The length of the longest label. */
+    Boolean isFirst; /* Whether this is the first line inserted. */
 
+    /* Initialize the necessary variables. */
     file = NULL;
     longest = getLongestLabel(externLabels);
 
+    /* Loop over the extern labels. */
     while (externLabels != NULL) {
+        /* Check if there is a definition of the current extern label. */
         if (getFoundLabel(foundLabels, externLabels->name) != NULL) {
+            /* It is invalid for an extern label to have a definition. */
             printError("Label marked as .extern, but also defined.", fileName,
                        externLabels->lineNumber);
             shouldGenerate = FALSE;
+
+            /* Move on to the next label. */
             externLabels = externLabels->next;
             continue;
         }
 
+        /* Check if there was some kind of error. */
         if (!shouldGenerate) {
+            /* Move on to the next label. */
             externLabels = externLabels->next;
             continue;
         }
 
-        currentUsedLabel = usedLabels;
-
-        while (currentUsedLabel != NULL) {
-            if (strcmp(externLabels->name, currentUsedLabel->name) ==
-                EQUAL_STRINGS) {
-                if (file == NULL) {
-                    file = openFile(fileName, "ext", "w");
-
-                    if (file == NULL) {
-                        return FALSE;
-                    }
-                }
-
-                insertLabel(file, externLabels->name, currentUsedLabel->address,
-                            longest, isFirst);
-                isFirst = FALSE;
-            }
-
-            currentUsedLabel = currentUsedLabel->next;
+        /* Insert all of the label's uses throughout the code. */
+        if (!insertUses(&file, fileName, externLabels->name, usedLabels,
+                        longest, &isFirst)) {
+            /* There was a problem opening the .ext file. */
+            return FALSE;
         }
 
+        /* Move on to the next label. */
         externLabels = externLabels->next;
     }
 
+    /* Check if the file was opened. */
     if (file != NULL) {
+        /* Close the file, as it is no longer used. */
         fclose(file);
     }
 
+    /* Return if the files after this one should be generated. */
     return shouldGenerate;
 }
 
@@ -240,17 +255,103 @@ Boolean generateExtFile(char fileName[], Label *externLabels,
  * @param startingAddress The address of the first word in the list.
  */
 void insertWords(FILE *file, Word *words, Address startingAddress) {
-    unsigned short shiftedData2;
+    unsigned short shiftedData2; /* The shifted data2 of the current word. */
 
+    /* Loop over the list of words. */
     while (words != NULL) {
+        /* Data2 needs to be shifted, as it represents the last 7 bits. */
         shiftedData2 = (unsigned short)words->data2
                        << (sizeof(words->data1) * BITS_PER_BYTE);
 
+        /* Insert the word, along with its address, into the file. */
         fprintf(file, "\n%04hu %05o", startingAddress,
                 (unsigned short)words->data1 + shiftedData2);
+
+        /* Increment the address. */
         startingAddress++;
+        /* Move on to the next word. */
         words = words->next;
     }
+}
+
+/**
+ * Inserts all the uses of the given extern label into the given file.
+ *
+ * Assumes that the given pointer to the file pointer is not NULL.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the given label name string is not NULL and is null-terminated.
+ * Assumes that the given isFirst boolean pointer is not NULL.
+ *
+ * @param file The file to insert the uses into.
+ * @param fileName The name of the file to insert the uses into.
+ * @param labelName The name of the extern label.
+ * @param usedLabels The list of used labels to scan.
+ * @param longest The number of characters in the longest label.
+ * @param isFirst Whether this is the first label inserted.
+ */
+Boolean insertUses(FILE **file, char fileName[], char labelName[],
+                   UsedLabel *usedLabels, Length longest, Boolean *isFirst) {
+    /* Loop over the list of used labels. */
+    while (usedLabels != NULL) {
+        /* Compare the names to check if this is a use of the label. */
+        if (strcmp(labelName, usedLabels->name) == EQUAL_STRINGS) {
+            /* Check if the .ext file has not been opened yet. */
+            if (*file == NULL) {
+                /* Try opening the .ext file. */
+                *file = openFile(fileName, "ext", "w");
+
+                /* Check if there was a problem opening the file. */
+                if (*file == NULL) {
+                    /* An error occurred. */
+                    return FALSE;
+                }
+            }
+
+            /* Insert the label, along with the address of its use. */
+            insertLabel(*file, labelName, usedLabels->address, longest,
+                        *isFirst);
+            /* The first line has already been inserted. */
+            *isFirst = FALSE;
+        }
+
+        /* Move on to the next label. */
+        usedLabels = usedLabels->next;
+    }
+
+    /* There have not been any errors. */
+    return TRUE;
+}
+
+/**
+ * Inserts the given label definition into the given file.
+ *
+ * Assumes that the given file pointer is not NULL.
+ * Assumes that the given label name string is not NULL and is null-terminated.
+ * Assumes that the given found label is not NULL.
+ *
+ * @param file The file to insert the label definition into.
+ * @param labelName The name of the label to insert.
+ * @param definition The found label that defines the target label.
+ * @param instructionCount The final instruction count.
+ * @param longest The number of characters in the longest label.
+ * @param isFirst Whether this is the first label inserted.
+ */
+void insertLabelDefinition(FILE *file, char labelName[], FoundLabel *definition,
+                           WordCount instructionCount, Length longest,
+                           Boolean isFirst) {
+    /* Check if this is a data label. */
+    if (definition->isData) {
+        /* Insert the label, along with its address after the code part. */
+        insertLabel(file, labelName,
+                    definition->address + (Address)instructionCount +
+                        STARTING_MEMORY_ADDRESS,
+                    longest, isFirst);
+        return;
+    }
+
+    /* Insert the label, along with its address. */
+    insertLabel(file, labelName, definition->address + STARTING_MEMORY_ADDRESS,
+                longest, isFirst);
 }
 
 /**
@@ -271,6 +372,7 @@ void insertWords(FILE *file, Word *words, Address startingAddress) {
  */
 void insertLabel(FILE *file, char labelName[], Address address, Length longest,
                  Boolean isFirst) {
+    /* Insert the label, along with its address. Add newlines accordingly. */
     fprintf(file, "%s%-*s %04hu", isFirst ? "" : "\n", longest, labelName,
             address);
 }

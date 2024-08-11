@@ -32,9 +32,11 @@
  * @return A pointer to the new word.
  */
 Word *addWord(Word *words) {
-    Word *newWord;
+    Word *newWord; /* The new word. */
 
+    /* Create a new word. */
     newWord = createWord();
+    /* Add the new word to the list. */
     words->next = newWord;
 
     return newWord;
@@ -48,10 +50,12 @@ Word *addWord(Word *words) {
  * @return A pointer to the new word.
  */
 Word *createWord() {
-    Word *newWord;
+    Word *newWord; /* The new word. */
 
+    /* Allocate enough memory for the new word. */
     newWord = allocate(sizeof(Word));
 
+    /* Initialize the fields of the new word. */
     newWord->data1 = INITIAL_VALUE;
     newWord->data2 = INITIAL_VALUE;
     newWord->next = NULL;
@@ -67,11 +71,15 @@ Word *createWord() {
  * @param words The word list to free.
  */
 void freeWordList(Word *words) {
-    Word *next;
+    Word *next; /* The next word in the list. */
 
+    /* Loop over each word in the list and free it. */
     while (words != NULL) {
+        /* Store the next word. */
         next = words->next;
+        /* Free the current word. */
         free(words);
+        /* Move on to the next word. */
         words = next;
     }
 }

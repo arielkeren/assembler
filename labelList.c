@@ -33,11 +33,16 @@
  * @param lineNumber The new label's line number.
  */
 void addLabel(Label **labels, char labelName[], LineNumber lineNumber) {
-    Label *newLabel;
+    Label *newLabel; /* The new label. */
 
+    /* Allocate enough memory for the new label. */
     newLabel = allocate(sizeof(Label));
+
+    /* Set the new label's properties. */
     newLabel->name = labelName;
     newLabel->lineNumber = lineNumber;
+
+    /* Add the new label to the head of the list. */
     newLabel->next = *labels;
     *labels = newLabel;
 }
@@ -53,14 +58,19 @@ void addLabel(Label **labels, char labelName[], LineNumber lineNumber) {
  * @return TRUE if the label exists, FALSE otherwise.
  */
 Boolean containsLabel(Label *labels, char labelName[]) {
+    /* Loop over the labels to try to find the desired one. */
     while (labels != NULL) {
+        /* Compare the label names. */
         if (strcmp(labels->name, labelName) == EQUAL_STRINGS) {
+            /* The label has been found. */
             return TRUE;
         }
 
+        /* Try checking the next label. */
         labels = labels->next;
     }
 
+    /* The label has not been found. */
     return FALSE;
 }
 
@@ -71,21 +81,28 @@ Boolean containsLabel(Label *labels, char labelName[]) {
  * @return The length of the longest label in the given label list.
  */
 Length getLongestLabel(Label *labels) {
-    Length longest;
-    Length currentLength;
+    Length longest;       /* The length of the longest label so far. */
+    Length currentLength; /* The length of the current label. */
 
+    /* Intialize the longest value to the shortest possible. */
     longest = INITIAL_VALUE;
 
+    /* Loop over the labels and check each one's length. */
     while (labels != NULL) {
+        /* Get the length of the current label. */
         currentLength = (Length)strlen(labels->name);
 
+        /* Check if the current label is longer than the longest so far. */
         if (currentLength > longest) {
+            /* Replace the longest. */
             longest = currentLength;
         }
 
+        /* Try checking the next label. */
         labels = labels->next;
     }
 
+    /* Return the length of the longest label. */
     return longest;
 }
 
@@ -97,11 +114,15 @@ Length getLongestLabel(Label *labels) {
  * @param labels The label list to free.
  */
 void freeLabelList(Label *labels) {
-    Label *next;
+    Label *next; /* The next label. */
 
+    /* Loop over the labels and free each one. */
     while (labels != NULL) {
+        /* Store the next label. */
         next = labels->next;
+        /* Free the current label. */
         freeLabel(labels);
+        /* Move on to the next label. */
         labels = next;
     }
 }
@@ -114,6 +135,8 @@ void freeLabelList(Label *labels) {
  * @param label The label to free.
  */
 void freeLabel(Label *label) {
+    /* Free the name string. */
     free(label->name);
+    /* Free the label. */
     free(label);
 }

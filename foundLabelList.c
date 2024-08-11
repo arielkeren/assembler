@@ -30,11 +30,16 @@
  * @param labelName The new found label's name.
  */
 void addFoundLabel(FoundLabel **labels, char labelName[]) {
-    FoundLabel *newLabel;
+    FoundLabel *newLabel; /* The new found label. */
 
+    /* Allocate enough memory for the new found label. */
     newLabel = allocate(sizeof(FoundLabel));
+
+    /* Set the new found label's properties. */
     newLabel->name = labelName;
     newLabel->isData = FALSE;
+
+    /* Add the new found label to the head of the list. */
     newLabel->next = *labels;
     *labels = newLabel;
 }
@@ -46,7 +51,10 @@ void addFoundLabel(FoundLabel **labels, char labelName[]) {
  *
  * @param label The found label to mark as data.
  */
-void markAsData(FoundLabel *label) { label->isData = TRUE; }
+void markAsData(FoundLabel *label) {
+    /* Set the isData property. */
+    label->isData = TRUE;
+}
 
 /**
  * Sets the address of a found label.
@@ -59,6 +67,7 @@ void markAsData(FoundLabel *label) { label->isData = TRUE; }
  * @param newAddress The new address.
  */
 void setAddress(FoundLabel *label, Address newAddress) {
+    /* Set the address property. */
     label->address = newAddress;
 }
 
@@ -73,14 +82,19 @@ void setAddress(FoundLabel *label, Address newAddress) {
  * @return The found label with the given name or NULL if not found.
  */
 FoundLabel *getFoundLabel(FoundLabel *labels, char labelName[]) {
+    /* Loop over the labels to try to find the desired one. */
     while (labels != NULL) {
+        /* Compare the names. */
         if (strcmp(labels->name, labelName) == EQUAL_STRINGS) {
+            /* The label has been found. */
             return labels;
         }
 
+        /* Try checking the next label. */
         labels = labels->next;
     }
 
+    /* The label has not been found. */
     return NULL;
 }
 
@@ -92,11 +106,15 @@ FoundLabel *getFoundLabel(FoundLabel *labels, char labelName[]) {
  * @param labels The list of found labels to free.
  */
 void freeFoundLabelList(FoundLabel *labels) {
-    FoundLabel *next;
+    FoundLabel *next; /* The next label in the list. */
 
+    /* Loop over the labels in the list and free each one. */
     while (labels != NULL) {
+        /* Store the next label. */
         next = labels->next;
+        /* Free the current label. */
         freeFoundLabel(labels);
+        /* Move on to the next label. */
         labels = next;
     }
 }
@@ -109,6 +127,8 @@ void freeFoundLabelList(FoundLabel *labels) {
  * @param label The found label to free.
  */
 void freeFoundLabel(FoundLabel *label) {
+    /* Free the name string. */
     free(label->name);
+    /* Free the label. */
     free(label);
 }

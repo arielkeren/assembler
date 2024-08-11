@@ -30,17 +30,21 @@
  */
 void printMessage(char message[], char fileName[], LineNumber lineNumber,
                   Boolean isError, Boolean isMacro) {
-    static unsigned long errorCount = INITIAL_VALUE;
-    static unsigned long warningCount = INITIAL_VALUE;
+    static unsigned long errorCount = INITIAL_VALUE;   /* Errors so far. */
+    static unsigned long warningCount = INITIAL_VALUE; /* Warnings so far. */
 
+    /* Specify the type of the message. */
     if (isError) {
         printf("\n--- Error #%lu ---\n", ++errorCount);
     } else {
         printf("\n--- Warning #%lu ---\n", ++warningCount);
     }
 
+    /* Specify the file's name and extension. */
     printf("File: %s.a%c\n", fileName, isMacro ? 's' : 'm');
-    printf("Line: %hu\n", lineNumber);
+    /* Specify the line number. */
+    printf("Line: %lu\n", lineNumber);
+    /* Finally, print the message. */
     printf("%s\n", message);
 }
 
@@ -55,6 +59,7 @@ void printMessage(char message[], char fileName[], LineNumber lineNumber,
  * @param lineNumber The line number in the file in which the error occurred.
  */
 void printError(char message[], char fileName[], LineNumber lineNumber) {
+    /* Print an error that was found in the .am file. */
     printMessage(message, fileName, lineNumber, TRUE, FALSE);
 }
 
@@ -70,6 +75,7 @@ void printError(char message[], char fileName[], LineNumber lineNumber) {
  * @param lineNumber The line number in the file in which the error occurred.
  */
 void printMacroError(char message[], char fileName[], LineNumber lineNumber) {
+    /* Print an error that was found in the .as file. */
     printMessage(message, fileName, lineNumber, TRUE, TRUE);
 }
 
@@ -84,6 +90,7 @@ void printMacroError(char message[], char fileName[], LineNumber lineNumber) {
  * @param lineNumber The line number in the file in which the error occurred.
  */
 void printWarning(char message[], char fileName[], LineNumber lineNumber) {
+    /* Print a warning that was found in the .am file. */
     printMessage(message, fileName, lineNumber, FALSE, FALSE);
 }
 
@@ -97,11 +104,10 @@ void printWarning(char message[], char fileName[], LineNumber lineNumber) {
  */
 void printFileError(char fileName[]) {
     printf("\n--- File Error ---\n");
-    printf("Could not open the file by the name of: %s.\n");
+    printf("Could not open the file by the name of: %s.\n", fileName);
     printf(
         "Moving on to the next file, or exiting if there are no more "
-        "files...\n",
-        fileName);
+        "files...\n");
 }
 
 /**

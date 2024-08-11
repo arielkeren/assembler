@@ -54,76 +54,116 @@ void checkNoFiles(int fileCount) {
  * @param fileNames The names of the files to compile.
  * @param fileCount The number of files to compile.
  */
-void compileFiles(char *fileNames[], int fileCount) {
-    Word *code = NULL;
-    Word *data = NULL;
+void compileAllFiles(char *fileNames[], int fileCount) {
+    Word *code = NULL; /* The words in the code part. */
+    Word *data = NULL; /* The words in the data part. */
 
-    Macro *macros = NULL;
-    Label *entryLabels = NULL;
-    Label *externLabels = NULL;
-    UsedLabel *usedLabels = NULL;
-    FoundLabel *foundLabels = NULL;
+    Macro *macros = NULL;           /* The macro table. */
+    Label *entryLabels = NULL;      /* The entry labels list. */
+    Label *externLabels = NULL;     /* The extern labels list. */
+    UsedLabel *usedLabels = NULL;   /* The used labels list. */
+    FoundLabel *foundLabels = NULL; /* The found labels list. */
 
-    WordCount instructionCount;
-    WordCount dataCount;
-    Boolean shouldGenerateFiles;
-
+    /* In case of an allocation failure, make it possible to free the lists. */
     setToFree(&code, &data, &macros, &entryLabels, &externLabels, &usedLabels,
               &foundLabels);
 
+    /* Compile each file separately. */
     while (fileCount > NO_FILES) {
+        /* Create dummy nodes, so that the words will be ordered. */
         code = createWord();
         data = createWord();
 
+        /* Order does not matter, so set the other lists to NULL. */
         macros = NULL;
         entryLabels = NULL;
         externLabels = NULL;
         usedLabels = NULL;
         foundLabels = NULL;
 
-        instructionCount = INITIAL_VALUE;
-        dataCount = INITIAL_VALUE;
-        shouldGenerateFiles = TRUE;
+        /* Start compiling the current file. */
+        compileFile(*fileNames, code, data, macros, entryLabels, externLabels,
+                    usedLabels, foundLabels);
 
-        if (!expandMacros(*fileNames, &macros)) {
-            freeMacroTable(macros);
-            fileCount--;
-            fileNames++;
-            continue;
-        }
-
-        shouldGenerateFiles = readFile(
-            *fileNames, macros, code, data, &entryLabels, &externLabels,
-            &usedLabels, &foundLabels, &instructionCount, &dataCount);
-        freeMacroTable(macros);
-
-        shouldGenerateFiles = linkLabels(*fileNames, externLabels, usedLabels,
-                                         foundLabels, instructionCount) &&
-                              shouldGenerateFiles;
-
-        shouldGenerateFiles =
-            generateEntFile(*fileNames, entryLabels, foundLabels,
-                            instructionCount, shouldGenerateFiles) &&
-            shouldGenerateFiles;
-        freeLabelList(entryLabels);
-
-        shouldGenerateFiles =
-            generateExtFile(*fileNames, externLabels, usedLabels, foundLabels,
-                            shouldGenerateFiles) &&
-            shouldGenerateFiles;
-        freeLabelList(externLabels);
-        freeUsedLabelList(usedLabels);
-        freeFoundLabelList(foundLabels);
-
-        if (shouldGenerateFiles) {
-            generateObFile(*fileNames, code->next, data->next, instructionCount,
-                           dataCount);
-        }
-
-        freeWordList(code);
-        freeWordList(data);
-
+        /* Move on to the next file. */
         fileCount--;
         fileNames++;
     }
+}
+
+/**
+ * Compiles the given file.
+ * Uses the given lists to store the current compilation state.
+ *
+ * @param fileName The name of the file to compile.
+ * @param code The words in the code part.
+ * @param data The words in the data part.
+ * @param macros The macro table.
+ * @param entryLabels The entry labels list.
+ * @param externLabels The extern labels list.
+ * @param usedLabels The used labels list.
+ * @param foundLabels The found labels list.
+ */
+void compileFile(char fileName[], Word *code, Word *data, Macro *macros,
+                 Label *entryLabels, Label *externLabels, UsedLabel *usedLabels,
+                 FoundLabel *foundLabels) {
+    WordCount instructionCount;  /* The number of words in the code part. */
+    WordCount dataCount;         /* The number of words in the data part. */
+    Boolean shouldGenerateFiles; /* Whether or not to generate output files. */
+
+    /* Initialize the word counts. */
+    instructionCount = INITIAL_VALUE;
+    dataCount = INITIAL_VALUE;
+
+    /* Try expanding the macros in the .as file. */
+    if (!expandMacros(fileName, &macros)) {
+        /* Move on to the next file. */
+        freeMacroTable(macros);
+        return;
+    }
+
+    /* Read the .am file and put everything in the lists. */
+    shouldGenerateFiles =
+        readFile(fileName, macros, code, data, &entryLabels, &externLabels,
+                 &usedLabels, &foundLabels, &instructionCount, &dataCount);
+
+    /* The macro table is no longer needed. */
+    freeMacroTable(macros);
+
+    /* Try linking all the used labels with their definitions. */
+    if (!linkLabels(fileName, externLabels, usedLabels, foundLabels,
+                    instructionCount)) {
+        shouldGenerateFiles = FALSE;
+    }
+
+    /* Try generating the .ent file. */
+    if (!generateEntFile(fileName, entryLabels, foundLabels, instructionCount,
+                         shouldGenerateFiles)) {
+        shouldGenerateFiles = FALSE;
+    }
+
+    /* The entry labels are no longer needed. */
+    freeLabelList(entryLabels);
+
+    /* Try generating the .ext file. */
+    if (!generateExtFile(fileName, externLabels, usedLabels, foundLabels,
+                         shouldGenerateFiles)) {
+        shouldGenerateFiles = FALSE;
+    }
+
+    /* The extern, used and found labels are no longer needed. */
+    freeLabelList(externLabels);
+    freeUsedLabelList(usedLabels);
+    freeFoundLabelList(foundLabels);
+
+    /* Check if the .ob file should be generated. */
+    if (shouldGenerateFiles) {
+        /* Generate the .ob file (skip the dummy nodes). */
+        generateObFile(fileName, code->next, data->next, instructionCount,
+                       dataCount);
+    }
+
+    /* The word lists are no longer needed. */
+    freeWordList(code);
+    freeWordList(data);
 }

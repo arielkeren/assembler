@@ -101,6 +101,33 @@ Boolean validateName(char name[], char fileName[], LineNumber lineNumber,
                      Boolean isLabel);
 
 /**
+ * Checks and returns if the given macro definition line is valid.
+ *
+ * Assumes that the given line string is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
+ * @param line The macro definition line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
+Boolean validateMacroDefinition(char line[], char fileName[],
+                                LineNumber lineNumber);
+
+/**
+ * Checks and returns if the given "endmacr" line is valid.
+ *
+ * Assumes that the given line string is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
+ * @param line The "endmacr" line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
+Boolean validateMacroEnd(char line[], char fileName[], LineNumber lineNumber);
+
+/**
  * Checks and returns if the given .data line is valid.
  * Prints all the errors to stdout.
  *

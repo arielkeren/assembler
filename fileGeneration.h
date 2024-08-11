@@ -103,11 +103,12 @@ Boolean generateExtFile(char fileName[], Label *externLabels,
 /**
  * Inserts the given list of words into the given file.
  * The address of the first word will be the given starting address.
- * The following addresses will be automatically incremented by one each time.
+ * The following addresses will be automatically incremented by one each
+ * time.
  *
  * Assumes that the given file pointer is not NULL.
- * Assumes that the starting address is valid, so that all the words will fit in
- * the made-up memory until address 4095.
+ * Assumes that the starting address is valid, so that all the words will
+ * fit in the made-up memory until address 4095.
  *
  * @param file The file to insert the words into.
  * @param words The list of words to insert.
@@ -116,20 +117,56 @@ Boolean generateExtFile(char fileName[], Label *externLabels,
 void insertWords(FILE *file, Word *words, Address startingAddress);
 
 /**
- * Inserts the given label into the given file, along with an address.
+ * Inserts all the uses of the given extern label into the given file.
+ *
+ * Assumes that the given pointer to the file pointer is not NULL.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the given label name string is not NULL and is null-terminated.
+ * Assumes that the given isFirst boolean pointer is not NULL.
+ *
+ * @param file The file to insert the uses into.
+ * @param fileName The name of the file to insert the uses into.
+ * @param labelName The name of the extern label.
+ * @param usedLabels The list of used labels to scan.
+ * @param longest The number of characters in the longest label.
+ * @param isFirst Whether this is the first label inserted.
+ */
+Boolean insertUses(FILE **file, char fileName[], char labelName[],
+                   UsedLabel *usedLabels, Length longest, Boolean *isFirst);
+
+/**
+ * Inserts the given label definition into the given file.
  *
  * Assumes that the given file pointer is not NULL.
  * Assumes that the given label name string is not NULL and is null-terminated.
- * Assumes that the given address is between 100 and 4095, inclusive (to fit in
- * the made-up memory).
- * Assumes that the given longest label's length is the number of characters in
- * the longest label.
+ * Assumes that the given found label is not NULL.
+ *
+ * @param file The file to insert the label definition into.
+ * @param labelName The name of the label to insert.
+ * @param definition The found label that defines the target label.
+ * @param instructionCount The final instruction count.
+ * @param longest The number of characters in the longest label.
+ * @param isFirst Whether this is the first label inserted.
+ */
+void insertLabelDefinition(FILE *file, char labelName[], FoundLabel *definition,
+                           WordCount instructionCount, Length longest,
+                           Boolean isFirst);
+
+/**
+ * Inserts the given label into the given file, along with an address.
+ *
+ * Assumes that the given file pointer is not NULL.
+ * Assumes that the given label name string is not NULL and is
+ * null-terminated. Assumes that the given address is between 100 and 4095,
+ * inclusive (to fit in the made-up memory). Assumes that the given longest
+ * label's length is the number of characters in the longest label.
  *
  * @param file The file to insert the label into.
  * @param labelName The name of the label to insert.
  * @param address The address associated with the label.
  * @param longest The number of characters in the longest label.
- * @param isFirst Whether this is the first label to be inserted into some file.
+ * @param isFirst Whether this is the first label to be inserted into some
+ * file.
  */
 void insertLabel(FILE *file, char labelName[], Address address, Length longest,
                  Boolean isFirst);

@@ -43,27 +43,32 @@ Boolean validateLine(char line[], char fileName[], LineNumber lineNumber) {
         return TRUE;
     }
 
+    isValid = TRUE;
+
+    if (checkIfFollowedByComma(line)) {
+        printError("Comma at the start of the line.", fileName, lineNumber);
+        isValid = FALSE;
+    }
+
     line = skipWhitespace(line);
 
     if (*line == '\0') {
-        return TRUE;
+        return isValid;
     }
-
-    isValid = TRUE;
 
     if (*line == ';') {
         printError(
             "There should not be any whitespace characters before the "
             "semicolon in a comment line.",
             fileName, lineNumber);
-        isValid = FALSE;
+        return FALSE;
     }
 
     token = getNextToken(line);
 
     if (checkIfLabel(token)) {
         removeEnding(token, ':');
-        isValid = validateLabel(token, fileName, lineNumber);
+        isValid = validateLabel(token, fileName, lineNumber) && isValid;
 
         free(token);
         line = skipCharacters(line);
@@ -326,6 +331,106 @@ Boolean validateName(char name[], char fileName[], LineNumber lineNumber,
 }
 
 /**
+ * Checks and returns if the given macro definition line is valid.
+ *
+ * Assumes that the given line string is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
+ * @param line The macro definition line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
+Boolean validateMacroDefinition(char line[], char fileName[],
+                                LineNumber lineNumber) {
+    Boolean isValid;
+
+    isValid = TRUE;
+
+    if (checkIfFollowedByComma(line)) {
+        printMacroError("Comma before the \"macr\" keyword.", fileName,
+                        lineNumber);
+        isValid = FALSE;
+    }
+
+    line = skipWhitespace(line);
+    line = skipCharacters(line);
+
+    if (checkIfFollowedByComma(line)) {
+        printMacroError("Comma after the \"macr\" keyword.", fileName,
+                        lineNumber);
+        isValid = FALSE;
+    }
+
+    line = skipWhitespace(line);
+
+    if (*line == '\0') {
+        printMacroError("No macro name specified.", fileName, lineNumber);
+        return FALSE;
+    }
+
+    line = skipCharacters(line);
+
+    if (checkIfFollowedByComma(line)) {
+        printMacroError("Comma after the macro name.", fileName, lineNumber);
+        isValid = FALSE;
+    }
+
+    line = skipWhitespace(line);
+
+    if (*line != '\0') {
+        printMacroError("Extra non-whitespace characters after the macro name.",
+                        fileName, lineNumber);
+        isValid = FALSE;
+    }
+
+    return isValid;
+}
+
+/**
+ * Checks and returns if the given "endmacr" line is valid.
+ *
+ * Assumes that the given line string is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
+ * @param line The "endmacr" line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @return TRUE if this part contains no errors, FALSE otherwise.
+ */
+Boolean validateMacroEnd(char line[], char fileName[], LineNumber lineNumber) {
+    Boolean isValid;
+
+    isValid = TRUE;
+
+    if (checkIfFollowedByComma(line)) {
+        printMacroError("Comma before the \"endmacr\" keyword.", fileName,
+                        lineNumber);
+        isValid = FALSE;
+    }
+
+    line = skipWhitespace(line);
+    line = skipCharacters(line);
+
+    if (checkIfFollowedByComma(line)) {
+        printMacroError("Comma after the \"endmacr\" keyword.", fileName,
+                        lineNumber);
+        isValid = FALSE;
+    }
+
+    line = skipWhitespace(line);
+
+    if (*line != '\0') {
+        printMacroError(
+            "Extra non-whitespace characters after the \"endmacr\" keyword.",
+            fileName, lineNumber);
+        isValid = FALSE;
+    }
+
+    return isValid;
+}
+
+/**
  * Checks and returns if the given .data line is valid.
  * Prints all the errors to stdout.
  *
@@ -385,9 +490,10 @@ Boolean validateData(char data[], char fileName[], LineNumber lineNumber) {
 /**
  * Checks and returns if the given number in some .data line is valid.
  * Prints all the errors to stdout.
- * The number has to be between -16384 and 16383, inclusive (to fit in 15 bits).
- * Also, the number can include a plus or minus sign in the beginning.
- * Aside from that, the number has to include only decimal digits.
+ * The number has to be between -16384 and 16383, inclusive (to fit in 15
+ * bits). Also, the number can include a plus or minus sign in the
+ * beginning. Aside from that, the number has to include only decimal
+ * digits.
  *
  * Assumes that the given number string is not NULL and is null-terminated.
  * Assumes that the given file name is not NULL and is null-terminated.
@@ -420,7 +526,8 @@ Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
 
     if (value > MAX_NUMBER) {
         printError(
-            "Number is too large to store in just 15 bits - largest possible "
+            "Number is too large to store in just 15 bits - largest "
+            "possible "
             "value is 16383.",
             fileName, lineNumber);
         return FALSE;
@@ -428,7 +535,8 @@ Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
 
     if (value < MIN_NUMBER) {
         printError(
-            "Number is too small to store in just 15 bits - smallest possible "
+            "Number is too small to store in just 15 bits - smallest "
+            "possible "
             "value is -16384.",
             fileName, lineNumber);
         return FALSE;
@@ -475,11 +583,12 @@ Boolean validateString(char string[], char fileName[], LineNumber lineNumber) {
 }
 
 /**
- * Checks and returns if the given instruction line (not .data, .string, .entry,
- * .extern) is valid. Prints all the errors to stdout.
+ * Checks and returns if the given instruction line (not .data, .string,
+ * .entry, .extern) is valid. Prints all the errors to stdout.
  *
- * Assumes that the given instruction string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the given instruction string is not NULL and is
+ * null-terminated. Assumes that the given file name is not NULL and is
+ * null-terminated.
  *
  * @param instruction The instruction line to check.
  * @param fileName The name of the file in which the line is.
@@ -505,7 +614,8 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     if (operands == NO_OPERANDS && *instruction != '\0') {
         printError(
-            "Extra non-whitespace characters after operation - it should have "
+            "Extra non-whitespace characters after operation - it should "
+            "have "
             "no operands.",
             fileName, lineNumber);
         free(operation);
@@ -528,7 +638,8 @@ Boolean validateInstruction(char instruction[], char fileName[],
     if (!doesOperationAcceptOperand(operation, token,
                                     operands != ONE_OPERAND)) {
         printError(
-            "Operation does not accept the first operand - incompatible type.",
+            "Operation does not accept the first operand - incompatible "
+            "type.",
             fileName, lineNumber);
         return FALSE;
     }
@@ -551,7 +662,8 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     if (operands == ONE_OPERAND && *instruction != '\0') {
         printError(
-            "Extra non-whitespace characters after the operation - it should "
+            "Extra non-whitespace characters after the operation - it "
+            "should "
             "have only one operand.",
             fileName, lineNumber);
         free(operation);
@@ -573,7 +685,8 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     if (!doesOperationAcceptOperand(operation, token, FALSE)) {
         printError(
-            "Operation does not accept the second operand - incompatible type.",
+            "Operation does not accept the second operand - incompatible "
+            "type.",
             fileName, lineNumber);
         return FALSE;
     }
@@ -590,7 +703,8 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     if (*instruction != '\0') {
         printError(
-            "Extra non-whitespace characters after the operation - it should "
+            "Extra non-whitespace characters after the operation - it "
+            "should "
             "have only two operands.",
             fileName, lineNumber);
         free(operation);
@@ -604,8 +718,9 @@ Boolean validateInstruction(char instruction[], char fileName[],
  * Checks and returns if the given operation is valid.
  * Prints all the errors to stdout.
  *
- * Assumes that the given operation string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the given operation string is not NULL and is
+ * null-terminated. Assumes that the given file name is not NULL and is
+ * null-terminated.
  *
  * @param operation The operation to check.
  * @param fileName The name of the file in which the line is.
@@ -653,11 +768,10 @@ Boolean validateOperand(char operand[], char fileName[],
 /**
  * Checks and returns if the given immediate value is valid.
  * Prints all the errors to stdout.
- * The immediate value has to be between -2048 and 2047, inclusive (to fit in 12
- * bits).
- * Also, it could begin with a plus or minus sign (after the hash symbol).
- * Aside from the hash symbol and the possible sign, it has to include only
- * decimal digits.
+ * The immediate value has to be between -2048 and 2047, inclusive (to fit
+ * in 12 bits). Also, it could begin with a plus or minus sign (after the
+ * hash symbol). Aside from the hash symbol and the possible sign, it has to
+ * include only decimal digits.
  *
  * Assumes that the given immediate value string is not NULL and is
  * null-terminated.
@@ -686,7 +800,8 @@ Boolean validateImmediate(char immediate[], char fileName[],
 
     if (number > MAX_IMMEDIATE) {
         printError(
-            "Number is too large to store in just 12 bits - largest possible "
+            "Number is too large to store in just 12 bits - largest "
+            "possible "
             "value is 2047.",
             fileName, lineNumber);
         return FALSE;
@@ -694,7 +809,8 @@ Boolean validateImmediate(char immediate[], char fileName[],
 
     if (number < MIN_IMMEDIATE) {
         printError(
-            "Number is too small to store in just 12 bits - smallest possible "
+            "Number is too small to store in just 12 bits - smallest "
+            "possible "
             "value is -2048.",
             fileName, lineNumber);
         return FALSE;
@@ -706,7 +822,8 @@ Boolean validateImmediate(char immediate[], char fileName[],
 /**
  * Checks and returns if the given indirect register is valid.
  * Prints all the errors to stdout.
- * The possible indirect registers are *r0, *r1, *r2, *r3, *r4, *r5, *r6, *r7.
+ * The possible indirect registers are *r0, *r1, *r2, *r3, *r4, *r5, *r6,
+ * *r7.
  *
  * Assumes that the given indirect register string is not NULL and is
  * null-terminated.
@@ -722,7 +839,8 @@ Boolean validateIndirectRegister(char indirectRegister[], char fileName[],
     indirectRegister++;
     if (*indirectRegister != 'r') {
         printError(
-            "Token starts with an asterisk but does not include any register "
+            "Token starts with an asterisk but does not include any "
+            "register "
             "right after it (a label cannot start with an asterisk).",
             fileName, lineNumber);
         return FALSE;
@@ -731,7 +849,8 @@ Boolean validateIndirectRegister(char indirectRegister[], char fileName[],
     indirectRegister++;
     if (*indirectRegister == '\0') {
         printError(
-            "Token looks like it should be a register, but does not specify "
+            "Token looks like it should be a register, but does not "
+            "specify "
             "which one (a label cannot start with an asterisk).",
             fileName, lineNumber);
         return FALSE;

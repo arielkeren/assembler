@@ -12,6 +12,8 @@
 #ifndef FILE_HANDLING_H
 #define FILE_HANDLING_H
 
+#include "globals.h" /* Typedefs. */
+
 /**
  * Checks whether or not no files have been provided as command line arguments.
  * If no files have been provided, prints an error and exits the program.
@@ -35,6 +37,23 @@ void checkNoFiles(int fileCount);
  * @param fileNames The names of the files to compile.
  * @param fileCount The number of files to compile.
  */
-void compileFiles(char *fileNames[], int fileCount);
+void compileAllFiles(char *fileNames[], int fileCount);
+
+/**
+ * Compiles the given file.
+ * Uses the given lists to store the current compilation state.
+ *
+ * @param fileName The name of the file to compile.
+ * @param code The words in the code part.
+ * @param data The words in the data part.
+ * @param macros The macro table.
+ * @param entryLabels The entry labels list.
+ * @param externLabels The extern labels list.
+ * @param usedLabels The used labels list.
+ * @param foundLabels The found labels list.
+ */
+void compileFile(char fileName[], Word *code, Word *data, Macro *macros,
+                 Label *entryLabels, Label *externLabels, UsedLabel *usedLabels,
+                 FoundLabel *foundLabels);
 
 #endif
