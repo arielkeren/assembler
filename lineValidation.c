@@ -170,7 +170,7 @@ Boolean validateEntryExtern(char label[], char fileName[],
  * @return TRUE if this part contains no errors, FALSE otherwise.
  */
 Boolean validateLabel(char label[], char fileName[], LineNumber lineNumber) {
-    return validateName(label, fileName, lineNumber, TRUE);
+    return validateName(label, fileName, lineNumber, FALSE);
 }
 
 /**
@@ -186,7 +186,7 @@ Boolean validateLabel(char label[], char fileName[], LineNumber lineNumber) {
  * @return TRUE if this part contains no errors, FALSE otherwise.
  */
 Boolean validateMacro(char macro[], char fileName[], LineNumber lineNumber) {
-    return validateName(macro, fileName, lineNumber, FALSE);
+    return validateName(macro, fileName, lineNumber, TRUE);
 }
 
 /**
@@ -210,117 +210,66 @@ Boolean validateMacro(char macro[], char fileName[], LineNumber lineNumber) {
  * @param name The name to check.
  * @param fileName The name of the file in which the line is.
  * @param lineNumber The line's line number.
+ * @param isMacro Whether the name of a macro or of a label.
  * @return TRUE if this part contains no errors, FALSE otherwise.
  */
 Boolean validateName(char name[], char fileName[], LineNumber lineNumber,
-                     Boolean isLabel) {
+                     Boolean isMacro) {
     Boolean isValid;
 
     if (*name == '\0') {
-        if (isLabel) {
-            printError("No label specified.", fileName, lineNumber);
-        } else {
-            printMacroError("No macro specified.", fileName, lineNumber);
-        }
-
+        printNameError("not specified.", fileName, lineNumber, isMacro);
         return FALSE;
     }
 
     isValid = TRUE;
 
     if (!isalpha(*name)) {
-        if (isLabel) {
-            printError(
-                "Label starts with an invalid character - not a lowercase or "
-                "uppercase letter in the English alphabet.",
-                fileName, lineNumber);
-        } else {
-            printMacroError(
-                "Macro starts with an invalid character - not a lowercase or "
-                "uppercase letter in the English alphabet.",
-                fileName, lineNumber);
-        }
-
+        printNameError(
+            "starts with an invalid character - not a lowercase or "
+            "uppercase letter in the English alphabet.",
+            fileName, lineNumber, isMacro);
         isValid = FALSE;
     }
 
     if (strlen(name) > MAX_NAME_LENGTH) {
-        if (isLabel) {
-            printError("Label is too long - maximum length is 31 characters.",
-                       fileName, lineNumber);
-        } else {
-            printMacroError(
-                "Macro is too long - maximum length is 31 characters.",
-                fileName, lineNumber);
-        }
-
+        printNameError("is too long - maximum length is 31 characters.",
+                       fileName, lineNumber, isMacro);
         isValid = FALSE;
     }
 
     if (strcmp(name, "macr") == EQUAL_STRINGS) {
-        if (isLabel) {
-            printError("Label cannot be named \"macr\".", fileName, lineNumber);
-        } else {
-            printMacroError("Macro cannot be named \"macr\".", fileName,
-                            lineNumber);
-        }
-
+        printNameError("cannot be named \"macr\".", fileName, lineNumber,
+                       isMacro);
         isValid = FALSE;
     }
 
     if (strcmp(name, "endmacr") == EQUAL_STRINGS) {
-        if (isLabel) {
-            printError("Label cannot be named \"endmacr\".", fileName,
-                       lineNumber);
-        } else {
-            printMacroError("Macro cannot be named \"endmacr\".", fileName,
-                            lineNumber);
-        }
-
+        printNameError("cannot be named \"endmacr\".", fileName, lineNumber,
+                       isMacro);
         isValid = FALSE;
     }
 
     if (getOperationIndex(name) != INVALID_OPERATION) {
-        if (isLabel) {
-            printError("Label cannot share the same name as an operation.",
-                       fileName, lineNumber);
-        } else {
-            printMacroError("Macro cannot share the same name as an operation.",
-                            fileName, lineNumber);
-        }
-
+        printNameError("cannot share the same name as an operation.", fileName,
+                       lineNumber, isMacro);
         isValid = FALSE;
     }
 
     if (name[FIRST_INDEX] == 'r' && name[SECOND_INDEX] >= '0' &&
         name[SECOND_INDEX] <= '7' && name[THIRD_INDEX] == '\0') {
-        if (isLabel) {
-            printError("Label cannot share the same name as a register.",
-                       fileName, lineNumber);
-        } else {
-            printMacroError("Macro cannot share the same name as a register.",
-                            fileName, lineNumber);
-        }
-
+        printNameError("cannot share the same name as a register.", fileName,
+                       lineNumber, isMacro);
         isValid = FALSE;
     }
 
     while (*name != '\0') {
         if (!isalnum(*name) && *name != '_') {
-            if (isLabel) {
-                printError(
-                    "Label contains an invalid character - not a digit, nor a "
-                    "lowercase or uppercase letter in the English alphabet, "
-                    "nor an underscore.",
-                    fileName, lineNumber);
-            } else {
-                printMacroError(
-                    "Macro contains an invalid character - not a digit, nor a "
-                    "lowercase or uppercase letter in the English alphabet, "
-                    "nor an underscore.",
-                    fileName, lineNumber);
-            }
-
+            printNameError(
+                "contains an invalid character - not a digit, nor a "
+                "lowercase or uppercase letter in the English alphabet, "
+                "nor an underscore.",
+                fileName, lineNumber, isMacro);
             isValid = FALSE;
         }
 

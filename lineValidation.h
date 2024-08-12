@@ -95,10 +95,11 @@ Boolean validateMacro(char macro[], char fileName[], LineNumber lineNumber);
  * @param name The name to check.
  * @param fileName The name of the file in which the line is.
  * @param lineNumber The line's line number.
+ * @param isMacro Whether the name of a macro or of a label.
  * @return TRUE if this part contains no errors, FALSE otherwise.
  */
 Boolean validateName(char name[], char fileName[], LineNumber lineNumber,
-                     Boolean isLabel);
+                     Boolean isMacro);
 
 /**
  * Checks and returns if the given macro definition line is valid.

@@ -67,6 +67,24 @@ void printMacroError(char message[], char fileName[], LineNumber lineNumber);
 void printWarning(char message[], char fileName[], LineNumber lineNumber);
 
 /**
+ * Prints an error in the specified file to stdout according to the arguments
+ * given.
+ * Adds "Macro" or "Label" with a space after it to the start of the message,
+ * depending on the value of isMacro.
+ * So, the given message should not start with an uppercase letter.
+ *
+ * Assumes that the given message is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
+ * @param message The message to print (should not start with an uppercase).
+ * @param fileName The name of the file in which the error occurred.
+ * @param lineNumber The line number in the file in which the error occurred.
+ * @param isMacro Whether the invalid name is of a macro or of a label.
+ */
+void printNameError(char message[], char fileName[], LineNumber lineNumber,
+                    Boolean isMacro);
+
+/**
  * Prints a file error to stdout with the given file name.
  * A file error can occur if some file could not be opened for some reason.
  *
