@@ -221,8 +221,8 @@ Boolean generateExtFile(char fileName[], Label *externLabels,
         }
 
         /* Insert all of the label's uses throughout the code. */
-        if (!insertUses(&file, fileName, externLabels->name, usedLabels,
-                        longest, &isFirst)) {
+        if (!insertUses(&file, fileName, externLabels, usedLabels, longest,
+                        &isFirst)) {
             /* There was a problem opening the .ext file. */
             return FALSE;
         }
@@ -284,17 +284,24 @@ void insertWords(FILE *file, Word *words, Address startingAddress) {
  *
  * @param file The file to insert the uses into.
  * @param fileName The name of the file to insert the uses into.
- * @param labelName The name of the extern label.
+ * @param externLabel The extern label to insert.
  * @param usedLabels The list of used labels to scan.
  * @param longest The number of characters in the longest label.
  * @param isFirst Whether this is the first label inserted.
  */
-Boolean insertUses(FILE **file, char fileName[], char labelName[],
+Boolean insertUses(FILE **file, char fileName[], Label *externLabel,
                    UsedLabel *usedLabels, Length longest, Boolean *isFirst) {
+    Boolean isUsed; /* Whether the extern label is used somewhere. */
+
+    isUsed = FALSE;
+
     /* Loop over the list of used labels. */
     while (usedLabels != NULL) {
         /* Compare the names to check if this is a use of the label. */
-        if (strcmp(labelName, usedLabels->name) == EQUAL_STRINGS) {
+        if (strcmp(externLabel->name, usedLabels->name) == EQUAL_STRINGS) {
+            /* The extern label is used. */
+            isUsed = TRUE;
+
             /* Check if the .ext file has not been opened yet. */
             if (*file == NULL) {
                 /* Try opening the .ext file. */
@@ -308,7 +315,7 @@ Boolean insertUses(FILE **file, char fileName[], char labelName[],
             }
 
             /* Insert the label, along with the address of its use. */
-            insertLabel(*file, labelName, usedLabels->address, longest,
+            insertLabel(*file, externLabel->name, usedLabels->address, longest,
                         *isFirst);
             /* The first line has already been inserted. */
             *isFirst = FALSE;
@@ -316,6 +323,12 @@ Boolean insertUses(FILE **file, char fileName[], char labelName[],
 
         /* Move on to the next label. */
         usedLabels = usedLabels->next;
+    }
+
+    /* Check if the extern label is not used. */
+    if (!isUsed) {
+        /* Print a warning. */
+        printWarning("Unused extern label.", fileName, externLabel->lineNumber);
     }
 
     /* There have not been any errors. */

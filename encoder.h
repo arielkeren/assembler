@@ -75,7 +75,7 @@ void encodeString(Word **data, char string[], WordCount *dataCount);
 void encodeNumberList(Word **data, char numberList[], WordCount *dataCount);
 
 /**
- * Encodes the given addressing mode into the given word.
+ * Encodes the given metadata character into the given word.
  * There are 3 options:
  * - E: toggles the bit at position 0, representing extern labels.
  * - R: toggles the bit at position 1, representing labels that are defined in
@@ -86,10 +86,10 @@ void encodeNumberList(Word **data, char numberList[], WordCount *dataCount);
  * Assumes that the given word is not NULL.
  * Assumes that the given metadata is one of E, R or A.
  *
- * @param word The word to encode the addressing mode in.
- * @param metadata The addressing mode to encode - can be either E, R or A.
+ * @param word The word to encode the metadata in.
+ * @param metadata The metadata to encode - can be either E, R or A.
  */
-void encodeAddressingMode(Word *word, char metadata);
+void encodeMetadata(Word *word, char metadata);
 
 /**
  * Encodes the given operand into the given word, representing the word that

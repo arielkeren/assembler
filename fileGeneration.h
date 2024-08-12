@@ -126,12 +126,12 @@ void insertWords(FILE *file, Word *words, Address startingAddress);
  *
  * @param file The file to insert the uses into.
  * @param fileName The name of the file to insert the uses into.
- * @param labelName The name of the extern label.
+ * @param externLabel The extern label to insert.
  * @param usedLabels The list of used labels to scan.
  * @param longest The number of characters in the longest label.
  * @param isFirst Whether this is the first label inserted.
  */
-Boolean insertUses(FILE **file, char fileName[], char labelName[],
+Boolean insertUses(FILE **file, char fileName[], Label *externLabel,
                    UsedLabel *usedLabels, Length longest, Boolean *isFirst);
 
 /**

@@ -86,7 +86,7 @@ Boolean handleUndefinedLabel(char fileName[], Label *externLabels,
     /* Check if the label is declared as extern. */
     if (containsLabel(externLabels, usedLabel->name)) {
         /* Mark the target word as extern. */
-        encodeAddressingMode(usedLabel->wordPointer, 'E');
+        encodeMetadata(usedLabel->wordPointer, 'E');
         /* This label is valid. */
         return TRUE;
     }
@@ -114,7 +114,7 @@ Boolean handleUndefinedLabel(char fileName[], Label *externLabels,
 void handleDefinedLabel(UsedLabel *usedLabel, FoundLabel *foundLabel,
                         WordCount instructionCount) {
     /* Mark the target word as a label that is defined in the same file. */
-    encodeAddressingMode(usedLabel->wordPointer, 'R');
+    encodeMetadata(usedLabel->wordPointer, 'R');
 
     /* Check if the label is defined in the data part. */
     if (foundLabel->isData) {
