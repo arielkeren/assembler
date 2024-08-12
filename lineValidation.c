@@ -89,34 +89,56 @@ Boolean validateLine(char line[], char fileName[], LineNumber lineNumber) {
 
     if (checkIfFollowedByComma(skipCharacters(line))) {
         printError(
-            "Comma after the first word in the command (excluding the label, "
-            "if there is one).",
+            "Comma after the first token in the line (excluding the label, if "
+            "there is one).",
             fileName, lineNumber);
         isValid = FALSE;
     }
 
-    if (strcmp(token, ".entry") == EQUAL_STRINGS) {
-        isValid = validateEntryExtern(skipWhitespace(skipCharacters(line)),
-                                      fileName, lineNumber) &&
-                  isValid;
-    } else if (strcmp(token, ".extern") == EQUAL_STRINGS) {
-        isValid = validateEntryExtern(skipWhitespace(skipCharacters(line)),
-                                      fileName, lineNumber) &&
-                  isValid;
-    } else if (strcmp(token, ".data") == EQUAL_STRINGS) {
-        isValid = validateData(skipWhitespace(skipCharacters(line)), fileName,
-                               lineNumber) &&
-                  isValid;
-    } else if (strcmp(token, ".string") == EQUAL_STRINGS) {
-        isValid = validateString(skipWhitespace(skipCharacters(line)), fileName,
-                                 lineNumber) &&
-                  isValid;
-    } else {
-        isValid = validateInstruction(line, fileName, lineNumber) && isValid;
-    }
-
+    isValid = splitLineValidation(line, fileName, lineNumber, token) && isValid;
     free(token);
     return isValid;
+}
+
+/**
+ * Splits the validation into the different types of lines.
+ * The type of the line depends on the given token.
+ * Returns whether or not the line is valid.
+ * Prints errors to stdout.
+ *
+ * Assumes that the given line is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the given token is not NULL and is null-terminated.
+ *
+ * @param line The line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @param token The token to check with.
+ * @return TRUE if the line contains no errors, FALSE otherwise.
+ */
+Boolean splitLineValidation(char line[], char fileName[], LineNumber lineNumber,
+                            char token[]) {
+    if (strcmp(token, ".entry") == EQUAL_STRINGS) {
+        return validateEntryExtern(skipWhitespace(skipCharacters(line)),
+                                   fileName, lineNumber);
+    }
+
+    if (strcmp(token, ".extern") == EQUAL_STRINGS) {
+        return validateEntryExtern(skipWhitespace(skipCharacters(line)),
+                                   fileName, lineNumber);
+    }
+
+    if (strcmp(token, ".data") == EQUAL_STRINGS) {
+        return validateData(skipWhitespace(skipCharacters(line)), fileName,
+                            lineNumber);
+    }
+
+    if (strcmp(token, ".string") == EQUAL_STRINGS) {
+        return validateString(skipWhitespace(skipCharacters(line)), fileName,
+                              lineNumber);
+    }
+
+    return validateInstruction(line, fileName, lineNumber);
 }
 
 /**
@@ -262,6 +284,31 @@ Boolean validateName(char name[], char fileName[], LineNumber lineNumber,
                        lineNumber, isMacro);
         isValid = FALSE;
     }
+
+    return validateNameCharacters(name, fileName, lineNumber, isMacro) &&
+           isValid;
+}
+
+/**
+ * Checks and returns if all of the given name's characters are valid.
+ * A character is valid if it is an underscore or a lowercase or uppercase
+ * letter in the English alphabet.
+ *
+ * Assumes that the given name string is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
+ * @param name The name to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @param isMacro Whether the name of a macro or of a label.
+ * @return Whether all of the given name's characters are valid.
+ */
+Boolean validateNameCharacters(char name[], char fileName[],
+                               LineNumber lineNumber, Boolean isMacro) {
+    Boolean isValid;
+
+    isValid = TRUE;
+    name++;
 
     while (*name != '\0') {
         if (!isalnum(*name) && *name != '_') {
@@ -563,8 +610,7 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     if (operands == NO_OPERANDS && *instruction != '\0') {
         printError(
-            "Extra non-whitespace characters after operation - it should "
-            "have "
+            "Extra non-whitespace characters after operation - it should have "
             "no operands.",
             fileName, lineNumber);
         free(operation);
@@ -590,6 +636,8 @@ Boolean validateInstruction(char instruction[], char fileName[],
             "Operation does not accept the first operand - incompatible "
             "type.",
             fileName, lineNumber);
+        free(operation);
+        free(token);
         return FALSE;
     }
 
@@ -598,12 +646,14 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     if (operands == ONE_OPERAND && checkIfFollowedByComma(instruction)) {
         printError("Comma after the only operand.", fileName, lineNumber);
+        free(operation);
         return FALSE;
     }
 
     if (operands == TWO_OPERANDS && !checkIfFollowedByComma(instruction)) {
         printError("Missing comma between the first and the second operand.",
                    fileName, lineNumber);
+        free(operation);
         return FALSE;
     }
 
@@ -611,8 +661,7 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     if (operands == ONE_OPERAND && *instruction != '\0') {
         printError(
-            "Extra non-whitespace characters after the operation - it "
-            "should "
+            "Extra non-whitespace characters after the operation - it should "
             "have only one operand.",
             fileName, lineNumber);
         free(operation);
@@ -637,9 +686,12 @@ Boolean validateInstruction(char instruction[], char fileName[],
             "Operation does not accept the second operand - incompatible "
             "type.",
             fileName, lineNumber);
+        free(operation);
+        free(token);
         return FALSE;
     }
 
+    free(operation);
     free(token);
     instruction = skipCharacters(instruction);
 
@@ -656,7 +708,6 @@ Boolean validateInstruction(char instruction[], char fileName[],
             "should "
             "have only two operands.",
             fileName, lineNumber);
-        free(operation);
         return FALSE;
     }
 

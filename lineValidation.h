@@ -32,6 +32,25 @@
 Boolean validateLine(char line[], char fileName[], LineNumber lineNumber);
 
 /**
+ * Splits the validation into the different types of lines.
+ * The type of the line depends on the given token.
+ * Returns whether or not the line is valid.
+ * Prints errors to stdout.
+ *
+ * Assumes that the given line is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ * Assumes that the given token is not NULL and is null-terminated.
+ *
+ * @param line The line to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @param token The token to check with.
+ * @return TRUE if the line contains no errors, FALSE otherwise.
+ */
+Boolean splitLineValidation(char line[], char fileName[], LineNumber lineNumber,
+                            char token[]);
+
+/**
  * Checks and returns if the given entry/extern declaration is valid.
  * Prints all the errors to stdout.
  *
@@ -100,6 +119,23 @@ Boolean validateMacro(char macro[], char fileName[], LineNumber lineNumber);
  */
 Boolean validateName(char name[], char fileName[], LineNumber lineNumber,
                      Boolean isMacro);
+
+/**
+ * Checks and returns if all of the given name's characters are valid.
+ * A character is valid if it is an underscore or a lowercase or uppercase
+ * letter in the English alphabet.
+ *
+ * Assumes that the given name string is not NULL and is null-terminated.
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
+ * @param name The name to check.
+ * @param fileName The name of the file in which the line is.
+ * @param lineNumber The line's line number.
+ * @param isMacro Whether the name of a macro or of a label.
+ * @return Whether all of the given name's characters are valid.
+ */
+Boolean validateNameCharacters(char name[], char fileName[],
+                               LineNumber lineNumber, Boolean isMacro);
 
 /**
  * Checks and returns if the given macro definition line is valid.
