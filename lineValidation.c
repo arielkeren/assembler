@@ -20,21 +20,6 @@
 #include "instructionInformation.h" /* Information about the different instructions. */
 #include "utils.h"                  /* Parsing lines. */
 
-/**
- * Checks and returns if the given line is valid.
- * Only checks for errors and warnings that can be found with no reference to
- * the existing state of the program.
- * Prints errors and warnings to stdout.
- * NOTE: Warnings do not mean the line is invalid. They are only printed.
- *
- * Assumes that the given line is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param line The line to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if the line contains no errors, FALSE otherwise.
- */
 Boolean validateLine(char line[], char fileName[], LineNumber lineNumber) {
     Boolean isValid; /* Whether the line is valid. */
     char *token;     /* The current token. */
@@ -123,22 +108,6 @@ Boolean validateLine(char line[], char fileName[], LineNumber lineNumber) {
     return isValid;
 }
 
-/**
- * Splits the validation into the different types of lines.
- * The type of the line depends on the given token.
- * Returns whether or not the line is valid.
- * Prints errors to stdout.
- *
- * Assumes that the given line is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- * Assumes that the given token is not NULL and is null-terminated.
- *
- * @param line The line to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @param token The token to check with.
- * @return TRUE if the line contains no errors, FALSE otherwise.
- */
 Boolean splitLineValidation(char line[], char fileName[], LineNumber lineNumber,
                             char token[]) {
     /* Check if it is a .entry line. */
@@ -169,18 +138,6 @@ Boolean splitLineValidation(char line[], char fileName[], LineNumber lineNumber,
     return validateInstruction(line, fileName, lineNumber);
 }
 
-/**
- * Checks and returns if the given entry/extern declaration is valid.
- * Prints all the errors to stdout.
- *
- * Assumes that the given label string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param label The entry/extern declaration to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateEntryExtern(char label[], char fileName[],
                             LineNumber lineNumber) {
     Boolean isValid; /* Whether the line is valid. */
@@ -213,64 +170,16 @@ Boolean validateEntryExtern(char label[], char fileName[],
     return isValid;
 }
 
-/**
- * Checks and returns if the given label name is valid.
- * Prints all the errors to stdout.
- *
- * Assumes that the given label string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param label The label to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateLabel(char label[], char fileName[], LineNumber lineNumber) {
     /* Macros and labels follow the same naming rules. */
     return validateName(label, fileName, lineNumber, FALSE);
 }
 
-/**
- * Checks and returns if the given macro name is valid.
- * Prints all the errors to stdout.
- *
- * Assumes that the given macro string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param macro The macro to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateMacro(char macro[], char fileName[], LineNumber lineNumber) {
     /* Macros and labels follow the same naming rules. */
     return validateName(macro, fileName, lineNumber, TRUE);
 }
 
-/**
- * Checks and returns if the given name is valid.
- * Prints all the errors to stdout.
- * Names are either label names or macro names, as they follow the same rules:
- * 1. Non-empty.
- * 2. Starts with a lowercase or uppercase letter in the English alphabet.
- * 3. Has a length of at most 31 characters.
- * 4. Is not a keyword in the language (includes "macr", "endmacr", operation
- * names, register names).
- * 5. The characters, not including the first character, have to be either:
- * - Lowercase characters in the English alphabet.
- * - Uppercase characters in the English alphabet.
- * - Digits.
- * - The underscore character.
- *
- * Assumes that the given name string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param name The name to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @param isMacro Whether the name of a macro or of a label.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateName(char name[], char fileName[], LineNumber lineNumber,
                      Boolean isMacro) {
     Boolean isValid; /* Whether the name is valid. */
@@ -334,20 +243,6 @@ Boolean validateName(char name[], char fileName[], LineNumber lineNumber,
            isValid;
 }
 
-/**
- * Checks and returns if all of the given name's characters are valid.
- * A character is valid if it is an underscore or a lowercase or uppercase
- * letter in the English alphabet.
- *
- * Assumes that the given name string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param name The name to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @param isMacro Whether the name of a macro or of a label.
- * @return Whether all of the given name's characters are valid.
- */
 Boolean validateNameCharacters(char name[], char fileName[],
                                LineNumber lineNumber, Boolean isMacro) {
     Boolean isValid; /* Whether the name's characters are valid. */
@@ -374,17 +269,6 @@ Boolean validateNameCharacters(char name[], char fileName[],
     return isValid;
 }
 
-/**
- * Checks and returns if the given macro definition line is valid.
- *
- * Assumes that the given line string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param line The macro definition line to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateMacroDefinition(char line[], char fileName[],
                                 LineNumber lineNumber) {
     Boolean isValid; /* Whether the line is valid. */
@@ -437,17 +321,6 @@ Boolean validateMacroDefinition(char line[], char fileName[],
     return isValid;
 }
 
-/**
- * Checks and returns if the given "endmacr" line is valid.
- *
- * Assumes that the given line string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param line The "endmacr" line to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateMacroEnd(char line[], char fileName[], LineNumber lineNumber) {
     Boolean isValid; /* Whether the line is valid. */
 
@@ -484,18 +357,6 @@ Boolean validateMacroEnd(char line[], char fileName[], LineNumber lineNumber) {
     return isValid;
 }
 
-/**
- * Checks and returns if the given .data line is valid.
- * Prints all the errors to stdout.
- *
- * Assumes that the given data string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param data The .data line to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateData(char data[], char fileName[], LineNumber lineNumber) {
     Boolean isValid;           /* Whether the line is valid.*/
     Boolean isFollowedByComma; /* Whether there was a comma. */
@@ -553,22 +414,6 @@ Boolean validateData(char data[], char fileName[], LineNumber lineNumber) {
     return isValid;
 }
 
-/**
- * Checks and returns if the given number in some .data line is valid.
- * Prints all the errors to stdout.
- * The number has to be between -16384 and 16383, inclusive (to fit in 15
- * bits). Also, the number can include a plus or minus sign in the
- * beginning. Aside from that, the number has to include only decimal
- * digits.
- *
- * Assumes that the given number string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param number The number to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
     char *current; /* The current character in the number.*/
     int value;     /* The numerical value of the number.*/
@@ -618,18 +463,6 @@ Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
     return TRUE;
 }
 
-/**
- * Checks and returns if the given .string line is valid.
- * Prints all the errors to stdout.
- *
- * Assumes that the given string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param string The .string line to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateString(char string[], char fileName[], LineNumber lineNumber) {
     Boolean isValid; /* Whether the string is valid. */
 
@@ -659,19 +492,6 @@ Boolean validateString(char string[], char fileName[], LineNumber lineNumber) {
     return isValid;
 }
 
-/**
- * Checks and returns if the given instruction line (not .data, .string,
- * .entry, .extern) is valid. Prints all the errors to stdout.
- *
- * Assumes that the given instruction string is not NULL and is
- * null-terminated. Assumes that the given file name is not NULL and is
- * null-terminated.
- *
- * @param instruction The instruction line to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateInstruction(char instruction[], char fileName[],
                             LineNumber lineNumber) {
     char *operation;       /* The operation of the instruction line. */
@@ -812,19 +632,6 @@ Boolean validateInstruction(char instruction[], char fileName[],
     return TRUE;
 }
 
-/**
- * Checks and returns if the given operation is valid.
- * Prints all the errors to stdout.
- *
- * Assumes that the given operation string is not NULL and is
- * null-terminated. Assumes that the given file name is not NULL and is
- * null-terminated.
- *
- * @param operation The operation to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateOperation(char operation[], char fileName[],
                           LineNumber lineNumber) {
     /* Check if the operation could not be found (invalid). */
@@ -836,18 +643,6 @@ Boolean validateOperation(char operation[], char fileName[],
     return TRUE;
 }
 
-/**
- * Checks and returns if the given operand is valid.
- * Prints all the errors to stdout.
- *
- * Assumes that the given operand string is not NULL and is null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param operand The operand to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateOperand(char operand[], char fileName[],
                         LineNumber lineNumber) {
     /* Split the validation based on the operand's addressing mode. */
@@ -867,23 +662,6 @@ Boolean validateOperand(char operand[], char fileName[],
     }
 }
 
-/**
- * Checks and returns if the given immediate value is valid.
- * Prints all the errors to stdout.
- * The immediate value has to be between -2048 and 2047, inclusive (to fit
- * in 12 bits). Also, it could begin with a plus or minus sign (after the
- * hash symbol). Aside from the hash symbol and the possible sign, it has to
- * include only decimal digits.
- *
- * Assumes that the given immediate value string is not NULL and is
- * null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param immediate The immediate value to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateImmediate(char immediate[], char fileName[],
                           LineNumber lineNumber) {
     int number; /* The numerical value of the immediate value. */
@@ -925,21 +703,6 @@ Boolean validateImmediate(char immediate[], char fileName[],
     return TRUE;
 }
 
-/**
- * Checks and returns if the given indirect register is valid.
- * Prints all the errors to stdout.
- * The possible indirect registers are *r0, *r1, *r2, *r3, *r4, *r5, *r6,
- * *r7.
- *
- * Assumes that the given indirect register string is not NULL and is
- * null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param indirectRegister The indirect register to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
 Boolean validateIndirectRegister(char indirectRegister[], char fileName[],
                                  LineNumber lineNumber) {
     /* Skip the asterisk.*/

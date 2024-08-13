@@ -26,7 +26,7 @@
  * @param argc The number of command line arguments (including the program's
  * name).
  * @param argv The command line arguments (including the program's name).
- * @return 0 when runs successfully.
+ * @return The exit status of the program (0 - successful, 1 - failed).
  */
 int main(int argc, char *argv[]) {
     /* Check the possibility of no files being provided. */

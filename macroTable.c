@@ -20,16 +20,6 @@
 #include "globals.h" /* Constants and typedefs. */
 #include "utils.h"   /* Allocating memory. */
 
-/**
- * Adds a new macro to the given macro table with the given name.
- * IMPORTANT: The caller must free the new macro.
- *
- * Assumes that the given pointer to the macros is not NULL.
- * Assumes that the given macro name is not NULL and is null-terminated.
- *
- * @param macros The macro table to add the macro to.
- * @param macroName The name of the new macro.
- */
 void addMacro(Macro **macros, char macroName[]) {
     Macro *newMacro; /* The new macro. */
 
@@ -45,15 +35,6 @@ void addMacro(Macro **macros, char macroName[]) {
     *macros = newMacro;
 }
 
-/**
- * Appends the given content to the given macro's content.
- *
- * Assumes that the given macro pointer is not NULL.
- * Assumes that the given content is not NULL and is null-terminated.
- *
- * @param macro The macro to add the content to.
- * @param content The content to add.
- */
 void addMacroContent(Macro *macro, char content[]) {
     char *newContent; /* The new combined content. */
 
@@ -72,17 +53,6 @@ void addMacroContent(Macro *macro, char content[]) {
     macro->content = newContent;
 }
 
-/**
- * Searches for the given macro name in the given macro table.
- * If found, returns its content.
- * If not found, returns NULL.
- *
- * Assumes that the given macro name is not NULL and is null-terminated.
- *
- * @param macros The macro table.
- * @param macroName The macro name to search for.
- * @return The macro's content, or NULL if not found.
- */
 char *getMacroContent(Macro *macros, char macroName[]) {
     /* Loop over the macros in the list and find the one with the given name. */
     while (macros != NULL) {
@@ -100,13 +70,6 @@ char *getMacroContent(Macro *macros, char macroName[]) {
     return NULL;
 }
 
-/**
- * Frees a macro table.
- *
- * Assumes that the given macro table has not been freed yet.
- *
- * @param macros The macro table to free.
- */
 void freeMacroTable(Macro *macros) {
     Macro *next; /* The next macro in the list. */
 
@@ -121,13 +84,6 @@ void freeMacroTable(Macro *macros) {
     }
 }
 
-/**
- * Frees a single macro.
- *
- * Assumes that the given macro is not NULL and has not been freed yet.
- *
- * @param macro The macro to free.
- */
 void freeMacro(Macro *macro) {
     /* Free the name string. */
     free(macro->name);

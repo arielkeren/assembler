@@ -21,16 +21,6 @@
 #include "globals.h" /* Constants and typedefs. */
 #include "utils.h"   /* Allocating memory. */
 
-/**
- * Adds a new word to the given word list.
- * Returns a pointer to the new word.
- * IMPORTANT: The caller must free the new word.
- *
- * Assumes that the given word pointer is not NULL.
- *
- * @param words The word list to add the new word to.
- * @return A pointer to the new word.
- */
 Word *addWord(Word *words) {
     Word *newWord; /* The new word. */
 
@@ -42,13 +32,6 @@ Word *addWord(Word *words) {
     return newWord;
 }
 
-/**
- * Creates a new word and returns a pointer to it.
- * Initializes the fields of the word to zeros.
- * IMPORTANT: The caller must free the new word.
- *
- * @return A pointer to the new word.
- */
 Word *createWord() {
     Word *newWord; /* The new word. */
 
@@ -63,13 +46,6 @@ Word *createWord() {
     return newWord;
 }
 
-/**
- * Frees a word list.
- *
- * Assumes that the given words have not been freed yet.
- *
- * @param words The word list to free.
- */
 void freeWordList(Word *words) {
     Word *next; /* The next word in the list. */
 
