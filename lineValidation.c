@@ -383,7 +383,7 @@ Boolean validateData(char data[], char fileName[], LineNumber lineNumber) {
         /* Get the current token. */
         token = getNextToken(data);
         /* Check if the token represents a valid number. */
-        isValid = validateNumber(token, fileName, lineNumber) && isValid;
+        isValid = validateNumber(token, fileName, lineNumber, FALSE) && isValid;
         /* The token is no longer needed. */
         free(token);
 
@@ -414,7 +414,8 @@ Boolean validateData(char data[], char fileName[], LineNumber lineNumber) {
     return isValid;
 }
 
-Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
+Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber,
+                       Boolean isImmediate) {
     char *current; /* The current character in the number.*/
     int value;     /* The numerical value of the number.*/
 
@@ -440,6 +441,28 @@ Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber) {
 
     /* Convert the number string to an integer. */
     value = atoi(number);
+
+    if (isImmediate) {
+        /* Check if the immediate value is above the maximum allowed. */
+        if (value > MAX_IMMEDIATE) {
+            printError(
+                "Number is too large to store in just 12 bits - largest "
+                "possible value is 2047.",
+                fileName, lineNumber);
+            return FALSE;
+        }
+
+        /* Check if the immediate value is below the minimum allowed. */
+        if (value < MIN_IMMEDIATE) {
+            printError(
+                "Number is too small to store in just 12 bits - smallest "
+                "possible value is -2048.",
+                fileName, lineNumber);
+            return FALSE;
+        }
+
+        return TRUE;
+    }
 
     /* Check if the value is above the maximum allowed. */
     if (value > MAX_NUMBER) {
@@ -648,7 +671,8 @@ Boolean validateOperand(char operand[], char fileName[],
     /* Split the validation based on the operand's addressing mode. */
     switch (getOperandType(operand)) {
         case IMMEDIATE:
-            return validateImmediate(operand, fileName, lineNumber);
+            return validateNumber(&operand[SECOND_INDEX], fileName, lineNumber,
+                                  TRUE);
         case DIRECT:
             return validateLabel(operand, fileName, lineNumber);
         case INDIRECT_REGISTER:
@@ -660,47 +684,6 @@ Boolean validateOperand(char operand[], char fileName[],
             /* This should never happen. */
             return FALSE;
     }
-}
-
-Boolean validateImmediate(char immediate[], char fileName[],
-                          LineNumber lineNumber) {
-    int number; /* The numerical value of the immediate value. */
-
-    /* Skip the hash symbol. */
-    immediate++;
-
-    /* Check if the immediate value does not represent a valid number. */
-    if (!validateNumber(immediate, fileName, lineNumber)) {
-        printError(
-            "Not a number, even though it is preceded by a hash (a label "
-            "cannot start with a hash).",
-            fileName, lineNumber);
-        return FALSE;
-    }
-
-    /* Convert the immediate value string to an integer. */
-    number = atoi(immediate);
-
-    /* Check if the immediate value is above the maximum allowed. */
-    if (number > MAX_IMMEDIATE) {
-        printError(
-            "Number is too large to store in just 12 bits - largest possible "
-            "value is 2047.",
-            fileName, lineNumber);
-        return FALSE;
-    }
-
-    /* Check if the immediate value is below the minimum allowed. */
-    if (number < MIN_IMMEDIATE) {
-        printError(
-            "Number is too small to store in just 12 bits - smallest possible "
-            "value is -2048.",
-            fileName, lineNumber);
-        return FALSE;
-    }
-
-    /* The immediate value is valid, as it has passed every test. */
-    return TRUE;
 }
 
 Boolean validateIndirectRegister(char indirectRegister[], char fileName[],

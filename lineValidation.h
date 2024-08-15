@@ -181,9 +181,12 @@ Boolean validateData(char data[], char fileName[], LineNumber lineNumber);
 /**
  * Checks and returns if the given number in some .data line is valid.
  * Prints all the errors to stdout.
- * The number has to be between -16384 and 16383, inclusive (to fit in 15 bits).
- * Also, the number can include a plus or minus sign in the beginning.
+ * The number can include a plus or minus sign in the beginning.
  * Aside from that, the number has to include only decimal digits.
+ * If immediate, The number has to be between -2048 and 2047, inclusive (to fit
+ * in 12 bits).
+ * Otherwise, the number has to be between -16384 and 16383, inclusive (to fit
+ * in 15 bits).
  *
  * Assumes that the given number string is not NULL and is null-terminated.
  * Assumes that the given file name is not NULL and is null-terminated.
@@ -191,9 +194,11 @@ Boolean validateData(char data[], char fileName[], LineNumber lineNumber);
  * @param number The number to check.
  * @param fileName The name of the file in which the line is.
  * @param lineNumber The line's line number.
+ * @param isImmediate Whether the number is an immediate value or not.
  * @return TRUE if this part contains no errors, FALSE otherwise.
  */
-Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber);
+Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber,
+                       Boolean isImmediate);
 
 /**
  * Checks and returns if the given .string line is valid.
@@ -252,27 +257,6 @@ Boolean validateOperation(char operation[], char fileName[],
  * @return TRUE if this part contains no errors, FALSE otherwise.
  */
 Boolean validateOperand(char operand[], char fileName[], LineNumber lineNumber);
-
-/**
- * Checks and returns if the given immediate value is valid.
- * Prints all the errors to stdout.
- * The immediate value has to be between -2048 and 2047, inclusive (to fit in 12
- * bits).
- * Also, it could begin with a plus or minus sign (after the hash symbol).
- * Aside from the hash symbol and the possible sign, it has to include only
- * decimal digits.
- *
- * Assumes that the given immediate value string is not NULL and is
- * null-terminated.
- * Assumes that the given file name is not NULL and is null-terminated.
- *
- * @param immediate The immediate value to check.
- * @param fileName The name of the file in which the line is.
- * @param lineNumber The line's line number.
- * @return TRUE if this part contains no errors, FALSE otherwise.
- */
-Boolean validateImmediate(char immediate[], char fileName[],
-                          LineNumber lineNumber);
 
 /**
  * Checks and returns if the given indirect register is valid.
