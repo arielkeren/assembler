@@ -34,6 +34,17 @@ void addUsedLabel(UsedLabel **labels, char labelName[], Address address,
                   LineNumber lineNumber, Word *wordPointer);
 
 /**
+ * Checks if the given list of used labels contains the given label name.
+ *
+ * Assumes that the given label name is not NULL and is null-terminated.
+ *
+ * @param labels The list of used labels.
+ * @param labelName The label name to search for.
+ * @return TRUE if the label is in the list, FALSE otherwise.
+ */
+Boolean containsUsedLabel(UsedLabel *labels, char labelName[]);
+
+/**
  * Frees a used label list.
  *
  * Assumes that the given labels have not been freed yet.

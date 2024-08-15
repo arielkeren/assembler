@@ -18,7 +18,8 @@
 #include "foundLabelList.h" /* Searching through the found label list. */
 #include "globals.h"        /* Constants and typedefs. */
 #include "labelList.h" /* Getting the longest label's length in each label list. */
-#include "utils.h"     /* Creating the output files. */
+#include "usedLabelList.h" /* Searching through the used label list. */
+#include "utils.h"         /* Creating the output files. */
 
 void generateObFile(char fileName[], Word *code, Word *data,
                     WordCount instructionCount, WordCount dataCount) {
@@ -57,7 +58,7 @@ Boolean generateEntFile(char fileName[], Label *entryLabels,
     /* Initialize the necessary variables. */
     isFirst = TRUE;
     file = NULL;
-    longest = getLongestLabel(entryLabels);
+    longest = getLongestLabel(fileName, entryLabels, FALSE, NULL);
 
     /* Loop over the entry labels. */
     while (entryLabels != NULL) {
@@ -124,7 +125,7 @@ Boolean generateExtFile(char fileName[], Label *externLabels,
 
     /* Initialize the necessary variables. */
     file = NULL;
-    longest = getLongestLabel(externLabels);
+    longest = getLongestLabel(fileName, externLabels, TRUE, usedLabels);
 
     /* Loop over the extern labels. */
     while (externLabels != NULL) {
@@ -190,17 +191,10 @@ void insertWords(FILE *file, Word *words, Address startingAddress) {
 
 Boolean insertUses(FILE **file, char fileName[], Label *externLabel,
                    UsedLabel *usedLabels, Length longest, Boolean *isFirst) {
-    Boolean isUsed; /* Whether the extern label is used somewhere. */
-
-    isUsed = FALSE;
-
     /* Loop over the list of used labels. */
     while (usedLabels != NULL) {
         /* Compare the names to check if this is a use of the label. */
         if (strcmp(externLabel->name, usedLabels->name) == EQUAL_STRINGS) {
-            /* The extern label is used. */
-            isUsed = TRUE;
-
             /* Check if the .ext file has not been opened yet. */
             if (*file == NULL) {
                 /* Try opening the .ext file. */
@@ -222,12 +216,6 @@ Boolean insertUses(FILE **file, char fileName[], Label *externLabel,
 
         /* Move on to the next label. */
         usedLabels = usedLabels->next;
-    }
-
-    /* Check if the extern label is not used. */
-    if (!isUsed) {
-        /* Print a warning. */
-        printWarning("Unused extern label.", fileName, externLabel->lineNumber);
     }
 
     /* There have not been any errors. */
@@ -257,4 +245,41 @@ void insertLabel(FILE *file, char labelName[], Address address, Length longest,
     /* Insert the label, along with its address. Add newlines accordingly. */
     fprintf(file, "%s%-*s %04hu", isFirst ? "" : "\n", longest, labelName,
             address);
+}
+
+Length getLongestLabel(char fileName[], Label *labels, Boolean isExtern,
+                       UsedLabel *usedLabels) {
+    Length longest;       /* The length of the longest label so far. */
+    Length currentLength; /* The length of the current label. */
+
+    /* Intialize the longest value to the shortest possible. */
+    longest = INITIAL_VALUE;
+
+    /* Loop over the labels and check each one's length. */
+    while (labels != NULL) {
+        /* Check if this is an extern label that is unused. */
+        if (isExtern && !containsUsedLabel(usedLabels, labels->name)) {
+            /* Print a warning. */
+            printWarning("Unused extern label.", fileName, labels->lineNumber);
+
+            /* Skip to the next label. */
+            labels = labels->next;
+            continue;
+        }
+
+        /* Get the length of the current label. */
+        currentLength = (Length)strlen(labels->name);
+
+        /* Check if the current label is longer than the longest so far. */
+        if (currentLength > longest) {
+            /* Replace the longest. */
+            longest = currentLength;
+        }
+
+        /* Try checking the next label. */
+        labels = labels->next;
+    }
+
+    /* Return the length of the longest label. */
+    return longest;
 }

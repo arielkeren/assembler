@@ -16,7 +16,7 @@ fileHandling.o: fileHandling.c fileHandling.h errorHandling.h macroExpansion.h f
 errorHandling.o: errorHandling.c errorHandling.h globals.h
 	$(CC) $(OBJ_FLAGS) errorHandling.c
 
-fileGeneration.o: fileGeneration.c fileGeneration.h errorHandling.h labelList.h foundLabelList.h utils.h globals.h
+fileGeneration.o: fileGeneration.c fileGeneration.h errorHandling.h labelList.h foundLabelList.h usedLabelList.h utils.h globals.h
 	$(CC) $(OBJ_FLAGS) fileGeneration.c
 
 macroExpansion.o: macroExpansion.c macroExpansion.h errorHandling.h macroTable.h lineValidation.h utils.h globals.h

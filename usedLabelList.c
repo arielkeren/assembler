@@ -14,6 +14,7 @@
 #include "usedLabelList.h"
 
 #include <stdlib.h> /* free. */
+#include <string.h> /* strcmp. */
 
 #include "globals.h" /* Constants and typedefs. */
 #include "utils.h"   /* Allocating memory. */
@@ -34,6 +35,22 @@ void addUsedLabel(UsedLabel **labels, char labelName[], Address address,
     /* Add the new used label to the head of the list. */
     newLabel->next = *labels;
     *labels = newLabel;
+}
+
+Boolean containsUsedLabel(UsedLabel *labels, char labelName[]) {
+    /* Loop over the labels to try to find the desired one. */
+    while (labels != NULL) {
+        /* Check for the given name. */
+        if (strcmp(labels->name, labelName) == EQUAL_STRINGS) {
+            /* The label has been found. */
+            return TRUE;
+        }
+
+        labels = labels->next;
+    }
+
+    /* The label has not been found. */
+    return FALSE;
 }
 
 void freeUsedLabelList(UsedLabel *labels) {

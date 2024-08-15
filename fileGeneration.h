@@ -154,6 +154,10 @@ void insertLabelDefinition(FILE *file, char labelName[], FoundLabel *definition,
 
 /**
  * Inserts the given label into the given file, along with an address.
+ * Pads the label with spaces to the right using the longest label's length, so
+ * that all the labels line up properly.
+ * Pads the address with zeros to the left, so that every address is 4 digits
+ * long.
  *
  * Assumes that the given file pointer is not NULL.
  * Assumes that the given label name string is not NULL and is
@@ -170,5 +174,24 @@ void insertLabelDefinition(FILE *file, char labelName[], FoundLabel *definition,
  */
 void insertLabel(FILE *file, char labelName[], Address address, Length longest,
                  Boolean isFirst);
+
+/**
+ * Computes and returns the length of the longest label in the given label list.
+ * If the labels are extern, the calculation does not include the extern labels
+ * that are unused.
+ * Uses the given list of used labels to check for unused extern labels.
+ * If an extern label is unused, prints a warning to stdout.
+ *
+ * Assumes that the given file name is not NULL and is null-terminated.
+ *
+ * @param fileName The name of the current file (for warnings).
+ * @param labels The label list to compute the length of the longest label in.
+ * @param isExtern Whether the labels are extern or not (entry).
+ * @param usedLabels The list of used labels to use to check for unused extern
+ * labels.
+ * @return The length of the longest label in the given label list.
+ */
+Length getLongestLabel(char fileName[], Label *labels, Boolean isExtern,
+                       UsedLabel *usedLabels);
 
 #endif

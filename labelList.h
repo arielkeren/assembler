@@ -40,14 +40,6 @@ void addLabel(Label **labels, char labelName[], LineNumber lineNumber);
 Boolean containsLabel(Label *labels, char labelName[]);
 
 /**
- * Computes and returns the length of the longest label in the given label list.
- *
- * @param labels The label list to compute the length of the longest label in.
- * @return The length of the longest label in the given label list.
- */
-Length getLongestLabel(Label *labels);
-
-/**
  * Frees a list of labels.
  *
  * Assumes that the given labels have not been freed yet.

@@ -16,7 +16,7 @@
 #include "labelList.h"
 
 #include <stdlib.h> /* free. */
-#include <string.h> /* strcmp, strlen. */
+#include <string.h> /* strcmp. */
 
 #include "globals.h" /* Constants and typedefs. */
 #include "utils.h"   /* Allocating memory. */
@@ -51,32 +51,6 @@ Boolean containsLabel(Label *labels, char labelName[]) {
 
     /* The label has not been found. */
     return FALSE;
-}
-
-Length getLongestLabel(Label *labels) {
-    Length longest;       /* The length of the longest label so far. */
-    Length currentLength; /* The length of the current label. */
-
-    /* Intialize the longest value to the shortest possible. */
-    longest = INITIAL_VALUE;
-
-    /* Loop over the labels and check each one's length. */
-    while (labels != NULL) {
-        /* Get the length of the current label. */
-        currentLength = (Length)strlen(labels->name);
-
-        /* Check if the current label is longer than the longest so far. */
-        if (currentLength > longest) {
-            /* Replace the longest. */
-            longest = currentLength;
-        }
-
-        /* Try checking the next label. */
-        labels = labels->next;
-    }
-
-    /* Return the length of the longest label. */
-    return longest;
 }
 
 void freeLabelList(Label *labels) {
