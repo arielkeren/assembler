@@ -583,7 +583,14 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     /* Check if there are two operands, that are not separated by a comma. */
     if (operands == TWO_OPERANDS && !checkIfFollowedByComma(instruction)) {
-        printError("Missing comma between the first and second operands.",
+        printError("Missing comma between the operands.", fileName, lineNumber);
+        free(operation);
+        return FALSE;
+    }
+
+    /* Check if the operands are separated by multiple commas. */
+    if (operands == TWO_OPERANDS && checkForConsecutiveCommas(instruction)) {
+        printError("Multiple consecutive commas between the operands.",
                    fileName, lineNumber);
         free(operation);
         return FALSE;
