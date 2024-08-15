@@ -230,6 +230,11 @@ Boolean handleLabel(char fileName[], char line[], LineNumber lineNumber,
     line = skipWhitespace(line);
     nextToken = getNextToken(line);
 
+    if (nextToken == NULL) {
+        free(token);
+        return FALSE;
+    }
+
     /* Skip .entry and .extern lines. */
     if (strcmp(nextToken, ".entry") == EQUAL_STRINGS ||
         strcmp(nextToken, ".extern") == EQUAL_STRINGS) {
