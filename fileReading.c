@@ -225,6 +225,19 @@ Boolean handleLabel(char fileName[], char line[], LineNumber lineNumber,
         return TRUE;
     }
 
+    /* Get the second token. */
+    line = skipCharacters(line);
+    line = skipWhitespace(line);
+    nextToken = getNextToken(line);
+
+    /* Skip .entry and .extern lines. */
+    if (strcmp(nextToken, ".entry") == EQUAL_STRINGS ||
+        strcmp(nextToken, ".extern") == EQUAL_STRINGS) {
+        free(token);
+        free(nextToken);
+        return TRUE;
+    }
+
     /* Remove the colon at the end of the label. */
     removeEnding(token, ':');
 
@@ -241,19 +254,6 @@ Boolean handleLabel(char fileName[], char line[], LineNumber lineNumber,
                    lineNumber);
         free(token);
         return FALSE;
-    }
-
-    /* Get the second token. */
-    line = skipCharacters(line);
-    line = skipWhitespace(line);
-    nextToken = getNextToken(line);
-
-    /* Skip .entry and .extern lines. */
-    if (strcmp(nextToken, ".entry") == EQUAL_STRINGS ||
-        strcmp(nextToken, ".extern") == EQUAL_STRINGS) {
-        free(token);
-        free(nextToken);
-        return TRUE;
     }
 
     /* Add the label to the list of found labels. */
