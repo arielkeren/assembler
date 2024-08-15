@@ -442,21 +442,13 @@ Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber,
     /* Convert the number string to an integer. */
     value = atoi(number);
 
+    /* Immediate values have a different valid range. */
     if (isImmediate) {
-        /* Check if the immediate value is above the maximum allowed. */
-        if (value > MAX_IMMEDIATE) {
+        /* Check if the immediate value is not in the valid range. */
+        if (value > MAX_IMMEDIATE || value < MIN_IMMEDIATE) {
             printError(
-                "Number is too large to store in just 12 bits - largest "
-                "possible value is 2047.",
-                fileName, lineNumber);
-            return FALSE;
-        }
-
-        /* Check if the immediate value is below the minimum allowed. */
-        if (value < MIN_IMMEDIATE) {
-            printError(
-                "Number is too small to store in just 12 bits - smallest "
-                "possible value is -2048.",
+                "Number does not fit in 12 bits - must be between -2048 and "
+                "2047, inclusive.",
                 fileName, lineNumber);
             return FALSE;
         }
@@ -464,20 +456,11 @@ Boolean validateNumber(char number[], char fileName[], LineNumber lineNumber,
         return TRUE;
     }
 
-    /* Check if the value is above the maximum allowed. */
+    /* Check if the value is not in the valid range. */
     if (value > MAX_NUMBER) {
         printError(
-            "Number is too large to store in just 15 bits - largest possible "
-            "value is 16383.",
-            fileName, lineNumber);
-        return FALSE;
-    }
-
-    /* Check if the value is below the minimum allowed. */
-    if (value < MIN_NUMBER) {
-        printError(
-            "Number is too small to store in just 15 bits - smallest possible "
-            "value is -16384.",
+            "Number does not fit in 15 bits - must be between -16384 and "
+            "16383, inclusive.",
             fileName, lineNumber);
         return FALSE;
     }

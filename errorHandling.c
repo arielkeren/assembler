@@ -67,7 +67,7 @@ void printNameError(char message[], char fileName[], LineNumber lineNumber,
 
 void printFileError(char fileName[]) {
     printf("\n--- File Error ---\n");
-    printf("Could not open the file by the name of: %s.\n", fileName);
+    printf("Could not open the file by the name of: %s\n", fileName);
     printf(
         "Moving on to the next file, or exiting if there are no more "
         "files...\n");
