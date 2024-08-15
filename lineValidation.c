@@ -522,8 +522,8 @@ Boolean validateInstruction(char instruction[], char fileName[],
     if (operands == NO_OPERANDS) {
         /* Check if any operands were given. */
         if (*instruction != '\0') {
-            printError("Operation expects no operands.", fileName, lineNumber);
             free(operation);
+            printError("Operation expects no operands.", fileName, lineNumber);
             return FALSE;
         }
 
@@ -535,6 +535,14 @@ Boolean validateInstruction(char instruction[], char fileName[],
     /* Get the first operand. */
     token = getNextToken(instruction);
 
+    /* Check if no operand was given. */
+    if (token == NULL) {
+        free(operation);
+        printError("Operation expects operands, but none were given.", fileName,
+                   lineNumber);
+        return FALSE;
+    }
+
     /* Check if the operand is invalid. */
     if (!validateOperand(token, fileName, lineNumber)) {
         free(operation);
@@ -545,11 +553,11 @@ Boolean validateInstruction(char instruction[], char fileName[],
     /* Check if the operation does not accept the first operand. */
     if (!doesOperationAcceptOperand(operation, token,
                                     operands != ONE_OPERAND)) {
+        free(operation);
+        free(token);
         printError(
             "Operation does not accept the first operand - incompatible type.",
             fileName, lineNumber);
-        free(operation);
-        free(token);
         return FALSE;
     }
 
@@ -559,23 +567,23 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     /* Check if there is only one operand, that is followed by a comma. */
     if (operands == ONE_OPERAND && checkIfFollowedByComma(instruction)) {
-        printError("Comma after the only operand.", fileName, lineNumber);
         free(operation);
+        printError("Comma after the only operand.", fileName, lineNumber);
         return FALSE;
     }
 
     /* Check if there are two operands, that are not separated by a comma. */
     if (operands == TWO_OPERANDS && !checkIfFollowedByComma(instruction)) {
-        printError("Missing comma between the operands.", fileName, lineNumber);
         free(operation);
+        printError("Missing comma between the operands.", fileName, lineNumber);
         return FALSE;
     }
 
     /* Check if the operands are separated by multiple commas. */
     if (operands == TWO_OPERANDS && checkForConsecutiveCommas(instruction)) {
+        free(operation);
         printError("Multiple consecutive commas between the operands.",
                    fileName, lineNumber);
-        free(operation);
         return FALSE;
     }
 
@@ -583,11 +591,11 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     /* Check if there are more tokens when only one operand is expected. */
     if (operands == ONE_OPERAND && *instruction != '\0') {
+        free(operation);
         printError(
             "Extra non-whitespace characters after the operation - it should "
             "have only one operand.",
             fileName, lineNumber);
-        free(operation);
         return FALSE;
     }
 
@@ -601,6 +609,14 @@ Boolean validateInstruction(char instruction[], char fileName[],
     /* Get the second operand. */
     token = getNextToken(instruction);
 
+    /* Check if no second operand was given. */
+    if (token == NULL) {
+        free(operation);
+        printError("Operation expects two operands, but only one was given.",
+                   fileName, lineNumber);
+        return FALSE;
+    }
+
     /* Check if the second operand is invalid. */
     if (!validateOperand(token, fileName, lineNumber)) {
         free(operation);
@@ -610,12 +626,12 @@ Boolean validateInstruction(char instruction[], char fileName[],
 
     /* Check if the operation does not accept the second operand. */
     if (!doesOperationAcceptOperand(operation, token, FALSE)) {
+        free(operation);
+        free(token);
         printError(
             "Operation does not accept the second operand - incompatible "
             "type.",
             fileName, lineNumber);
-        free(operation);
-        free(token);
         return FALSE;
     }
 
