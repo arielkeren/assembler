@@ -44,8 +44,10 @@ void addMacroContent(Macro *macro, char content[]) {
 
     /* Copy the old content. */
     strcpy(newContent, macro->content);
-    /* Free the old content. */
-    free(macro->content);
+    /* Free the old content if it is not empty. */
+    if (*macro->content != '\0') {
+        free(macro->content);
+    }
     /* Concatenate the given content. */
     strcat(newContent, content);
 
