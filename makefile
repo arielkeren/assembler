@@ -7,7 +7,7 @@ EXE_DEPS = assembler.o fileHandling.o errorHandling.o fileGeneration.o macroExpa
 assembler: $(EXE_DEPS)
 	$(CC) $(EXE_FLAGS) assembler $(EXE_DEPS)
 
-assembler.o: assembler.c fileHandling.h globals.h
+assembler.o: assembler.c fileHandling.h errorHandling.h globals.h
 	$(CC) $(OBJ_FLAGS) assembler.c
 
 fileHandling.o: fileHandling.c fileHandling.h errorHandling.h macroExpansion.h fileReading.h labelLinking.h fileGeneration.h freeingLogic.h macroTable.h wordList.h labelList.h foundLabelList.h usedLabelList.h globals.h

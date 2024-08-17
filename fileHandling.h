@@ -15,7 +15,7 @@
 #include "globals.h" /* Typedefs. */
 
 /**
- * Checks whether or not no files have been provided as command line arguments.
+ * Checks whether no files have been provided as command line arguments.
  * If no files have been provided, prints an error and exits the program.
  *
  * Assumes that the given file count is the number of file names provided as
@@ -23,7 +23,7 @@
  *
  * @param fileCount The number of files provided as command line arguments.
  */
-void checkNoFiles(int fileCount);
+void handleNoFiles(int fileCount);
 
 /**
  * Starts the compilation process of the provided files.

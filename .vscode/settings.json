@@ -10,6 +10,7 @@
     "labellinking.h": "c",
     "wordlist.h": "c",
     "usedlabellist.h": "c",
-    "filegeneration.h": "c"
+    "filegeneration.h": "c",
+    "errorhandling.h": "c"
   }
 }

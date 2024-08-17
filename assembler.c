@@ -9,6 +9,7 @@
  * Date: 30/07/2024
  */
 
+#include "errorHandling.h" /* Getting the error status. */
 #include "fileHandling.h" /* Handling the files in the command line arguments. */
 #include "globals.h"      /* Constants. */
 
@@ -30,9 +31,10 @@
  */
 int main(int argc, char *argv[]) {
     /* Check the possibility of no files being provided. */
-    checkNoFiles(argc - ARGS_DIFF);
+    handleNoFiles(argc - ARGS_DIFF);
     /* Start the compilation process of every file provided. */
     compileAllFiles(argv + ARGS_DIFF, argc - ARGS_DIFF);
 
-    return SUCCESS;
+    /* Return 1 if any errors occurred, otherwise 0. */
+    return getErrorStatus() ? ERROR : SUCCESS;
 }

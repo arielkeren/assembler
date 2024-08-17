@@ -26,7 +26,7 @@
 #include "usedLabelList.h" /* Freeing the used label list. */
 #include "wordList.h" /* Creating dummy nodes and freeing the 2 word lists. */
 
-void checkNoFiles(int fileCount) {
+void handleNoFiles(int fileCount) {
     if (fileCount == NO_FILES) {
         printNoFilesError();
         exit(ERROR);

@@ -16,6 +16,13 @@
 
 #include "globals.h" /* Constants and typedefs. */
 
+static Boolean error = FALSE;
+
+Boolean getErrorStatus() {
+    /* Return the error status. */
+    return error;
+}
+
 void printMessage(char message[], char fileName[], LineNumber lineNumber,
                   Boolean isError, Boolean isMacro) {
     static unsigned long errorCount = INITIAL_VALUE;   /* Errors so far. */
@@ -37,11 +44,15 @@ void printMessage(char message[], char fileName[], LineNumber lineNumber,
 }
 
 void printError(char message[], char fileName[], LineNumber lineNumber) {
+    error = TRUE;
+
     /* Print an error that was found in the .am file. */
     printMessage(message, fileName, lineNumber, TRUE, FALSE);
 }
 
 void printMacroError(char message[], char fileName[], LineNumber lineNumber) {
+    error = TRUE;
+
     /* Print an error that was found in the .as file. */
     printMessage(message, fileName, lineNumber, TRUE, TRUE);
 }
@@ -55,6 +66,8 @@ void printNameError(char message[], char fileName[], LineNumber lineNumber,
                     Boolean isMacro) {
     static unsigned long nameErrorCount = INITIAL_VALUE; /* Errors so far. */
 
+    error = TRUE;
+
     /* Specify the type of the message. */
     printf("\n--- Name Error #%lu ---\n", ++nameErrorCount);
     /* Specify the file's name and extension. */
@@ -66,6 +79,8 @@ void printNameError(char message[], char fileName[], LineNumber lineNumber,
 }
 
 void printFileError(char fileName[]) {
+    error = TRUE;
+
     printf("\n--- File Error ---\n");
     printf("Could not open the file by the name of: %s\n", fileName);
     printf(
@@ -74,6 +89,8 @@ void printFileError(char fileName[]) {
 }
 
 void printAllocationError() {
+    error = TRUE;
+
     printf("\n--- Allocation Error ---\n");
     printf("Failed to allocate enough memory.\n");
     printf("Exiting the program...\n");
