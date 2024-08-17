@@ -250,6 +250,7 @@ Boolean handleLabel(char fileName[], char line[], LineNumber lineNumber,
     if (getFoundLabel(*foundLabels, token) != NULL) {
         printError("Label already defined.", fileName, lineNumber);
         free(token);
+        free(nextToken);
         return FALSE;
     }
 
@@ -258,6 +259,7 @@ Boolean handleLabel(char fileName[], char line[], LineNumber lineNumber,
         printError("Label's name already taken by a macro.", fileName,
                    lineNumber);
         free(token);
+        free(nextToken);
         return FALSE;
     }
 
@@ -364,7 +366,10 @@ void handleOperation(char line[], LineNumber lineNumber, Word **code,
         /* Encode both the operands in the word. */
         encodeExtraWord(*code, firstOperand, TRUE);
         encodeExtraWord(*code, secondOperand, FALSE);
+
         /* End here. */
+        free(firstOperand);
+        free(secondOperand);
         return;
     }
 
