@@ -1,6 +1,6 @@
 # Assembler
 
-An assembler, written in C, for a made-up assembly language.
+An assembler for a made-up assembly language.
 
 ## Background
 This assembler was made as the final project for a course in C in The Open University of Israel.
