@@ -119,15 +119,15 @@ The files get compiled into at most **4** different files each:
 
 ## Instructions
 
-- Clone this repository:
+- Clone this repository.
    ```bash
    git clone https://github.com/arielkeren/assembler.git
    ```
-- Run the Makefile:
+- Run the Makefile.
    ```bash
    makefile
    ```
-- Run the assembler:
+- Run the assembler.
    ```bash
    ./assembler file1 file2 [...]
    ```
