@@ -1,6 +1,6 @@
 # Assembler
 
-An assembler for a made-up assembly language.
+Assembler for a made-up assembly language.
 
 ## Background
 
